@@ -20,9 +20,7 @@ public class SendStmt extends Stmt {
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel pc) {
 
-        if (delta.getType(name) == null) {
-            throw new TypeCheckException("Undefined variable: " + name);
-        }
+        delta.getType(name);
 
         // Optional (depending on your security model):
         // sending might leak → enforce LOW

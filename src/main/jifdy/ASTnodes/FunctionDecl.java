@@ -24,13 +24,16 @@ public class FunctionDecl extends Declaration {
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel secLabel) {
 
         List<Type> paramTypes = new ArrayList<>();
+        List<SecLabel> paramLabels = new ArrayList<>();
 
         for (Param p : params) {
             paramTypes.add(p.type);
+            paramLabels.add(p.label);
         }
 
         // register function signature
-        delta.putFunction(name, new FunctionType(paramTypes, returnType));
+        delta.putFunction(name, new FunctionType(paramTypes, returnType, paramLabels, returnLabel));
+        gamma.putFunction(name, new FunctionLabel(paramLabels, returnLabel));
 
         // new scope
         TypeEnv localDelta = new TypeEnv(delta);
@@ -50,7 +53,7 @@ public class FunctionDecl extends Declaration {
         body.typecheck(localDelta, localGamma, SecLabel.LOW);
 
         // inferred return label
-        SecLabel inferred = localGamma.getReturnLabel();
+        SecLabel inferred = localGamma.getObservedReturnLabel();
 
         // enforce declared label
         if (!Security.canFlow(inferred, returnLabel)) {
@@ -59,7 +62,7 @@ public class FunctionDecl extends Declaration {
             );
         }
 
-        // update function label
+        // update function label after checking the body
         gamma.getFunction(name).returnLabel = returnLabel;
     }
 

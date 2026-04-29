@@ -5,7 +5,7 @@ public class MyClass {
     bool low flag = true;
     String high text = "hello";
 
-    public int compute(int low x, int high y, bool low z) {
+    public int low compute(int low x, int high y, bool low z) {
 
         int low local = 0;
 
@@ -43,7 +43,7 @@ public class MyClass {
         return local;
     }
 
-    private void helper(int high a, int high b) {
+    private void low helper(int high a, int high b) {
 
         int high temp = 0;
         a = a + 4;
@@ -53,7 +53,7 @@ public class MyClass {
         print("helper", temp);
     }
 
-    public int factorial(int high n) {
+    public int high factorial(int high n) {
 
         int low smiley = 1;
 

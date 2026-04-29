@@ -91,12 +91,12 @@ public class ClassDecl extends Node {
 
             delta.putFunction(
                     f.name,
-                    new FunctionType(paramTypes, f.returnType)
+                    new FunctionType(paramTypes, f.returnType, paramLabels, f.returnLabel)
             );
 
             gamma.putFunction(
                     f.name,
-                    new FunctionLabel(paramLabels, SecLabel.LOW)
+                    new FunctionLabel(paramLabels, f.returnLabel)
             );
         }
 
@@ -111,6 +111,7 @@ public class ClassDecl extends Node {
             case INT: return new IntValue(0);
             case BOOL: return new BoolValue(false);
             case STRING: return new StringValue("");
+            case CIPHERTEXT: return new EncryptedValue("", new StringValue(""), "");
         }
         throw new TypeCheckException("Unknown type");
     }

@@ -21,7 +21,7 @@ public class FunctionCall extends Expr {
             Param p = f.params.get(i);
             Value v = args.get(i).eval(env);
 
-            localEnv.setVariables(p.name, v);
+            localEnv.declare(p.name, v, p.label);
         }
 
         f.body.eval(localEnv);
@@ -43,6 +43,18 @@ public class FunctionCall extends Expr {
             if (argType != f.paramTypes.get(i)) {
                 throw new TypeCheckException("Argument type mismatch");
             }
+
+            if (f.paramLabels != null) {
+                SecLabel argLabel = args.get(i).label(gamma);
+                SecLabel paramLabel = f.paramLabels.get(i);
+
+                if (!Security.canFlow(argLabel, paramLabel)) {
+                    throw new TypeCheckException(
+                            "Illegal argument flow in call to " + name + ": "
+                                    + argLabel + " -> " + paramLabel
+                    );
+                }
+            }
         }
 
         return f.returnType;
@@ -56,7 +68,6 @@ public class FunctionCall extends Expr {
         // join argument labels
         for (Expr arg : args) {
             result = join(result, arg.label(gamma));
-            System.out.println("Arg label: " + arg.label(gamma));
         }
 
         // get function label

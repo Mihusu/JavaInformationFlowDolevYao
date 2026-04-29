@@ -11,6 +11,7 @@ public class LabelEnv {
     private final Map<String, FunctionLabel> functions = new HashMap<>();
     private final Map<String, SecLabel> cipherPayloadLabels = new HashMap<>();
     private SecLabel returnLabel;
+    private SecLabel observedReturnLabel;
 
     public LabelEnv() {}
 
@@ -20,6 +21,7 @@ public class LabelEnv {
         this.functions.putAll(other.functions);
         this.cipherPayloadLabels.putAll(other.cipherPayloadLabels);
         this.returnLabel = other.returnLabel;
+        this.observedReturnLabel = other.observedReturnLabel;
     }
 
     public void putLabel(String var, SecLabel label) {
@@ -30,6 +32,10 @@ public class LabelEnv {
         if (!labels.containsKey(var))
             throw new TypeCheckException("Label error: variable not declared: " + var);
         return labels.get(var);
+    }
+
+    public boolean containsLabel(String var) {
+        return labels.containsKey(var);
     }
 
     // functions
@@ -45,6 +51,7 @@ public class LabelEnv {
 
     public void setReturnLabel(SecLabel label) {
         this.returnLabel = label;
+        this.observedReturnLabel = null;
     }
 
     public SecLabel getReturnLabel() {
@@ -54,11 +61,23 @@ public class LabelEnv {
     }
 
     public void updateReturnLabel(SecLabel l) {
-        if (this.returnLabel == null) {
-            this.returnLabel = l;
+        if (this.observedReturnLabel == null) {
+            this.observedReturnLabel = l;
         } else {
-            this.returnLabel = join(this.returnLabel, l);
+            this.observedReturnLabel = join(this.observedReturnLabel, l);
         }
+    }
+
+    public SecLabel getObservedReturnLabel() {
+        return observedReturnLabel != null ? observedReturnLabel : SecLabel.LOW;
+    }
+
+    public void putCipherPayloadLabel(String name, SecLabel label) {
+        cipherPayloadLabels.put(name, label);
+    }
+
+    public SecLabel getCipherPayloadLabel(String name) {
+        return cipherPayloadLabels.get(name);
     }
 
     private SecLabel join(SecLabel a, SecLabel b) {

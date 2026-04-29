@@ -44,6 +44,10 @@ public class TypeEnv {
         return types.get(name);
     }
 
+    public boolean containsType(String name) {
+        return types.containsKey(name);
+    }
+
     // functions
     public void putFunction(String name, FunctionType type) {
         functions.put(name, type);
@@ -58,6 +62,7 @@ public class TypeEnv {
     public void copyFrom(TypeEnv other) {
         this.types.putAll(other.types);
         this.functions.putAll(other.functions);
+        this.cipherPayloadTypes.putAll(other.cipherPayloadTypes);
     }
 
     public void putCipherPayloadType(String name, Type payloadType) {

@@ -39,7 +39,7 @@ public class EncryptPattern extends ReceivePattern {
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel pc) {
 
         // Verify the key expression is well-typed
-        Type keyType = delta.getType(key.toString());
+        Type keyType = key.typecheck(delta, gamma);
 
         if (keyType != Type.STRING) {
             throw new TypeCheckException(

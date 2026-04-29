@@ -3,7 +3,7 @@ public class Test {
     int high secret;
     int low x;
 
-    public void main() {
+    public void low main() {
 
         secret = 42;
 

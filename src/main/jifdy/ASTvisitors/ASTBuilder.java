@@ -415,6 +415,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
             case "int" -> Type.INT;
             case "bool" -> Type.BOOL;
             case "String" -> Type.STRING;
+            case "ciphertext" -> Type.CIPHERTEXT;
             default -> throw new RuntimeException("Unknown type: " + t);
         };
     }

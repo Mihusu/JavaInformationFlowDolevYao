@@ -3,7 +3,7 @@ public class ImplicitLeak {
     int high secret = 1;
     int low x = 0;
 
-    public void main() {
+    public void low main() {
         if (secret == 1) {
             x = 1;
         } else {

@@ -20,11 +20,11 @@ public class VarPattern extends ReceivePattern {
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel pc) {
 
-        if (gamma.getLabel(name) == null) {
+        if (!gamma.containsLabel(name)) {
             gamma.putLabel(name, SecLabel.HIGH);
         }
 
-        if (delta.getType(name) == null) {
+        if (!delta.containsType(name)) {
             delta.putType(name, Type.STRING);
         }
     }

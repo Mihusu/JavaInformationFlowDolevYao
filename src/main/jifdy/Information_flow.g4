@@ -80,6 +80,7 @@ typeExpr
     : 'int'
     | 'bool'
     | 'String'
+    | 'ciphertext'
     ;
 
 statement

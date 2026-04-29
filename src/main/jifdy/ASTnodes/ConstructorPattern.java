@@ -75,7 +75,7 @@ public class ConstructorPattern extends ReceivePattern {
                 .append(name).append("\")) throw new RuntimeException();\n");
 
         for (int i = 0; i < args.size(); i++) {
-            sb.append(args.get(i).compileMatch(env, cv + ".args.get(" + i + ")"));
+            sb.append(args.get(i).compileMatch(env, cv + ".values.get(" + i + ")"));
         }
 
         return sb.toString();

@@ -19,15 +19,19 @@ public class Compiler {
 
     public static void main(String[] args) throws Exception {
 
-        // 1. Read input file
+        // 1. Read the input file
         CharStream input = CharStreams.fromFileName("src/main/jifdy/JifdyFiles/main.jifdy");
 
         // 2. Lexer
         Information_flowLexer lexer = new Information_flowLexer(input);
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
 
         // 3. Parser
         Information_flowParser parser = new Information_flowParser(tokens);
+        parser.removeErrorListeners();
+        parser.addErrorListener(ThrowingErrorListener.INSTANCE);
 
         // 4. Parse tree
         Information_flowParser.ProgramContext tree = parser.program();
@@ -45,7 +49,7 @@ public class Compiler {
 
         String generatedCode = program.compile(codeEnv);
 
-        // 8. Write Java file
+        // 8. Write a Java file
         Path output = Path.of("src/main/jifdy/CodeGeneration/GeneratedProgram.java");
         Files.writeString(output, generatedCode);
 
@@ -56,5 +60,10 @@ public class Compiler {
 
         // 10. Execute
         program.eval(env);
+    }
+
+    private static class ThrowingErrorListener extends BaseErrorListener {
+        private static final ThrowingErrorListener INSTANCE = new ThrowingErrorListener();
+
     }
 }

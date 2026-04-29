@@ -30,7 +30,10 @@ public class EncryptStmt extends Stmt {
         // Set up a random value/nonce
         String nonce = UUID.randomUUID().toString();
 
-        env.setVariables(target, new EncryptedValue(sk.value, payloadValue, nonce));
+        EncryptedValue encrypted = new EncryptedValue(sk.value, payloadValue, nonce);
+        encrypted.label = SecLabel.LOW;
+
+        env.setVariables(target, encrypted);
     }
 
     @Override
@@ -46,13 +49,8 @@ public class EncryptStmt extends Stmt {
             );
         }
 
-        if (!targetType.equals(payloadType)) {
-            throw new TypeCheckException(
-                    "Ciphertext variable " + target +
-                            " expects encrypted " + targetType +
-                            " but got " + payloadType
-            );
-        }
+        delta.putCipherPayloadType(target, payloadType);
+        gamma.putCipherPayloadLabel(target, payload.label(gamma));
 
         // encryption is the only operator allowed to lower the label
         SecLabel targetLabel = gamma.getLabel(target);

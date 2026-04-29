@@ -1,5 +1,3 @@
-package CodeGeneration;
-
 import java.util.*;
 
 public class GeneratedProgram {
@@ -27,6 +25,5 @@ public class GeneratedProgram {
     }
 
     public static void main(String[] args) {
-
     }
 }
