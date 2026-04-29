@@ -1,0 +1,14 @@
+public class Test {
+
+    int high secret;
+    int low x;
+
+    public void main() {
+
+        secret = 42;
+
+        x = secret;
+        send(secret);
+
+    }
+}

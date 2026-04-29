@@ -1,0 +1,10 @@
+public class ExplicitLeak {
+
+    int high secret = 42;
+    int low publicValue = 0;
+
+    public void main() {
+        publicValue = secret;
+    }
+
+}
