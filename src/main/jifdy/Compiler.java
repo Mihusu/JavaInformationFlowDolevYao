@@ -6,6 +6,7 @@ import Analysis.TypeChecker;
 
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
+import SymbolTable.SyntaxError;
 import antlr.Information_flowLexer;
 import antlr.Information_flowParser;
 
@@ -20,7 +21,7 @@ public class Compiler {
     public static void main(String[] args) throws Exception {
 
         // 1. Read the input file
-        CharStream input = CharStreams.fromFileName("src/main/jifdy/JifdyFiles/main.jifdy");
+        CharStream input = CharStreams.fromFileName("src/main/jifdy/JifdyFiles/test/BankTransfer.jifdy");
 
         // 2. Lexer
         Information_flowLexer lexer = new Information_flowLexer(input);
@@ -65,5 +66,16 @@ public class Compiler {
     private static class ThrowingErrorListener extends BaseErrorListener {
         private static final ThrowingErrorListener INSTANCE = new ThrowingErrorListener();
 
+        @Override
+        public void syntaxError(
+                Recognizer<?, ?> recognizer,
+                Object offendingSymbol,
+                int line,
+                int charPositionInLine,
+                String msg,
+                RecognitionException e
+        ) {
+            throw new SyntaxError("Syntax error at line " + line + ":" + charPositionInLine + " - " + msg);
+        }
     }
 }

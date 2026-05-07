@@ -4,9 +4,8 @@ grammar Information_flow;
 PPLABEL     : 'public' | 'private';
 SEND        : 'send';
 TRY_RCV     : 'try_rcv';
-ENCRYPT     : 'encrypt';
-PUBLICKEY   : 'publicKey';
-PRIVATEKEY  : 'privateKey';
+ENCRYPT     : 'e';
+KEY         : 'k'[a-zA-Z0-9_]*;
 
 // Security labels
 SECLABEL : 'high' | 'low';
@@ -54,6 +53,7 @@ classBlock
 declaration
     : type SECLABEL IDENTIFIER ('=' expression)? ';'
     | PPLABEL IDENTIFIER '(' decls* ')' '{' (assignmentStatement)* '}'
+    | encryptionType SECLABEL IDENTIFIER '=' ENCRYPT '(' KEY ',' ( expression | receivePattern ) ')' ';'
     ;
 
 functionDeclaration
@@ -73,22 +73,25 @@ declItem
     ;
 
 type
-    : typeExpr
+    : basicType
+    | encryptionType
     ;
 
-typeExpr
+basicType
     : 'int'
     | 'bool'
     | 'String'
-    | 'ciphertext'
+    ;
+
+encryptionType
+    : ENCRYPT '(' KEY ',' ( expression | receivePattern ) ')'
     ;
 
 statement
     : assignmentStatement
+    | functionCall ';'
     | sendStatement
     | receiveStatement
-    | encryptStatement
-    | expression ';'
     | returnStatement
     | ifStatement
     | whileStatement
@@ -97,10 +100,6 @@ statement
 
 returnStatement
     : 'return' expression ';'
-    ;
-
-encryptStatement
-    : IDENTIFIER '=' ENCRYPT '(' expression ',' expression ')' ';'
     ;
 
 // EXAMPLE: t = encrypt(z,k); send(t);
@@ -113,12 +112,11 @@ receiveStatement
     ;
 
 receivePattern
-    : IDENTIFIER
+    : (type )? SECLABEL IDENTIFIER                      // Variable OR nested format reference
     | IDENTIFIER '(' receivePatternList ')'
-    | ENCRYPT '(' expression ',' receivePattern ')'
+    | ENCRYPT '(' KEY ',' receivePattern ')'
     ;
 
-// Formats
 receivePatternList
     : receivePattern (',' receivePattern)*
     ;
@@ -168,6 +166,7 @@ primary
     | BOOL
     | STR
     | IDENTIFIER
+    | ENCRYPT '(' KEY ',' ( expression | receivePattern ) ')'
     | functionCall
     | '(' expression ')'
     ;

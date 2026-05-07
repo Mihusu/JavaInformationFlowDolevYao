@@ -4,6 +4,8 @@ import ASTnodes.*;
 import antlr.Information_flowBaseVisitor;
 import antlr.Information_flowParser;
 import ASTnodes.Expr.*;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +30,10 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
             privacy = parsePrivacy(ctx.PPLABEL().getText());
         }
 
-        ClassDecl cls = new ClassDecl();
+        ClassDecl cls = (ClassDecl) visit(ctx.classBlock());
         cls.privacy = privacy;
 
-        return visit(ctx.classBlock());
+        return cls;
     }
 
     @Override
@@ -70,7 +72,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
 
         // return type
         if (ctx.type() != null) {
-            f.returnType = parseType(ctx.type().getText());
+            f.returnType = parseType(ctx.type());
         } else {
             f.returnType = null; // void
         }
@@ -98,16 +100,23 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
     @Override
     public Node visitDeclaration(Information_flowParser.DeclarationContext ctx) {
 
-        // Variable declaration
-        if (ctx.type() != null) {
+        if (ctx.PPLABEL() == null) {
 
             VarDecl decl = new VarDecl();
 
-            decl.type = parseType(ctx.type().getText());
+            decl.type = ctx.type() == null ? Type.CIPHERTEXT : parseType(ctx.type());
             decl.label = parseSecLabel(ctx.SECLABEL().getText());
             decl.name = ctx.IDENTIFIER().getText();
 
-            if (ctx.expression() != null) {
+            if (isEncryptedDeclaration(ctx)) {
+                Expr key = buildDeclarationKeyExpr(ctx);
+                Expr payload = ctx.receivePattern() == null
+                        ? (Expr) visit(ctx.expression())
+                        : buildPayloadExpr(ctx.receivePattern());
+
+                decl.type = Type.CIPHERTEXT;
+                decl.init = new EncryptExpr(payload, key);
+            } else if (ctx.expression() != null) {
                 decl.init = (Expr) visit(ctx.expression());
             }
 
@@ -119,10 +128,10 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         proc.privacy = parsePrivacy(ctx.PPLABEL().getText());
         proc.name = ctx.IDENTIFIER().getText();
 
-        if (ctx.decls() != null)
-            proc.params = buildParams((Information_flowParser.DeclsContext) ctx.decls());
-        else
-            proc.params = new ArrayList<>();
+        proc.params = new ArrayList<>();
+        for (var dctx : ctx.decls()) {
+            proc.params.addAll(buildParams(dctx));
+        }
         proc.body = new ArrayList<>();
 
         for (var stmt : ctx.assignmentStatement()) {
@@ -142,16 +151,14 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         CmdBlock block = new CmdBlock();
         block.statements = new ArrayList<>();
 
-        for (var d : ctx.declaration()) {
-            block.statements.add(visit(d));
-        }
-
-        for (var s : ctx.statement()) {
-            block.statements.add(visit(s));
-        }
-
-        for (var b : ctx.cmdBlock()) {
-            block.statements.add(visit(b));
+        for (ParseTree child : ctx.children) {
+            if (child instanceof Information_flowParser.DeclarationContext d) {
+                block.statements.add(visit(d));
+            } else if (child instanceof Information_flowParser.StatementContext s) {
+                block.statements.add(visit(s));
+            } else if (child instanceof Information_flowParser.CmdBlockContext b) {
+                block.statements.add(visit(b));
+            }
         }
 
         return block;
@@ -162,24 +169,29 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
     // =========================
 
     @Override
+    public Node visitStatement(Information_flowParser.StatementContext ctx) {
+        if (ctx.assignmentStatement() != null) return visit(ctx.assignmentStatement());
+        if (ctx.functionCall() != null) return new FunctionCallStmt((Expr) visit(ctx.functionCall()));
+        if (ctx.sendStatement() != null) return visit(ctx.sendStatement());
+        if (ctx.receiveStatement() != null) return visit(ctx.receiveStatement());
+        if (ctx.returnStatement() != null) return visit(ctx.returnStatement());
+        if (ctx.ifStatement() != null) return visit(ctx.ifStatement());
+        if (ctx.whileStatement() != null) return visit(ctx.whileStatement());
+        if (ctx.print() != null) return visit(ctx.print());
+
+        throw new RuntimeException("Unknown statement");
+    }
+
+    @Override
     public Stmt visitAssignmentStatement(Information_flowParser.AssignmentStatementContext ctx) {
+        if (ctx.expression() == null) {
+            throw new RuntimeException("Invalid assignment statement: missing right-hand expression for " + ctx.IDENTIFIER().getText());
+        }
 
         return new AssignStmt(
                 ctx.IDENTIFIER().getText(),
                 (Expr) visit(ctx.expression())
         );
-    }
-
-    @Override
-    public Node visitEncryptStatement(
-            Information_flowParser.EncryptStatementContext ctx) {
-
-        String target = ctx.IDENTIFIER().getText();
-
-        Expr payload = (Expr) visit(ctx.expression(0));
-        Expr key     = (Expr) visit(ctx.expression(1));
-
-        return new EncryptStmt(target, payload, key);
     }
 
     @Override
@@ -331,6 +343,17 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
     }
 
     @Override
+    public Expr visitUnary(Information_flowParser.UnaryContext ctx) {
+        if (ctx.unary() != null) {
+            return new UnaryExpr(
+                    ctx.getChild(0).getText(),
+                    (Expr) visit(ctx.unary())
+            );
+        }
+        return (Expr) visit(ctx.primary());
+    }
+
+    @Override
     public Expr visitPrimary(Information_flowParser.PrimaryContext ctx) {
 
         if (ctx.INT() != null)
@@ -345,6 +368,18 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         if (ctx.IDENTIFIER() != null)
             return new VarExpr(ctx.IDENTIFIER().getText());
 
+        if (ctx.ENCRYPT() != null) {
+            Expr key = buildKeyExpr(ctx.getToken(Information_flowParser.KEY, 0));
+            Expr payload = ctx.receivePattern() == null
+                    ? (Expr) visit(ctx.expression())
+                    : buildPayloadExpr(ctx.receivePattern());
+
+            return new EncryptExpr(
+                    payload,
+                    key
+            );
+        }
+
         if (ctx.functionCall() != null)
             return (Expr) visit(ctx.functionCall());
 
@@ -354,7 +389,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
     @Override
     public Expr visitFunctionCall(Information_flowParser.FunctionCallContext ctx) {
 
-        FunctionCall call = new FunctionCall();
+        FunctionCallExpr call = new FunctionCallExpr();
         call.name = ctx.IDENTIFIER().getText();
         call.args = new ArrayList<>();
 
@@ -377,7 +412,11 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
 
         // X
         if (ctx.IDENTIFIER() != null && ctx.receivePatternList() == null)
-            return new VarPattern(ctx.IDENTIFIER().getText());
+            return new TypedVarPattern(
+                    ctx.IDENTIFIER().getText(),
+                    ctx.type() == null ? null : parseType(ctx.type()),
+                    parseSecLabel(ctx.SECLABEL().getText())
+            );
 
         // f(X,Y)
         if (ctx.receivePatternList() != null) {
@@ -397,8 +436,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         // encrypt(keyExpr, pattern)
         if (ctx.ENCRYPT() != null) {
 
-            Expr key =
-                    (Expr) visit(ctx.expression());
+            Expr key = buildPatternKeyExpr(ctx);
 
             ReceivePattern inner =
                     (ReceivePattern) visit(ctx.receivePattern());
@@ -410,12 +448,19 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
     }
 
 
-    private Type parseType(String t) {
+    private Type parseType(Information_flowParser.TypeContext ctx) {
+        if (ctx.encryptionType() != null) {
+            return Type.CIPHERTEXT;
+        }
+
+        return parseBasicType(ctx.basicType().getText());
+    }
+
+    private Type parseBasicType(String t) {
         return switch (t) {
             case "int" -> Type.INT;
             case "bool" -> Type.BOOL;
             case "String" -> Type.STRING;
-            case "ciphertext" -> Type.CIPHERTEXT;
             default -> throw new RuntimeException("Unknown type: " + t);
         };
     }
@@ -436,6 +481,71 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         return s.substring(1, s.length() - 1);
     }
 
+    private boolean isEncryptedDeclaration(Information_flowParser.DeclarationContext ctx) {
+        return ctx.ENCRYPT() != null
+                && ctx.getToken(Information_flowParser.KEY, 0) != null
+                && (ctx.expression() != null || ctx.receivePattern() != null);
+    }
+
+    private Expr buildDeclarationKeyExpr(Information_flowParser.DeclarationContext ctx) {
+        TerminalNode keyNode = ctx.getToken(Information_flowParser.KEY, 0);
+        if (keyNode != null) {
+            return buildKeyExpr(keyNode);
+        }
+
+        throw new RuntimeException("Encryption declaration requires a key");
+    }
+
+    private Expr buildPatternKeyExpr(Information_flowParser.ReceivePatternContext ctx) {
+        TerminalNode keyNode = ctx.getToken(Information_flowParser.KEY, 0);
+        if (keyNode != null) {
+            return buildKeyExpr(keyNode);
+        }
+
+        throw new RuntimeException("Encryption pattern requires a key");
+    }
+
+    private Expr buildKeyExpr(TerminalNode keyNode) {
+        if (keyNode == null) {
+            throw new RuntimeException("Encryption requires a KEY token");
+        }
+
+        return new StringLiteral(normalizeKey(keyNode.getText()));
+    }
+
+    private String normalizeKey(String text) {
+        if (text.length() >= 2 && text.startsWith("\"") && text.endsWith("\"")) {
+            return stripQuotes(text);
+        }
+
+        return text;
+    }
+
+    private Expr buildPayloadExpr(Information_flowParser.ReceivePatternContext ctx) {
+        if (ctx.IDENTIFIER() != null && ctx.receivePatternList() == null) {
+            return new VarExpr(ctx.IDENTIFIER().getText());
+        }
+
+        if (ctx.receivePatternList() != null) {
+            List<Expr> args = new ArrayList<>();
+
+            for (var p : ctx.receivePatternList().receivePattern()) {
+                args.add(buildPayloadExpr(p));
+            }
+
+            return new ConstructorExpr(ctx.IDENTIFIER().getText(), args);
+        }
+
+        if (ctx.ENCRYPT() != null) {
+            return new EncryptExpr(
+                    buildPayloadExpr(ctx.receivePattern()),
+                    buildPatternKeyExpr(ctx)
+            );
+        }
+
+        throw new RuntimeException("Invalid encrypted payload expression");
+    }
+
     private List<Param> buildParams(Information_flowParser.DeclsContext ctx) {
 
         List<Param> params = new ArrayList<>();
@@ -443,7 +553,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         for (var item : ctx.declItem()) {
 
             Param p = new Param();
-            p.type = parseType(item.type().getText());
+            p.type = parseType(item.type());
             p.label = parseSecLabel(item.SECLABEL().getText());
             p.name = item.IDENTIFIER().getText();
 

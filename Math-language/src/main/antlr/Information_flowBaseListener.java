@@ -125,13 +125,25 @@ public class Information_flowBaseListener implements Information_flowListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypeExpr(Information_flowParser.TypeExprContext ctx) { }
+	@Override public void enterBasicType(Information_flowParser.BasicTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypeExpr(Information_flowParser.TypeExprContext ctx) { }
+	@Override public void exitBasicType(Information_flowParser.BasicTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterEncryptionType(Information_flowParser.EncryptionTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitEncryptionType(Information_flowParser.EncryptionTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -156,18 +168,6 @@ public class Information_flowBaseListener implements Information_flowListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitReturnStatement(Information_flowParser.ReturnStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterEncryptStatement(Information_flowParser.EncryptStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitEncryptStatement(Information_flowParser.EncryptStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

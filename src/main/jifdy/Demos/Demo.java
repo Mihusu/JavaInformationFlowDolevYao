@@ -17,7 +17,7 @@ public class Demo {
     }
 
     static class BoolValue extends Value {
-        boolean value;
+        boolean value;  
         BoolValue(boolean v) { value = v; }
     }
 
@@ -118,7 +118,7 @@ public class Demo {
             System.out.println(X);
 
         } catch (Exception e) {
-            // receive failed → ignore
+            // receive failed -> ignore
         }
     }
 }

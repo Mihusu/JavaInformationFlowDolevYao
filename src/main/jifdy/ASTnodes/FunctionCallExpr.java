@@ -5,12 +5,26 @@ import CodeGeneration.CodeGenEnv;
 
 import java.util.List;
 
-public class FunctionCall extends Expr {
+public class FunctionCallExpr extends Expr {
     public String name;
     public List<Expr> args;
 
     @Override
     public Value eval(Environment env) {
+        Value value = invoke(env);
+
+        if (value == null) {
+            throw new RuntimeException("Void function used as an expression: " + name);
+        }
+
+        return value;
+    }
+
+    public void evalAsStatement(Environment env) {
+        invoke(env);
+    }
+
+    private Value invoke(Environment env) {
 
         FunctionDecl f = env.getFunction(name);
 
@@ -25,6 +39,10 @@ public class FunctionCall extends Expr {
         }
 
         f.body.eval(localEnv);
+
+        if (f.returnType == null) {
+            return null;
+        }
 
         return localEnv.getReturnValue();
     }

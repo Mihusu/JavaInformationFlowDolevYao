@@ -36,8 +36,16 @@ public class ClassDecl extends Node {
 
         StringBuilder sb = new StringBuilder();
 
-        for (Node d : declarations) {
-            sb.append(d.compile(env));
+        for (Declaration d : declarations) {
+            if (d instanceof VarDecl v) {
+                sb.append(v.compileField(env));
+            } else {
+                sb.append(d.compile(env));
+            }
+        }
+
+        for (FunctionDecl f : functions) {
+            sb.append("\n").append(f.compile(env));
         }
 
         return sb.toString();

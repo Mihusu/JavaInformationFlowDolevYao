@@ -98,15 +98,25 @@ public interface Information_flowListener extends ParseTreeListener {
 	 */
 	void exitType(Information_flowParser.TypeContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Information_flowParser#typeExpr}.
+	 * Enter a parse tree produced by {@link Information_flowParser#basicType}.
 	 * @param ctx the parse tree
 	 */
-	void enterTypeExpr(Information_flowParser.TypeExprContext ctx);
+	void enterBasicType(Information_flowParser.BasicTypeContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link Information_flowParser#typeExpr}.
+	 * Exit a parse tree produced by {@link Information_flowParser#basicType}.
 	 * @param ctx the parse tree
 	 */
-	void exitTypeExpr(Information_flowParser.TypeExprContext ctx);
+	void exitBasicType(Information_flowParser.BasicTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Information_flowParser#encryptionType}.
+	 * @param ctx the parse tree
+	 */
+	void enterEncryptionType(Information_flowParser.EncryptionTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Information_flowParser#encryptionType}.
+	 * @param ctx the parse tree
+	 */
+	void exitEncryptionType(Information_flowParser.EncryptionTypeContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Information_flowParser#statement}.
 	 * @param ctx the parse tree
@@ -127,16 +137,6 @@ public interface Information_flowListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitReturnStatement(Information_flowParser.ReturnStatementContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link Information_flowParser#encryptStatement}.
-	 * @param ctx the parse tree
-	 */
-	void enterEncryptStatement(Information_flowParser.EncryptStatementContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Information_flowParser#encryptStatement}.
-	 * @param ctx the parse tree
-	 */
-	void exitEncryptStatement(Information_flowParser.EncryptStatementContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Information_flowParser#sendStatement}.
 	 * @param ctx the parse tree

@@ -25,7 +25,17 @@ public class OpExpr extends Expr {
 
         switch (op) {
 
-            case "+", "-", "*", "/" -> {
+            case "+" -> {
+                if (t1 == Type.STRING || t2 == Type.STRING) {
+                    return Type.STRING;
+                }
+
+                if (t1 != Type.INT || t2 != Type.INT)
+                    throw new TypeCheckException("Arithmetic needs INT");
+                return Type.INT;
+            }
+
+            case "-", "*", "/", "%", "^" -> {
                 if (t1 != Type.INT || t2 != Type.INT)
                     throw new TypeCheckException("Arithmetic needs INT");
                 return Type.INT;
@@ -66,7 +76,13 @@ public class OpExpr extends Expr {
         Value r = right.eval(env);
 
         return switch (op) {
-            case "+" -> new IntValue(((IntValue) l).value + ((IntValue) r).value);
+            case "+" -> {
+                if (l instanceof StringValue || r instanceof StringValue) {
+                    yield new StringValue(valueToString(l) + valueToString(r));
+                }
+
+                yield new IntValue(((IntValue) l).value + ((IntValue) r).value);
+            }
             case "-" ->
                     new IntValue(((IntValue) l).value - ((IntValue) r).value);
 
@@ -112,6 +128,19 @@ public class OpExpr extends Expr {
 
             default -> throw new TypeCheckException("Unknown operator: " + op);
         };
+    }
+
+    private String valueToString(Value value) {
+        if (value instanceof StringValue stringValue) {
+            return stringValue.value;
+        }
+        if (value instanceof IntValue intValue) {
+            return Integer.toString(intValue.value);
+        }
+        if (value instanceof BoolValue boolValue) {
+            return Boolean.toString(boolValue.value);
+        }
+        return value.toString();
     }
 
     private SecLabel join(SecLabel a, SecLabel b) {

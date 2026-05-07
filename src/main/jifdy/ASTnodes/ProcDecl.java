@@ -81,6 +81,11 @@ public class ProcDecl extends Declaration {
 
         sb.append(") {\n");
 
+        env.pushScope();
+        for (Param p : params) {
+            env.declareVariable(p.name);
+        }
+
         env.increaseIndent();
 
         for (Stmt stmt : body) {
@@ -88,6 +93,7 @@ public class ProcDecl extends Declaration {
         }
 
         env.decreaseIndent();
+        env.popScope();
 
         sb.append(env.indent()).append("}\n");
 

@@ -45,7 +45,6 @@ public class TryReceiveStmt extends Stmt {
     public String compile(CodeGenEnv env) {
 
         String msg = env.freshVar("msg");
-        String enc = env.freshVar("enc");
 
         StringBuilder sb = new StringBuilder();
 

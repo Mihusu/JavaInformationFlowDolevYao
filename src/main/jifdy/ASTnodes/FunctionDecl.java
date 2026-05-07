@@ -72,20 +72,47 @@ public class FunctionDecl extends Declaration {
         StringBuilder sb = new StringBuilder();
 
         sb.append(env.indent())
-                .append("public static ")
-                .append(returnType == null ? "void" : returnType.toString().toLowerCase())
+                .append("public ")
+                .append(returnType == null ? "void" : toJavaType(returnType))
                 .append(" ")
                 .append(name)
-                .append("() {\n");
+                .append("(");
+
+        for (int i = 0; i < params.size(); i++) {
+            Param p = params.get(i);
+
+            sb.append(toJavaType(p.type))
+                    .append(" ")
+                    .append(p.name);
+
+            if (i < params.size() - 1) sb.append(", ");
+        }
+
+        sb.append(") {\n");
+
+        env.pushScope();
+        for (Param p : params) {
+            env.declareVariable(p.name);
+        }
 
         env.increaseIndent();
 
         sb.append(body.compile(env));
 
         env.decreaseIndent();
+        env.popScope();
 
         sb.append(env.indent()).append("}\n");
 
         return sb.toString();
+    }
+
+    private String toJavaType(Type type) {
+        return switch (type) {
+            case INT -> "int";
+            case BOOL -> "boolean";
+            case STRING -> "String";
+            case CIPHERTEXT -> "EncryptedValue";
+        };
     }
 }

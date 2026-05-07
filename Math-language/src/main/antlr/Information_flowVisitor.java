@@ -65,11 +65,17 @@ public interface Information_flowVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitType(Information_flowParser.TypeContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Information_flowParser#typeExpr}.
+	 * Visit a parse tree produced by {@link Information_flowParser#basicType}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTypeExpr(Information_flowParser.TypeExprContext ctx);
+	T visitBasicType(Information_flowParser.BasicTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Information_flowParser#encryptionType}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEncryptionType(Information_flowParser.EncryptionTypeContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Information_flowParser#statement}.
 	 * @param ctx the parse tree
@@ -82,12 +88,6 @@ public interface Information_flowVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitReturnStatement(Information_flowParser.ReturnStatementContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Information_flowParser#encryptStatement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitEncryptStatement(Information_flowParser.EncryptStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Information_flowParser#sendStatement}.
 	 * @param ctx the parse tree

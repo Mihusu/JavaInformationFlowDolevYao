@@ -5,7 +5,9 @@ import Analysis.LabelEnv;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Program extends Node {
     public List<ClassDecl> classes;
@@ -47,6 +49,16 @@ public class Program extends Node {
                     nonce = n;
                 }
             }
+
+            static class ConstructorValue {
+                String name;
+                List<Object> values;
+
+                ConstructorValue(String n, List<Object> v) {
+                    name = n;
+                    values = v;
+                }
+            }
         
             static class Crypto {
                 static EncryptedValue encrypt(Object payload, String key) {
@@ -57,23 +69,85 @@ public class Program extends Node {
                     );
                 }
             }
-        
-            public static void main(String[] args) {
-        """);
 
-        env.increaseIndent();
+            static class Channel {
+                private final Queue<Object> messages = new ArrayDeque<>();
+
+                void send(Object message) {
+                    messages.add(message);
+                }
+
+                Object receive() {
+                    if (messages.isEmpty()) {
+                        throw new RuntimeException("No message available");
+                    }
+
+                    return messages.remove();
+                }
+            }
+
+            final Channel channel = new Channel();
+        """);
 
         for (ClassDecl c : classes) {
             sb.append(c.compile(env));
         }
 
-        env.decreaseIndent();
+        sb.append("""
+
+            public static void main(String[] args) {
+                GeneratedProgram program = new GeneratedProgram();
+        """);
+
+        for (ClassDecl c : classes) {
+            appendMainCalls(sb, c);
+        }
 
         sb.append("""
             }
+
         }
         """);
 
         return sb.toString();
+    }
+
+    private void appendMainCalls(StringBuilder sb, ClassDecl cls) {
+        Set<String> fieldNames = new HashSet<>();
+        for (Declaration declaration : cls.declarations) {
+            if (declaration instanceof VarDecl varDecl) {
+                fieldNames.add(varDecl.name);
+            }
+        }
+
+        for (FunctionDecl function : cls.functions) {
+            sb.append("        program.")
+                    .append(function.name)
+                    .append("(");
+
+            for (int i = 0; i < function.params.size(); i++) {
+                Param param = function.params.get(i);
+                if (fieldNames.contains(param.name)) {
+                    sb.append("program.").append(param.name);
+                } else {
+                    sb.append(defaultJavaValue(param.type));
+                }
+
+                if (i < function.params.size() - 1) {
+                    sb.append(", ");
+                }
+            }
+
+            sb.append(");\n");
+        }
+    }
+
+    private String defaultJavaValue(Type type) {
+        return switch (type) {
+            case INT -> "0";
+            case BOOL -> "false";
+            case STRING -> "\"\"";
+            case CIPHERTEXT -> "new EncryptedValue(\"\", \"\", \"\")";
+        };
     }
 }

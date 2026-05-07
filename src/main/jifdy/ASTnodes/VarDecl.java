@@ -32,6 +32,7 @@ public class VarDecl extends Declaration {
             case INT: return new IntValue(0);
             case BOOL: return new BoolValue(false);
             case STRING: return new StringValue("");
+            case CIPHERTEXT: return new EncryptedValue("", new StringValue(""), "");
         }
         throw new RuntimeException("Unknown type");
     }
@@ -71,6 +72,38 @@ public class VarDecl extends Declaration {
 
     @Override
     public String compile(CodeGenEnv env) {
-        return "";
+        env.declareVariable(name);
+        return env.indent() + toJavaType(type) + " " + name + compileInitializer(env) + ";\n";
+    }
+
+    public String compileField(CodeGenEnv env) {
+        env.declareVariable(name);
+        return env.indent() + "public " + toJavaType(type) + " " + name + compileInitializer(env) + ";\n";
+    }
+
+    private String compileInitializer(CodeGenEnv env) {
+        if (init != null) {
+            return " = " + init.compile(env);
+        }
+
+        return " = " + defaultJavaValue(type);
+    }
+
+    private String toJavaType(Type t) {
+        return switch (t) {
+            case INT -> "int";
+            case BOOL -> "boolean";
+            case STRING -> "String";
+            case CIPHERTEXT -> "EncryptedValue";
+        };
+    }
+
+    private String defaultJavaValue(Type t) {
+        return switch (t) {
+            case INT -> "0";
+            case BOOL -> "false";
+            case STRING -> "\"\"";
+            case CIPHERTEXT -> "new EncryptedValue(\"\", \"\", \"\")";
+        };
     }
 }

@@ -22,14 +22,22 @@ public class PrintStmt extends Stmt {
 
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel secLabel) {
-
+        for (Expr e : args) {
+            e.typecheck(delta, gamma);
+        }
     }
 
     @Override
     public String compile(CodeGenEnv env) {
-        return env.indent() +
-                "System.out.println(" +
-                (env) +
-                ");\n";
+        StringBuilder sb = new StringBuilder();
+
+        for (Expr arg : args) {
+            sb.append(env.indent())
+                    .append("System.out.println(")
+                    .append(arg.compile(env))
+                    .append(");\n");
+        }
+
+        return sb.toString();
     }
 }

@@ -75,6 +75,29 @@ public class IfStmt extends Stmt {
 
         sb.append(env.indent()).append("}\n");
 
+        for (ElseIf e : elseIfs) {
+            sb.append(env.indent())
+                    .append("else if (")
+                    .append(e.condition.compile(env))
+                    .append(") {\n");
+
+            env.increaseIndent();
+            sb.append(e.cmdBlock.compile(env));
+            env.decreaseIndent();
+
+            sb.append(env.indent()).append("}\n");
+        }
+
+        if (elseCmdBlock != null) {
+            sb.append(env.indent()).append("else {\n");
+
+            env.increaseIndent();
+            sb.append(elseCmdBlock.compile(env));
+            env.decreaseIndent();
+
+            sb.append(env.indent()).append("}\n");
+        }
+
         return sb.toString();
     }
 }
