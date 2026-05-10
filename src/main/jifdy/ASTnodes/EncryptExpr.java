@@ -6,6 +6,12 @@ import Analysis.TypeCheckException;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.UUID;
 
 public class EncryptExpr extends Expr {
@@ -26,13 +32,29 @@ public class EncryptExpr extends Expr {
             throw new RuntimeException("Key must be string");
         }
 
-        EncryptedValue encrypted = new EncryptedValue(
-                sk.value,
-                payloadValue,
-                UUID.randomUUID().toString()
-        );
-        encrypted.label = SecLabel.LOW;
-        return encrypted;
+        try {
+            byte[] keyBytes = Arrays.copyOf(sk.value.getBytes("UTF-8"), 16);
+            SecretKeySpec secretKey = new SecretKeySpec(keyBytes, "AES");
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            oos.writeObject(payloadValue);
+            byte[] payloadBytes = bos.toByteArray();
+
+            // We still use EncryptedValue but we could store the actual ciphertext if we wanted to be 100% realistic
+            // For now, let's keep the EncryptedValue structure but emphasize that it's "encrypted"
+            EncryptedValue encrypted = new EncryptedValue(
+                    null,
+                    null,
+                    Base64.getEncoder().encodeToString(cipher.doFinal(payloadBytes))
+            );
+            encrypted.label = SecLabel.LOW;
+            return encrypted;
+        } catch (Exception e) {
+            throw new RuntimeException("Encryption failed", e);
+        }
     }
 
     @Override

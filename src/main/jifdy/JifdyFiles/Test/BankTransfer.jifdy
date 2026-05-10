@@ -31,7 +31,7 @@ public class BankTransfer {
     public void low bank() {
 
         int high total = 0;
-        bool high done = false;
+        bool low done = false;
 
         // First transfer
         try_rcv(e(kBank,
@@ -45,6 +45,10 @@ public class BankTransfer {
           Transfer(String low user, int high amount2, String low target)
         )) {
           total = total + amount2;
+          done = true;
+        }
+
+        if(total == 1) {
           done = true;
         }
 

@@ -35,25 +35,25 @@ public class Program extends Node {
 
         sb.append("""
         import java.util.*;
+        import javax.crypto.Cipher;
+        import javax.crypto.spec.SecretKeySpec;
+        import java.io.*;
         
         public class GeneratedProgram {
         
-            static class EncryptedValue {
-                String key;
-                Object payload;
-                String nonce;
+            static class EncryptedValue implements Serializable {
+                byte[] ciphertext;
+                byte[] salt; // This is just a mock for simplicity. 
         
-                EncryptedValue(String k, Object p, String n) {
-                    key = k;
-                    payload = p;
-                    nonce = n;
+                EncryptedValue(byte[] ciphertext) {
+                    this.ciphertext = ciphertext;
                 }
             }
-
-            static class ConstructorValue {
+        
+            static class ConstructorValue implements Serializable {
                 String name;
                 List<Object> values;
-
+        
                 ConstructorValue(String n, List<Object> v) {
                     name = n;
                     values = v;
@@ -61,15 +61,46 @@ public class Program extends Node {
             }
         
             static class Crypto {
+                private static final String ALGORITHM = "AES";
+
                 static EncryptedValue encrypt(Object payload, String key) {
-                    return new EncryptedValue(
-                        key,
-                        payload,
-                        UUID.randomUUID().toString()
-                    );
+                    try {
+                        byte[] keyBytes = Arrays.copyOf(key.getBytes("UTF-8"), 16);
+                        SecretKeySpec secretKey = new SecretKeySpec(keyBytes, ALGORITHM);
+                        Cipher cipher = Cipher.getInstance(ALGORITHM);
+                        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+                        
+                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                        ObjectOutputStream oos = new ObjectOutputStream(bos);
+                        oos.writeObject(payload);
+                        byte[] payloadBytes = bos.toByteArray();
+                        
+                        return new EncryptedValue(cipher.doFinal(payloadBytes));
+                    } catch (Exception e) {
+                        throw new RuntimeException("Encryption failed", e);
+                    }
+                }
+
+                static Object decrypt(EncryptedValue enc, String key) {
+                    try {
+                        byte[] keyBytes = Arrays.copyOf(key.getBytes("UTF-8"), 16);
+                        SecretKeySpec secretKey = new SecretKeySpec(keyBytes, ALGORITHM);
+                        Cipher cipher = Cipher.getInstance(ALGORITHM);
+                        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+                        
+                        byte[] decryptedBytes = cipher.doFinal(enc.ciphertext);
+                        
+                        ByteArrayInputStream bis = new ByteArrayInputStream(decryptedBytes);
+                        ObjectInputStream ois = new ObjectInputStream(bis);
+                        return ois.readObject();
+                    } catch (Exception e) {
+                        throw new RuntimeException("Decryption failed", e);
+                    }
                 }
             }
+        """);
 
+        sb.append("""
             static class Channel {
                 private final Queue<Object> messages = new ArrayDeque<>();
 
@@ -147,7 +178,7 @@ public class Program extends Node {
             case INT -> "0";
             case BOOL -> "false";
             case STRING -> "\"\"";
-            case CIPHERTEXT -> "new EncryptedValue(\"\", \"\", \"\")";
+            case CIPHERTEXT -> "new EncryptedValue(new byte[0])";
         };
     }
 }

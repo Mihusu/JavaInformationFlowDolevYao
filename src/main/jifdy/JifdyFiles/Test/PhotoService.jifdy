@@ -59,7 +59,7 @@ public class PhotoService {
         // PROCESS
         if (ok) {
 
-            store(photo);  // HIGH sink ✔
+            store(photo);  // HIGH variable
 
             e(Client(Ack) low ackMsg =
                 encrypt(kClient, Ack(String low "uploaded")));

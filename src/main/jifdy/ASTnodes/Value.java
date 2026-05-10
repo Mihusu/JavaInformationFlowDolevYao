@@ -1,12 +1,14 @@
 package ASTnodes;
 
-abstract public class Value {
+import java.io.Serializable;
+
+abstract public class Value implements Serializable {
     public SecLabel label;
 
     public abstract Type getType();
 }
 
-class IntValue extends Value {
+class IntValue extends Value implements Serializable {
     int value;
 
     public IntValue(int i) {
@@ -19,7 +21,7 @@ class IntValue extends Value {
     }
 }
 
-class BoolValue extends Value {
+class BoolValue extends Value implements Serializable {
     boolean value;
 
     public BoolValue(boolean equals) {
@@ -32,7 +34,7 @@ class BoolValue extends Value {
     }
 }
 
-class StringValue extends Value {
+class StringValue extends Value implements Serializable {
     String value;
 
     public StringValue(String key) {
