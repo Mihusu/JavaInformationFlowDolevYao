@@ -31,7 +31,7 @@ public class ReturnStmt extends Stmt {
         }
 
         SecLabel exprLabel = expr.label(gamma);
-        SecLabel actualLabel = join(secLabel, exprLabel);
+        SecLabel actualLabel = SecLabel.join(secLabel, exprLabel);
 
         // Checks the expected secLabel
         SecLabel expectedLabel = gamma.getReturnLabel();
@@ -52,10 +52,4 @@ public class ReturnStmt extends Stmt {
                 "return " + expr.compile(env) + ";\n";
     }
 
-    // Helper function
-    private SecLabel join(SecLabel a, SecLabel b) {
-        return (a == SecLabel.HIGH || b == SecLabel.HIGH)
-                ? SecLabel.HIGH
-                : SecLabel.LOW;
-    }
 }

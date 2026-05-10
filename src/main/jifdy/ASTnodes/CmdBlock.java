@@ -39,7 +39,7 @@ public class CmdBlock extends Stmt {
                     }
 
                     SecLabel lExpr = v.init.label(gamma);
-                    SecLabel effective = join(secLabel, lExpr);
+                    SecLabel effective = SecLabel.join(secLabel, lExpr);
 
                     if (!Security.canFlow(effective, v.label)) {
                         throw new TypeCheckException(
@@ -55,11 +55,6 @@ public class CmdBlock extends Stmt {
         }
     }
 
-    private SecLabel join(SecLabel a, SecLabel b) {
-        return (a == SecLabel.HIGH || b == SecLabel.HIGH)
-                ? SecLabel.HIGH
-                : SecLabel.LOW;
-    }
 
     @Override
     public String compile(CodeGenEnv env) {

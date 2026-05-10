@@ -31,16 +31,11 @@ public class WhileStmt extends Stmt {
         }
 
         SecLabel condLabel = condition.label(gamma);
-        SecLabel newLabel = join(label, condLabel);
+        SecLabel newLabel = SecLabel.join(label, condLabel);
 
         body.typecheck(delta, gamma, newLabel);
     }
 
-    private SecLabel join(SecLabel a, SecLabel b) {
-        return (a == SecLabel.HIGH || b == SecLabel.HIGH)
-                ? SecLabel.HIGH
-                : SecLabel.LOW;
-    }
 
     @Override
     public String compile(CodeGenEnv env) {

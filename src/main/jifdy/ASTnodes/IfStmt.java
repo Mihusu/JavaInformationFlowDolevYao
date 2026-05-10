@@ -40,7 +40,7 @@ public class IfStmt extends Stmt {
         }
 
         SecLabel condLabel = condition.label(gamma);
-        SecLabel newLabel = join(label, condLabel);
+        SecLabel newLabel = SecLabel.join(label, condLabel);
 
         thenCmdBlock.typecheck(delta, gamma, newLabel);
 
@@ -53,11 +53,6 @@ public class IfStmt extends Stmt {
         }
     }
 
-    private SecLabel join(SecLabel a, SecLabel b) {
-        return (a == SecLabel.HIGH || b == SecLabel.HIGH)
-                ? SecLabel.HIGH
-                : SecLabel.LOW;
-    }
 
     @Override
     public String compile(CodeGenEnv env) {

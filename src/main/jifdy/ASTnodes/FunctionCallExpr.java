@@ -85,23 +85,18 @@ public class FunctionCallExpr extends Expr {
 
         // join argument labels
         for (Expr arg : args) {
-            result = join(result, arg.label(gamma));
+            result = SecLabel.join(result, arg.label(gamma));
         }
 
         // get function label
         FunctionLabel fLabel = gamma.getFunction(name);
 
         // include function return label
-        result = join(result, fLabel.returnLabel);
+        result = SecLabel.join(result, fLabel.returnLabel);
 
         return result;
     }
 
-    private SecLabel join(SecLabel a, SecLabel b) {
-        return (a == SecLabel.HIGH || b == SecLabel.HIGH)
-                ? SecLabel.HIGH
-                : SecLabel.LOW;
-    }
 
     @Override
     public String compile(CodeGenEnv env) {

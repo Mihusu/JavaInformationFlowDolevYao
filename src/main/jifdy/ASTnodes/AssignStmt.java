@@ -30,7 +30,7 @@ public class AssignStmt extends Stmt {
         SecLabel exprLabel = expr.label(gamma);
 
         // explicit flow + implicit flow
-        SecLabel effectiveLabel = join(pc, exprLabel);
+        SecLabel effectiveLabel = SecLabel.join(pc, exprLabel);
         SecLabel varLabel = gamma.getLabel(name);
 
         if (!Security.canFlow(effectiveLabel, varLabel)) {
@@ -41,11 +41,6 @@ public class AssignStmt extends Stmt {
         }
     }
 
-    private SecLabel join(SecLabel a, SecLabel b) {
-        return (a == SecLabel.HIGH || b == SecLabel.HIGH)
-                ? SecLabel.HIGH
-                : SecLabel.LOW;
-    }
 
     @Override
     public String compile(CodeGenEnv env) {

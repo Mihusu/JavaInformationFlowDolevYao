@@ -64,7 +64,7 @@ public class LabelEnv {
         if (this.observedReturnLabel == null) {
             this.observedReturnLabel = l;
         } else {
-            this.observedReturnLabel = join(this.observedReturnLabel, l);
+            this.observedReturnLabel = SecLabel.join(this.observedReturnLabel, l);
         }
     }
 
@@ -80,9 +80,4 @@ public class LabelEnv {
         return cipherPayloadLabels.get(name);
     }
 
-    private SecLabel join(SecLabel a, SecLabel b) {
-        return (a == SecLabel.HIGH || b == SecLabel.HIGH)
-                ? SecLabel.HIGH
-                : SecLabel.LOW;
-    }
 }

@@ -58,18 +58,4 @@ public class TypeEnv {
             throw new TypeCheckException("Unknown function: " + name);
         return functions.get(name);
     }
-
-    public void copyFrom(TypeEnv other) {
-        this.types.putAll(other.types);
-        this.functions.putAll(other.functions);
-        this.cipherPayloadTypes.putAll(other.cipherPayloadTypes);
-    }
-
-    public void putCipherPayloadType(String name, Type payloadType) {
-        cipherPayloadTypes.put(name, payloadType);
-    }
-
-    public Type getCipherPayloadType(String name) {
-        return cipherPayloadTypes.get(name);
-    }
 }

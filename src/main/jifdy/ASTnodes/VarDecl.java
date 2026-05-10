@@ -54,7 +54,7 @@ public class VarDecl extends Declaration {
             }
 
             SecLabel initLabel = init.label(gamma);
-            SecLabel effective = join(pc, initLabel);
+            SecLabel effective = SecLabel.join(pc, initLabel);
 
             if (!Security.canFlow(effective, label)) {
                 throw new TypeCheckException(
@@ -64,11 +64,6 @@ public class VarDecl extends Declaration {
         }
     }
 
-    private SecLabel join(SecLabel a, SecLabel b) {
-        return (a == SecLabel.HIGH || b == SecLabel.HIGH)
-                ? SecLabel.HIGH
-                : SecLabel.LOW;
-    }
 
     @Override
     public String compile(CodeGenEnv env) {
