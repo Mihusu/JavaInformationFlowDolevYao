@@ -1,0 +1,58 @@
+public class BankTransfer {
+
+    String low user = "Alice";
+    String low target = "Bob";
+
+    public void low client() {
+
+        int high amount1 = 2000;
+        int high amount2 = 3000;
+
+        // encrypted messages (ciphertext is LOW)
+        e(kBank,transfer) low msg1 = e(kBank,
+            Transfer(String low user, int high amount1, String low target)
+        );
+
+        e(kBank,transfer) low msg2 = e(kBank,
+            Transfer(String low user, int high amount2, String low target)
+        );
+
+        send(msg1);
+        send(msg2);
+
+        try_rcv(e(kClient,
+          Result(bool high done, int high total, String low target)
+        )) {
+          print("The transfer was sent successfully to " + target + " with the total amount " + total + "Status: " + done);
+        }
+    }
+
+
+    public void low bank() {
+
+        int high total = 0;
+        bool high done = false;
+
+        // First transfer
+        try_rcv(e(kBank,
+          Transfer(String low user, int high amount, String high target)
+        )) {
+          total = total + amount;
+        }
+
+        // Second transfer
+        try_rcv(e(kBank,
+          Transfer(String low user, int high amount2, String low target)
+        )) {
+          total = total + amount2;
+          done = true;
+        }
+
+        // Encrypt result BEFORE sending
+        e(kClient,transfer) low resultMsg = e(kClient,
+          Result(bool high done, int high total, String low target)
+        );
+
+        send(resultMsg);
+    }
+}

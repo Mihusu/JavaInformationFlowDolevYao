@@ -1,0 +1,68 @@
+public class MyClass {
+
+    int high secret = 5;
+    int low counter;
+    bool low flag = true;
+    String high text = "hello";
+
+    public int low compute(int low x, int high y, bool low z) {
+
+        int low local = 0;
+
+        {
+            int low inner = 1;
+            inner = inner + 1 * 3;
+        }
+
+        counter = 0;
+
+        if (local > 10) {
+            print("greater", local);
+        }
+        elseif (local == 10) {
+            print("equal", local);
+        }
+        else {
+            print("less", local);
+        }
+
+        while (counter < 5) {
+            counter = counter + 1;
+
+            if (counter == 3) {
+                print("three");
+            }
+        }
+
+        if (not flag) {
+            print("flag was false");
+        }
+
+        helper(local, counter);
+
+        return local;
+    }
+
+    private void low helper(int high a, int high b) {
+
+        int high temp = 0;
+        a = a + 4;
+        b = b + 12;
+
+        temp = a + b;
+        print("helper", temp);
+    }
+
+    public int high factorial(int high n) {
+
+        int low smiley = 1;
+
+        if (smiley == 1) {
+            n = 3;
+            return smiley;
+        }
+        else {
+            return n * factorial(n - 1);
+        }
+    }
+}

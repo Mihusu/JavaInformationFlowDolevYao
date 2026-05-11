@@ -1,0 +1,12 @@
+SETUP{
+
+    design Dog {
+        Dog next;
+    }
+
+    Dog dog;
+}
+RULES{}
+GAMELOOP{
+    exit;
+}

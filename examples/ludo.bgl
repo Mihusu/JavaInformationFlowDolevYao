@@ -1,0 +1,191 @@
+SETUP {
+
+    Piece piece1Player1;
+    Piece piece2Player1;
+    Piece piece3Player1;
+    Piece piece4Player1;
+
+    Piece piece1Player2;
+    Piece piece2Player2;
+    Piece piece3Player2;
+    Piece piece4Player2;
+
+    Piece piece1Player3;
+    Piece piece2Player3;
+    Piece piece3Player3;
+    Piece piece4Player3;
+
+    Piece piece1Player4;
+    Piece piece2Player4;
+    Piece piece3Player4;
+    Piece piece4Player4;
+
+    list:Piece player1Pieces;
+    player1Pieces[1] = piece1Player1;
+    player1Pieces[2] = piece2Player1;
+    player1Pieces[3] = piece3Player1;
+    player1Pieces[4] = piece4Player1;
+
+    list:Piece player2Pieces;
+    player2Pieces[1] = piece1Player2;
+    player2Pieces[2] = piece2Player2;
+    player2Pieces[3] = piece3Player2;
+    player2Pieces[4] = piece4Player2;
+
+    list:Piece player3Pieces;
+    player3Pieces[1] = piece1Player3;
+    player3Pieces[2] = piece2Player3;
+    player3Pieces[3] = piece3Player3;
+    player3Pieces[4] = piece4Player3;
+
+    list:Piece player4Pieces;
+    player4Pieces[1] = piece1Player4;
+    player4Pieces[2] = piece2Player4;
+    player4Pieces[3] = piece3Player4;
+    player4Pieces[4] = piece4Player4;
+
+    Player player1 = {"Red", player1Pieces};
+    Player player2 = {"Green", player2Pieces};
+    Player player3 = {"Blue", player3Pieces};
+    Player player4 = {"Yellow", player4Pieces};
+
+    list:player players;
+
+    players[1] = player1;
+    players[2] = player2;
+    players[3] = player3;
+    players[4] = player4;
+
+    path mp[52];
+
+    path player1EndPath[6];
+    path player2EndPath[6];
+    path player3EndPath[6];
+    path player4EndPath[6];
+
+    list:giraffe endPaths;
+
+    endPaths[1] = player1EndPath;
+    endPaths[2] = player2EndPath;
+    endPaths[3] = player3EndPath;
+    endPaths[4] = player4EndPath;
+
+    int currentPlayer = 1;
+    int rollValue;
+    int pieceNumber;
+    int round;
+}
+
+RULES {
+    action getPiecePosition(Piece p, List list): int {
+        int counter = 0;
+        foreach(piece in list){
+            if (piece.id = p.id){
+                return counter;
+            }
+            counter++;
+        }
+    }
+    action forceMovePiece(Piece p, List source, int sourceIndex, List dest, int destIndex){
+
+    }
+    action movePiece(Piece p, List source, int sourceIndex, List dest, int destIndex){
+        // need to be able to find a piece in a list, compare name?, pieces need something that uniquely identifies them
+        // or maybe just print each list index, can you print a struct in C?
+        int pp = getPiecePosition(p, source);
+        dest[destIndex] = source[pp];   //how do we find an empty spot? need to check if source is empty and if not,
+                                // if all pieces belong to current player
+    }
+    action selectPiece(): int {
+        int number = 0;
+        while (number < 1 || number > 4) {
+            print("Select a piece number between 1 and 4");
+            input(number);
+        }
+        return number;
+    }
+
+    action checkWinCondition(int i): bool {
+        Tile tempTile;
+        if (i == 1) {
+        tempTile = player1EndPath.tiles[6];
+        piece tempPiece = tempTile[4];
+        str tempName = tempPiece.name;
+        }
+        elseif (i == 2) {
+                    tempTile = player2EndPath.tiles[6];
+                    piece tempPiece = tempTile[4];
+                    str tempName = tempPiece.name;
+                    }
+                    elseif (i == 3) {
+                                tempTile = player3EndPath.tiles[6];
+                                piece tempPiece = tempTile[4];
+                                str tempName = tempPiece.name;
+                                }
+                                elseif (i == 4) {
+                                            tempTile = player4EndPath.tiles[6];
+                                            piece tempPiece = tempTile[4];
+                                            str tempName = tempPiece.name;
+                                            }
+        if (tempName != "") {
+        return true;
+        }
+        else {
+        return false;
+        }
+    }
+}
+
+GAMELOOP {
+    if (toast == 0) {
+        print("Welcome to basic Ludo, where there are almost no rules, you just have to get 4 pieces into goal before any other player. May the luckiest player win :)");
+        toast = 1;
+    }
+
+    round = round +1;
+
+    if (currentPlayer == 5) {
+        currentPlayer = 1;
+    }
+
+    print("Player", currentPlayer, "'s turn");
+    print("Simulated dice roll");
+    rollValue = random(6);
+    print("You rolled a ", rollValue);
+
+    if (rollValue == 6) {
+
+        int plchoice = -1;
+
+        while (plchoice < 0 || plchoice > 6 && plchoice == 5) {
+            print("Enter 0 to move a piece from home to start, or select a piece number between 1 and 4 to move");
+            input(plchoic);
+        }
+    }
+
+    if (plchoice == 0) {
+        jump();
+    }
+    elseif (players[currentPlayer].piecesOnPath != 0) {
+        pieceNumber = plchoice;
+        players[currentPlayer].pieces[pieceNumber].move(rollValue);
+    }
+
+    if (endPaths[currentPlayer].tiles[6].pieces[4].name != "") {
+        print(players[currentPlayer].name, "has won. Congratulations!");
+        exit;
+    }
+
+    if (checkWinCondition(currentPlayer)) {
+    print(players[currentPlayer].name, "has won. Congratulations!");
+    exit;
+    }
+
+    if (round == 1000) {
+        exit;
+    }
+
+    currentPlayer = currentPlayer + 1;
+}
+
+                                                              

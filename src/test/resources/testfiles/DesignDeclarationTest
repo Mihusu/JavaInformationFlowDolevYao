@@ -1,0 +1,8 @@
+GAME {
+    SETUP {
+
+        design LudoPiece {
+            str color;
+        }
+    }
+}
