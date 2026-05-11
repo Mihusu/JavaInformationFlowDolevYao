@@ -1,8 +1,6 @@
 package ASTnodes;
 
-import java.io.Serializable;
-
-public class EncryptedValue extends Value implements Serializable {
+public class EncryptedValue extends Value {
 
     public String key;
     public Value payload;

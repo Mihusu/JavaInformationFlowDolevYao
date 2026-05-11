@@ -49,7 +49,7 @@ public class FunctionDecl extends Declaration {
             localGamma.putLabel(p.name, p.label);
         }
 
-        // body (procedure(function) ALWAYS LOW at entry)
+        // body (pc ALWAYS LOW at entry)
         body.typecheck(localDelta, localGamma, SecLabel.LOW);
 
         // inferred return label
