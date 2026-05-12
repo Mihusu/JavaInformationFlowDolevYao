@@ -123,14 +123,14 @@ public class Information_flowBaseVisitor<T> extends AbstractParseTreeVisitor<T> 
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitReceivePattern(Information_flowParser.ReceivePatternContext ctx) { return visitChildren(ctx); }
+	@Override public T visitFormat(Information_flowParser.FormatContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitReceivePatternList(Information_flowParser.ReceivePatternListContext ctx) { return visitChildren(ctx); }
+	@Override public T visitFormatList(Information_flowParser.FormatListContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

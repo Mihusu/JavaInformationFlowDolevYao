@@ -26,7 +26,8 @@ public class ReturnStmt extends Stmt {
         if (actualType != expectedType) {
             throw new TypeCheckException(
                     "Return type mismatch: expected " + expectedType +
-                            " but got " + actualType
+                            " but got " + actualType,
+                    lineNumber
             );
         }
 
@@ -36,10 +37,14 @@ public class ReturnStmt extends Stmt {
         // Checks the expected secLabel
         SecLabel expectedLabel = gamma.getReturnLabel();
 
-        if (!Security.canFlow(actualLabel, expectedLabel)) {
+        // SPECIAL CASE: Encryption (EncryptExpr) is a declassification mechanism.
+        if (expr instanceof EncryptExpr && expectedLabel == SecLabel.LOW) {
+            // Allow it.
+        } else if (!Security.canFlow(actualLabel, expectedLabel)) {
             throw new TypeCheckException(
                     "Illegal return flow: " + actualLabel +
-                            " -> " + expectedLabel
+                            " -> " + expectedLabel,
+                    lineNumber
             );
         }
 

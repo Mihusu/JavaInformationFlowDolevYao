@@ -1,0 +1,70 @@
+public class InsecureBankTransfer {
+
+    int low publicTotal = 0;
+    int high secureTotal = 0;
+
+    public void low client() {
+
+        String low sender = "Alice";
+        String low receiver = "Bob";
+
+        int high amount1 = 5000;
+        int high amount2 = 7000;
+
+        e(kBank, Transfer) low transfer1 =
+            e(kBank, Transfer(String low sender, String low receiver, int high amount1));
+
+        e(kBank, Transfer) low transfer2 =
+            e(kBank, Transfer(String low sender, String low receiver, int high amount2));
+
+        send(transfer1);
+        send(transfer2);
+    }
+
+
+    public void low bank() {
+
+        bool high ok = true;
+
+        while (ok) {
+
+            // Input of the bank
+            String high sender_in = "";
+            String high receiver_in = "";
+            int high amount_in = 0;
+
+            try_rcv(
+                e(kBank,
+                    Transfer(
+                        String low sender,
+                        String low receiver,
+                        int high amount))
+            ) {
+                ok = false;
+            }
+
+            sender_in = sender;
+            receiver_in = receiver;
+            amount_in = amount;
+
+            if (ok) {
+
+                secureTotal = secureTotal + amount_in;
+
+                // ILLEGAL FLOW
+                publicTotal = secureTotal;
+
+                print(sender_in, receiver_in, publicTotal);
+
+                if (publicTotal > 10000) {
+                    ok = false;
+                }
+            }
+        }
+
+        e(kClient, Result(int low publicTotal)) low resultMsg =
+            e(kClient, Result(publicTotal));
+
+        send(resultMsg);
+    }
+}

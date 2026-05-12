@@ -38,28 +38,28 @@ public class Program extends Node {
         import javax.crypto.Cipher;
         import javax.crypto.spec.SecretKeySpec;
         import java.io.*;
-        
+       \s
         public class GeneratedProgram {
-        
+       \s
             static class EncryptedValue implements Serializable {
                 byte[] ciphertext;
-                byte[] salt; // This is just a mock for simplicity. 
-        
+                byte[] salt; // This is just a mock for simplicity.\s
+       \s
                 EncryptedValue(byte[] ciphertext) {
                     this.ciphertext = ciphertext;
                 }
             }
-        
+       \s
             static class ConstructorValue implements Serializable {
                 String name;
                 List<Object> values;
-        
+       \s
                 ConstructorValue(String n, List<Object> v) {
                     name = n;
                     values = v;
                 }
             }
-        
+       \s
             static class Crypto {
                 private static final String ALGORITHM = "AES";
 
@@ -69,12 +69,12 @@ public class Program extends Node {
                         SecretKeySpec secretKey = new SecretKeySpec(keyBytes, ALGORITHM);
                         Cipher cipher = Cipher.getInstance(ALGORITHM);
                         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-                        
+                       \s
                         ByteArrayOutputStream bos = new ByteArrayOutputStream();
                         ObjectOutputStream oos = new ObjectOutputStream(bos);
                         oos.writeObject(payload);
                         byte[] payloadBytes = bos.toByteArray();
-                        
+                       \s
                         return new EncryptedValue(cipher.doFinal(payloadBytes));
                     } catch (Exception e) {
                         throw new RuntimeException("Encryption failed", e);
@@ -87,9 +87,9 @@ public class Program extends Node {
                         SecretKeySpec secretKey = new SecretKeySpec(keyBytes, ALGORITHM);
                         Cipher cipher = Cipher.getInstance(ALGORITHM);
                         cipher.init(Cipher.DECRYPT_MODE, secretKey);
-                        
+                       \s
                         byte[] decryptedBytes = cipher.doFinal(enc.ciphertext);
-                        
+                       \s
                         ByteArrayInputStream bis = new ByteArrayInputStream(decryptedBytes);
                         ObjectInputStream ois = new ObjectInputStream(bis);
                         return ois.readObject();
@@ -98,7 +98,7 @@ public class Program extends Node {
                     }
                 }
             }
-        """);
+       \s""");
 
         sb.append("""
             static class Channel {
@@ -152,7 +152,7 @@ public class Program extends Node {
         }
 
         for (FunctionDecl function : cls.functions) {
-            sb.append("        program.")
+            sb.append("program.")
                     .append(function.name)
                     .append("(");
 

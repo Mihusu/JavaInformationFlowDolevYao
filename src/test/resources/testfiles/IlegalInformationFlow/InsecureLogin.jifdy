@@ -1,0 +1,58 @@
+public class InsecureLogin {
+
+    public void low client() {
+
+        String low user = "Alice";
+        String high password = "1234";
+
+        e(kServer, Login) low loginMsg =
+            e(kServer, Login(String low user, String high password));
+
+        send(loginMsg);
+    }
+
+
+    public void low server() {
+
+        bool low authenticated = false;
+        String high password = "";
+
+        try_rcv(
+            e(kServer,
+                Login(
+                    String low user,
+                    String high p))
+        ) {
+            authenticated = false;
+        }
+
+        password = p;
+
+        // HIGH condition
+        if (password == "1234") {
+
+            // ILLEGAL IMPLICIT FLOW
+            authenticated = true;
+        }
+
+        if (authenticated) {
+
+            print("LOGIN SUCCESS");
+
+            String low success = "SUCCESS";
+
+            e(kClient, Ack) low ackMsg =
+                e(kClient, Ack(String low success));
+
+            send(ackMsg);
+
+        } else {
+
+            String low fail = "FAIL";
+            e(kClient, Ack()) low failMsg =
+                e(kClient, Ack(String low fail));
+
+            send(failMsg);
+        }
+    }
+}

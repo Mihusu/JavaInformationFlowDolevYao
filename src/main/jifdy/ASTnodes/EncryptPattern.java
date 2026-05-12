@@ -13,11 +13,11 @@ import java.io.ObjectInputStream;
 import java.util.Arrays;
 import java.util.Base64;
 
-public class EncryptPattern extends ReceivePattern {
+public class EncryptPattern extends Format {
     public Expr key;
-    public ReceivePattern inner;
+    public Format inner;
 
-    public EncryptPattern(Expr key, ReceivePattern inner) {
+    public EncryptPattern(Expr key, Format inner) {
         this.key = key;
         this.inner = inner;
     }
@@ -54,7 +54,7 @@ public class EncryptPattern extends ReceivePattern {
     }
 
     @Override
-    public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel pc) {
+    public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel label) {
 
         // Verify the key expression is well-typed
         Type keyType = key.typecheck(delta, gamma);
@@ -65,7 +65,7 @@ public class EncryptPattern extends ReceivePattern {
             );
         }
 
-        inner.typecheck(delta, gamma, SecLabel.HIGH);
+        inner.typecheck(delta, gamma, label);
     }
 
     @Override
@@ -96,5 +96,10 @@ public class EncryptPattern extends ReceivePattern {
         sb.append(inner.compileMatch(env, decrypted));
 
         return sb.toString();
+    }
+
+    @Override
+    public SecLabel label(LabelEnv gamma) {
+        return inner.label(gamma);
     }
 }

@@ -5,7 +5,7 @@ import Analysis.LabelEnv;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
-public class TypedVarPattern extends ReceivePattern {
+public class TypedVarPattern extends Format {
 
     public String name;
     public Type type;
@@ -62,6 +62,11 @@ public class TypedVarPattern extends ReceivePattern {
     @Override
     public String compile(CodeGenEnv env) {
         return "";
+    }
+
+    @Override
+    public SecLabel label(LabelEnv gamma) {
+        return this.label;
     }
 
     private String toJavaType(Type t) {

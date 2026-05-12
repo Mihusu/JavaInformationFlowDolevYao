@@ -1,0 +1,75 @@
+public class InsecurePublishing {
+
+    int low publicationCounter = 0;
+
+    public void low author() {
+
+        String low title = "Security";
+        String high manuscript = "TOP_SECRET_BOOK";
+
+        e(kEditor, Submission) low submissionMsg =
+            e(kEditor, Submission(String low title, String high manuscript));
+
+        send(submissionMsg);
+    }
+
+
+    public void low editor() {
+
+        bool high ok = true;
+        String low title = "";
+        String high manuscript = "";
+
+        try_rcv(
+            e(kEditor,
+                Submission(
+                    String low t,
+                    String high m))
+        ) {
+            ok = false;
+        }
+
+        title = t;
+        manuscript = m;
+
+        if (ok) {
+
+            String high review = "REJECTED";
+
+            // ILLEGAL FLOW
+            print(review);
+
+            e(kPublisher, Approval) low approvalMsg =
+                e(kPublisher, Approval(String low title, String high review));
+
+            send(approvalMsg);
+        }
+    }
+
+
+    public void low publisher() {
+
+        bool high ok = true;
+        String low title = "";
+        String high review = "";
+
+        try_rcv(
+            e(kPublisher,
+                Approval(
+                    String low t,
+                    String high r))
+        ) {
+            ok = false;
+        }
+
+        title = t;
+        review = r;
+
+        if (ok) {
+
+            publicationCounter = publicationCounter + 1;
+
+            print(title, publicationCounter);
+        }
+    }
+}

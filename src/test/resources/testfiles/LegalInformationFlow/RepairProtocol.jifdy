@@ -1,0 +1,64 @@
+public class RepairProtocol {
+
+    public void low customer() {
+
+        String low customerName = "Alice";
+        String low device = "Laptop";
+
+        int high serial = 998877;
+        String high issue = "Broken motherboard";
+
+        // SEND REPAIR REQUEST
+        e(kRepair, RepairRequest) low repairMsg =
+            e(kRepair, RepairRequest(String low customerName, String low device, int high serial, String high issue));
+
+        send(repairMsg);
+
+        bool low ok = true;
+        String low status = "";
+
+        // RECEIVE STATUS
+        try_rcv(
+            e(kCustomer,
+                RepairStatus(
+                    String low repair,
+                    int high serial_in))
+        ) {
+
+        }
+
+        if (ok) {
+            print("Repaired");
+        }
+    }
+
+    public void low repairShop() {
+
+        bool low ok = true;
+        String low customerName = "";
+        String low device = "";
+        int high serial = 0;
+        String high issue = "";
+
+        // RECEIVE REQUEST
+        try_rcv(
+            e(kRepair,
+                RepairRequest(
+                    String low c,
+                    String low d,
+                    int high s,
+                    String high i))
+        ) {
+
+        }
+
+        if (ok) {
+
+            String low repair = "repaired";
+
+            e(kCustomer, RepairStatus) low statusMsg = e(kCustomer, RepairStatus(String low repair, int high serial));
+
+            send(statusMsg);
+        }
+    }
+}

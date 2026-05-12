@@ -7,11 +7,11 @@ import CodeGeneration.CodeGenEnv;
 
 import java.util.List;
 
-public class ConstructorPattern extends ReceivePattern {
+public class ConstructorPattern extends Format {
     String name;
-    List<ReceivePattern> args;
+    List<Format> args;
 
-    public ConstructorPattern(String text, List<ReceivePattern> args) {
+    public ConstructorPattern(String text, List<Format> args) {
         this.name = text;
         this.args = args;
     }
@@ -22,7 +22,7 @@ public class ConstructorPattern extends ReceivePattern {
         // The constructor name itself needs no checking for now.
         // Just recursively typecheck all subpatterns.
 
-        for (ReceivePattern p : args) {
+        for (Format p : args) {
             p.typecheck(delta, gamma, label);
         }
     }
@@ -79,5 +79,18 @@ public class ConstructorPattern extends ReceivePattern {
         }
 
         return sb.toString();
+    }
+
+    @Override
+    public SecLabel label(LabelEnv gamma) {
+
+        SecLabel result = SecLabel.LOW;
+
+        for (Format arg : args) {
+            result = SecLabel.join(result,
+                    arg.label(gamma));
+        }
+
+        return result;
     }
 }

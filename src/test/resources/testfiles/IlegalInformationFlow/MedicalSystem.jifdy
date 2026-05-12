@@ -1,0 +1,54 @@
+public class MedicalSystem {
+
+    public void low patient() {
+
+        String low patientName = "Alice";
+        String high diagnosis = "Cancer";
+        int high patientId = 777;
+
+        // LOW key used for HIGH data
+        e(kPublic, MedicalData) low medicalMsg =
+            e(kPublic, MedicalData(String low patientName, String high diagnosis, int high patientId));
+
+        send(medicalMsg);
+
+        try_rcv(
+            e(kPatient, Result(String low received))) {
+        }
+    }
+
+
+    public void low hospital() {
+
+        bool high ok = true;
+        String low patientName = "";
+        String high diagnosis = "";
+        int high patientId = 0;
+
+        try_rcv(
+            e(kPublic,
+                MedicalData(
+                    String low pName,
+                    String high receivedDiagnosis,
+                    int high pid))
+        ) {
+            ok = false;
+        }
+
+        if (ok) {
+
+            print(patientName);
+
+            patientName = pName;
+            diagnosis = receivedDiagnosis;
+            patientId = pid;
+
+            String low received = "RECEIVED";
+
+            e(kPatient, Result) low resultMsg =
+                e(kPatient, Result(String low received));
+
+            send(resultMsg);
+        }
+    }
+}

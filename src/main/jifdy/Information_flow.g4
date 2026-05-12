@@ -53,7 +53,7 @@ classBlock
 declaration
     : type SECLABEL IDENTIFIER ('=' expression)? ';'
     | PPLABEL IDENTIFIER '(' decls* ')' '{' (assignmentStatement)* '}'
-    | encryptionType SECLABEL IDENTIFIER '=' ENCRYPT '(' KEY ',' ( expression | receivePattern ) ')' ';'
+    | encryptionType SECLABEL IDENTIFIER '=' ENCRYPT '(' KEY ',' ( expression | format ) ')' ';'
     ;
 
 functionDeclaration
@@ -84,7 +84,7 @@ basicType
     ;
 
 encryptionType
-    : ENCRYPT '(' KEY ',' ( expression | receivePattern ) ')'
+    : ENCRYPT '(' KEY ',' ( expression | format ) ')'
     ;
 
 statement
@@ -108,17 +108,17 @@ sendStatement
     ;
 
 receiveStatement
-    : TRY_RCV '(' receivePattern ')' cmdBlock
+    : TRY_RCV '(' format ')' ( IDENTIFIER '=')? cmdBlock
     ;
 
-receivePattern
+format
     : (type )? SECLABEL IDENTIFIER                      // Variable OR nested format reference
-    | IDENTIFIER '(' receivePatternList ')'
-    | ENCRYPT '(' KEY ',' receivePattern ')'
+    | IDENTIFIER '(' formatList ')'
+    | ENCRYPT '(' KEY ',' format ')'
     ;
 
-receivePatternList
-    : receivePattern (',' receivePattern)*
+formatList
+    : format (',' format)*
     ;
 
 expression
@@ -166,7 +166,7 @@ primary
     | BOOL
     | STR
     | IDENTIFIER
-    | ENCRYPT '(' KEY ',' ( expression | receivePattern ) ')'
+    | ENCRYPT '(' KEY ',' ( expression | format ) ')'
     | functionCall
     | '(' expression ')'
     ;

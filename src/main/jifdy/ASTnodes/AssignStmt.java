@@ -18,25 +18,30 @@ public class AssignStmt extends Stmt {
     }
 
     @Override
-    public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel pc) {
+    public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedure) {
 
         Type rhs = expr.typecheck(delta, gamma);
         Type lhs = delta.getType(name);
 
         if (rhs != lhs) {
-            throw new TypeCheckException("Type mismatch in assignment");
+            throw new TypeCheckException("Type mismatch in assignment", lineNumber, name);
         }
 
         SecLabel exprLabel = expr.label(gamma);
 
         // explicit flow + implicit flow
-        SecLabel effectiveLabel = SecLabel.join(pc, exprLabel);
+        SecLabel effectiveLabel = SecLabel.join(currentProcedure, exprLabel);
         SecLabel varLabel = gamma.getLabel(name);
 
-        if (!Security.canFlow(effectiveLabel, varLabel)) {
+        // SPECIAL CASE: Encryption (EncryptExpr) is a declassification mechanism.
+        if(expr instanceof EncryptExpr && varLabel == SecLabel.LOW) {
+            // Allow it.
+        } else if (!Security.canFlow(effectiveLabel, varLabel)) {
             throw new TypeCheckException(
                     "Illegal information flow: " +
-                            effectiveLabel + " -> " + varLabel
+                            effectiveLabel + " -> " + varLabel,
+                    lineNumber,
+                    name
             );
         }
     }

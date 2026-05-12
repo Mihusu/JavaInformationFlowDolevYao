@@ -69,17 +69,24 @@ public class ClassDecl extends Node {
 
                     if (initType != v.type) {
                         throw new TypeCheckException(
-                                "Type mismatch in declaration of " + v.name
+                                "Type mismatch in declaration of " + v.name,
+                                v.lineNumber,
+                                v.name
                         );
                     }
 
                     SecLabel initLabel = v.init.label(gamma);
 
-                    if (!Security.canFlow(initLabel, v.label)) {
+                    // SPECIAL CASE: Encryption (EncryptExpr) is a declassification mechanism.
+                    if (v.init instanceof EncryptExpr && v.label == SecLabel.LOW) {
+                        // Allow it.
+                    } else if (!Security.canFlow(initLabel, v.label)) {
                         throw new TypeCheckException(
                                 "Illegal information flow in initialization of "
                                         + v.name + ": "
-                                        + initLabel + " -> " + v.label
+                                        + initLabel + " -> " + v.label,
+                                v.lineNumber,
+                                v.name
                         );
                     }
                 }

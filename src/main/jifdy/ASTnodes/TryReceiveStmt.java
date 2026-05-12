@@ -6,11 +6,17 @@ import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
 public class TryReceiveStmt extends Stmt {
-    public ReceivePattern receivePattern;
+    public Format format;
+    public String resultVar;
     public CmdBlock body;
 
-    public TryReceiveStmt(ReceivePattern receivePattern, CmdBlock body) {
-        this.receivePattern = receivePattern;
+    public TryReceiveStmt(Format format, CmdBlock body) {
+        this(format, null, body);
+    }
+
+    public TryReceiveStmt(Format format, String resultVar, CmdBlock body) {
+        this.format = format;
+        this.resultVar = resultVar;
         this.body = body;
     }
 
@@ -19,7 +25,10 @@ public class TryReceiveStmt extends Stmt {
 
         Value msg = env.inbox.poll();
 
-        if (receivePattern.match(msg, env)) {
+        if (format.match(msg, env)) {
+            if (resultVar != null) {
+                env.setVariables(resultVar, msg);
+            }
             body.eval(env);
         }
     }
@@ -27,18 +36,28 @@ public class TryReceiveStmt extends Stmt {
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel label) {
 
-        // Create new scope (inherit outer env)
-        TypeEnv localDelta = new TypeEnv(delta);
-        LabelEnv localGamma = new LabelEnv(gamma);
+        // Typecheck receive pattern using current procedure
+        format.typecheck(delta, gamma, label);
 
-        // Bind variables from receive pattern as HIGH
-        receivePattern.typecheck(localDelta, localGamma, SecLabel.HIGH);
+        // Optional ciphertext binding
+        if (resultVar != null) {
+            delta.putType(resultVar, Type.CIPHERTEXT);
+            gamma.putLabel(resultVar, SecLabel.LOW);
+        }
 
-        // Enter HIGH pc (implicit flow!)
-        SecLabel newLabel = SecLabel.HIGH;
+        // New scope for body
+        TypeEnv bodyDelta = new TypeEnv(delta);
+        LabelEnv bodyGamma = new LabelEnv(gamma);
 
-        // Typecheck body under HIGH context
-        body.typecheck(localDelta, localGamma, newLabel);
+        // Compute overall label of received pattern
+        SecLabel patternLabel = format.label(bodyGamma);
+
+        // Takes the current with message label
+        SecLabel newProcedureLabel = SecLabel.join(label, patternLabel);
+
+        // IMPORTANT:
+        // preserve current procedure
+        body.typecheck(bodyDelta, bodyGamma, newProcedureLabel);
     }
 
     @Override
@@ -55,7 +74,16 @@ public class TryReceiveStmt extends Stmt {
                 .append("Object ").append(msg)
                 .append(" = channel.receive();\n");
 
-        sb.append(receivePattern.compileMatch(env, msg));
+        sb.append(format.compileMatch(env, msg));
+
+        if (resultVar != null) {
+            if (env.isVariableDeclared(resultVar)) {
+                sb.append(env.indent()).append(resultVar).append(" = ").append(msg).append(";\n");
+            } else {
+                env.declareVariable(resultVar);
+                sb.append(env.indent()).append("Object ").append(resultVar).append(" = ").append(msg).append(";\n");
+            }
+        }
 
         sb.append(body.compile(env));
 

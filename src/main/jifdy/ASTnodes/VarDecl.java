@@ -49,16 +49,25 @@ public class VarDecl extends Declaration {
 
             if (initType != type) {
                 throw new TypeCheckException(
-                        "Type mismatch in initialization of " + name
+                        "Type mismatch in initialization of " + name,
+                        lineNumber,
+                        name
                 );
             }
 
             SecLabel initLabel = init.label(gamma);
             SecLabel effective = SecLabel.join(pc, initLabel);
 
-            if (!Security.canFlow(effective, label)) {
+            // SPECIAL CASE: Encryption (EncryptExpr) is a declassification mechanism.
+            // It results in a LOW ciphertext even if the payload or context is HIGH.
+            // The user explicitly requested that encryption doesn't cause illegal flow.
+            if (init instanceof EncryptExpr && label == SecLabel.LOW) {
+                // Allow it.
+            } else if (!Security.canFlow(effective, label)) {
                 throw new TypeCheckException(
-                        "Illegal flow in initialization of " + name
+                        "Illegal flow in initialization of " + name,
+                        lineNumber,
+                        name
                 );
             }
         }
@@ -85,20 +94,18 @@ public class VarDecl extends Declaration {
     }
 
     private String toJavaType(Type t) {
-        return switch (t) {
-            case INT -> "int";
-            case BOOL -> "boolean";
-            case STRING -> "String";
-            case CIPHERTEXT -> "EncryptedValue";
-        };
+        if (t == Type.INT) return "int";
+        if (t == Type.BOOL) return "boolean";
+        if (t == Type.STRING) return "String";
+        if (t == Type.CIPHERTEXT) return "EncryptedValue";
+        return "";
     }
 
     private String defaultJavaValue(Type t) {
-        return switch (t) {
-            case INT -> "0";
-            case BOOL -> "false";
-            case STRING -> "\"\"";
-            case CIPHERTEXT -> "new EncryptedValue(\"\", \"\", \"\")";
-        };
+        if (t == Type.INT) return "0";
+        if (t == Type.BOOL) return "false";
+        if (t == Type.STRING) return "\"\"";
+        if (t == Type.CIPHERTEXT) return "new EncryptedValue(\"\", \"\", \"\")";
+        return "";
     }
 }

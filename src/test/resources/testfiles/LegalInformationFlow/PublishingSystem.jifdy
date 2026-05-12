@@ -1,0 +1,93 @@
+public class PublishingSystem {
+
+    int low publications = 0;
+    String low title = "Secure Compilation";
+    String high manuscript = "SECRET_BOOK_CONTENT";
+
+    // AUTHOR
+    public void low author() {
+
+        e(kEditor, Submission) low submissionMsg =
+            e(kEditor, Submission(String low title, String high manuscript));
+
+        send(submissionMsg);
+
+        try_rcv(
+            e(kAuthor,
+                Published(
+                    String low title_in,
+                    int low publications_in
+                )
+            )
+        ) {
+            // Do nothing
+        }
+    }
+
+
+    // EDITOR
+    public void low editor() {
+
+        bool high received = false;
+        String low title_in = "";
+        String high manuscript_in = "";
+
+        try_rcv(
+            e(kEditor,
+                Submission(
+                    String low t,
+                    String high m))
+        ) {
+
+        }
+
+        received = true;
+
+        if (received) {
+            bool high ok = true;
+            if (manuscript_in != "SECRET_BOOK_CONTENT") {
+                ok = false;
+            }
+
+            if (ok) {
+                String high review = "APPROVED";
+
+                e(kPublisher, Approval) low approvalMsg = e(kPublisher,
+                    Approval(String low title_in, String high review)
+                );
+
+                send(approvalMsg);
+            }
+        }
+    }
+
+
+    // PUBLISHING TEAM
+    public void low publishingTeam() {
+
+        bool low ok = false;
+        String low title_in = "";
+
+        try_rcv(
+            e(kPublisher,
+                Approval(
+                    String low t,
+                    String high review))
+        ) {
+        }
+
+        ok = true;
+
+        if (ok) {
+
+            publications = publications + 1;
+
+            print(title_in, publications);
+
+            e(kAuthor, Published) low resultMsg =
+                e(kAuthor, Published(String low title_in, int low publications));
+
+            send(resultMsg);
+        }
+    }
+}

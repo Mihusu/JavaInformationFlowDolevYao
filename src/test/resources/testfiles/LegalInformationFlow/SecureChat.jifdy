@@ -1,0 +1,43 @@
+public class SecureChat {
+
+    public bool low isAllowed(int low x) {
+
+        if (x > 10 && !false) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public void low alice() {
+
+        String low user = "Alice";
+        String low text = "Hello";
+
+        e(kBob, Message) low msg =
+                e(kBob, Message(String low user, String low text));
+
+        send(msg);
+    }
+
+    public void low bob() {
+
+        bool high ok = true;
+        String low sender = "";
+        String low text = "";
+
+        try_rcv(e(kBob,
+                Message(String low user, String low text))
+        ) {
+            ok = false;
+        }
+
+        sender = user;
+        text = text;
+
+        if (ok) {
+            print(sender, text);
+        }
+    }
+}

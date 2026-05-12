@@ -158,25 +158,25 @@ public interface Information_flowListener extends ParseTreeListener {
 	 */
 	void exitReceiveStatement(Information_flowParser.ReceiveStatementContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Information_flowParser#receivePattern}.
+	 * Enter a parse tree produced by {@link Information_flowParser#format}.
 	 * @param ctx the parse tree
 	 */
-	void enterReceivePattern(Information_flowParser.ReceivePatternContext ctx);
+	void enterFormat(Information_flowParser.FormatContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link Information_flowParser#receivePattern}.
+	 * Exit a parse tree produced by {@link Information_flowParser#format}.
 	 * @param ctx the parse tree
 	 */
-	void exitReceivePattern(Information_flowParser.ReceivePatternContext ctx);
+	void exitFormat(Information_flowParser.FormatContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Information_flowParser#receivePatternList}.
+	 * Enter a parse tree produced by {@link Information_flowParser#formatList}.
 	 * @param ctx the parse tree
 	 */
-	void enterReceivePatternList(Information_flowParser.ReceivePatternListContext ctx);
+	void enterFormatList(Information_flowParser.FormatListContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link Information_flowParser#receivePatternList}.
+	 * Exit a parse tree produced by {@link Information_flowParser#formatList}.
 	 * @param ctx the parse tree
 	 */
-	void exitReceivePatternList(Information_flowParser.ReceivePatternListContext ctx);
+	void exitFormatList(Information_flowParser.FormatListContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Information_flowParser#expression}.
 	 * @param ctx the parse tree

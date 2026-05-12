@@ -197,25 +197,25 @@ public class Information_flowBaseListener implements Information_flowListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterReceivePattern(Information_flowParser.ReceivePatternContext ctx) { }
+	@Override public void enterFormat(Information_flowParser.FormatContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitReceivePattern(Information_flowParser.ReceivePatternContext ctx) { }
+	@Override public void exitFormat(Information_flowParser.FormatContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterReceivePatternList(Information_flowParser.ReceivePatternListContext ctx) { }
+	@Override public void enterFormatList(Information_flowParser.FormatListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitReceivePatternList(Information_flowParser.ReceivePatternListContext ctx) { }
+	@Override public void exitFormatList(Information_flowParser.FormatListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -1,7 +1,0 @@
-GAME {
-    SETUP {
-
-        if (3 > 4) {}
-        else {}
-    }
-}

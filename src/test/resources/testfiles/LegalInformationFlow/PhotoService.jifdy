@@ -1,0 +1,72 @@
+public class PhotoService {
+
+    public void low client() {
+
+        String low user = "Alice";
+        String high password = "1234";
+        String high photo = "BINARYDATA";
+
+        // SEND LOGIN
+        e(kServer, Login) low loginMsg =
+            e(kServer, Login(String low user, String high password));
+
+        send(loginMsg);
+
+        // SEND UPLOAD
+        e(kServer, Upload) low uploadMsg =
+            e(kServer, Upload(String low user, String high photo));
+
+        send(uploadMsg);
+
+        bool high ok = true;
+        String low msg = "";
+
+        // RECEIVE ACK
+        try_rcv(e(kClient,Ack(String low msg)
+        )) {
+            // receive FAILED -> mark failure
+            ok = false;
+        }
+
+        // Only use msg if receive succeeded
+        if (ok) {
+            print(msg);   // LOW
+        }
+    }
+
+
+    public void low server() {
+
+        bool high ok = true;
+        String high photo = "";
+
+        // RECEIVE LOGIN
+        try_rcv(e(kServer,
+            Login(String low user, String high password)
+        )) {
+            ok = false;
+        }
+
+        // RECEIVE UPLOAD
+        if (ok) {
+            try_rcv(e(kServer,
+                Upload(String low user2, String high photo_in)
+            )) {
+                ok = false;
+            }
+            photo = photo_in;
+        }
+
+        // PROCESS
+        if (ok) {
+
+            String high store = photo;
+            String high uploaded = "uploaded";
+
+            e(kClient, Ack) low ackMsg =
+                e(kClient, Ack(String high uploaded));
+
+            send(ackMsg);
+        }
+    }
+}

@@ -39,9 +39,12 @@ public class CmdBlock extends Stmt {
                     }
 
                     SecLabel lExpr = v.init.label(gamma);
-                    SecLabel effective = SecLabel.join(secLabel, lExpr);
+                    SecLabel currentLabel = SecLabel.join(secLabel, lExpr);
 
-                    if (!Security.canFlow(effective, v.label)) {
+                    // SPECIAL CASE: Encryption (EncryptExpr) is a declassification mechanism.
+                    if (v.init instanceof EncryptExpr && v.label == SecLabel.LOW) {
+                        // Allow it.
+                    } else if (!Security.canFlow(currentLabel, v.label)) {
                         throw new TypeCheckException(
                                 "Illegal information flow in initialization of " + v.name
                         );

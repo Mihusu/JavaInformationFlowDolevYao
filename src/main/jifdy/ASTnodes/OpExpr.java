@@ -23,44 +23,41 @@ public class OpExpr extends Expr {
         Type t1 = left.typecheck(delta, gamma);
         Type t2 = right.typecheck(delta, gamma);
 
-        switch (op) {
-
-            case "+" -> {
-                if (t1 == Type.STRING || t2 == Type.STRING) {
-                    return Type.STRING;
-                }
-
-                if (t1 != Type.INT || t2 != Type.INT)
-                    throw new TypeCheckException("Arithmetic needs INT");
-                return Type.INT;
+        if (op.equals("+")) {
+            if (t1 == Type.STRING || t2 == Type.STRING) {
+                return Type.STRING;
             }
 
-            case "-", "*", "/", "%", "^" -> {
-                if (t1 != Type.INT || t2 != Type.INT)
-                    throw new TypeCheckException("Arithmetic needs INT");
-                return Type.INT;
-            }
-
-            case ">", "<", ">=", "<=" -> {
-                if (t1 != Type.INT || t2 != Type.INT)
-                    throw new TypeCheckException("Comparison needs INT");
-                return Type.BOOL;
-            }
-
-            case "==", "!=" -> {
-                if (t1 != t2)
-                    throw new TypeCheckException("Type mismatch in equality");
-                return Type.BOOL;
-            }
-
-            case "&&", "||" -> {
-                if (t1 != Type.BOOL || t2 != Type.BOOL)
-                    throw new TypeCheckException("Logical needs BOOL");
-                return Type.BOOL;
-            }
-
-            default -> throw new RuntimeException("Unknown op: " + op);
+            if (t1 != Type.INT || t2 != Type.INT)
+                throw new TypeCheckException("Arithmetic needs INT");
+            return Type.INT;
         }
+
+        if (op.equals("-") || op.equals("*") || op.equals("/") || op.equals("%") || op.equals("^")) {
+            if (t1 != Type.INT || t2 != Type.INT)
+                throw new TypeCheckException("Arithmetic needs INT");
+            return Type.INT;
+        }
+
+        if (op.equals(">") || op.equals("<") || op.equals(">=") || op.equals("<=")) {
+            if (t1 != Type.INT || t2 != Type.INT)
+                throw new TypeCheckException("Comparison needs INT");
+            return Type.BOOL;
+        }
+
+        if (op.equals("==") || op.equals("!=")) {
+            if (t1 != t2)
+                throw new TypeCheckException("Type mismatch in equality");
+            return Type.BOOL;
+        }
+
+        if (op.equals("&&") || op.equals("||")) {
+            if (t1 != Type.BOOL || t2 != Type.BOOL)
+                throw new TypeCheckException("Logical needs BOOL");
+            return Type.BOOL;
+        }
+
+        throw new RuntimeException("Unknown op: " + op);
     }
 
     @Override
@@ -75,69 +72,84 @@ public class OpExpr extends Expr {
         Value l = left.eval(env);
         Value r = right.eval(env);
 
-        return switch (op) {
-            case "+" -> {
-                if (l instanceof StringValue || r instanceof StringValue) {
-                    yield new StringValue(valueToString(l) + valueToString(r));
-                }
-
-                yield new IntValue(((IntValue) l).value + ((IntValue) r).value);
+        if (op.equals("+")) {
+            if (l instanceof StringValue || r instanceof StringValue) {
+                return new StringValue(valueToString(l) + valueToString(r));
             }
-            case "-" ->
-                    new IntValue(((IntValue) l).value - ((IntValue) r).value);
+            return new IntValue(((IntValue) l).value + ((IntValue) r).value);
+        }
 
-            case "*" ->
-                    new IntValue(((IntValue) l).value * ((IntValue) r).value);
+        if (op.equals("-")) {
+            return new IntValue(((IntValue) l).value - ((IntValue) r).value);
+        }
 
-            case "/" ->
-                    new IntValue(((IntValue) l).value / ((IntValue) r).value);
+        if (op.equals("*")) {
+            return new IntValue(((IntValue) l).value * ((IntValue) r).value);
+        }
 
-            case "%" ->
-                    new IntValue(((IntValue) l).value % ((IntValue) r).value);
+        if (op.equals("/")) {
+            return new IntValue(((IntValue) l).value / ((IntValue) r).value);
+        }
 
-            case "^" -> {
-                int leftVal = ((IntValue) l).value;
-                int rightVal = ((IntValue) r).value;
-                yield new IntValue((int) Math.pow(leftVal, rightVal));
-            }
+        if (op.equals("%")) {
+            return new IntValue(((IntValue) l).value % ((IntValue) r).value);
+        }
 
-            // Comparisons
-            case ">" ->
-                    new BoolValue(((IntValue) l).value > ((IntValue) r).value);
+        if (op.equals("^")) {
+            int leftVal = ((IntValue) l).value;
+            int rightVal = ((IntValue) r).value;
+            return new IntValue((int) Math.pow(leftVal, rightVal));
+        }
 
-            case "<" ->
-                    new BoolValue(((IntValue) l).value < ((IntValue) r).value);
+        // Comparisons
+        if (op.equals(">")) {
+            return new BoolValue(((IntValue) l).value > ((IntValue) r).value);
+        }
 
-            case ">=" ->
-                    new BoolValue(((IntValue) l).value >= ((IntValue) r).value);
+        if (op.equals("<")) {
+            return new BoolValue(((IntValue) l).value < ((IntValue) r).value);
+        }
 
-            case "<=" ->
-                    new BoolValue(((IntValue) l).value <= ((IntValue) r).value);
+        if (op.equals(">=")) {
+            return new BoolValue(((IntValue) l).value >= ((IntValue) r).value);
+        }
 
-            // Equality
-            case "==" ->  new BoolValue(l.equals(r));
+        if (op.equals("<=")) {
+            return new BoolValue(((IntValue) l).value <= ((IntValue) r).value);
+        }
 
-            case "!=" ->  new BoolValue(!l.equals(r));
+        // Equality
+        if (op.equals("==")) {
+            return new BoolValue(l.equals(r));
+        }
 
-            // Logical
-            case "and", "&&" ->
-                    new BoolValue(((BoolValue) l).value && ((BoolValue) r).value);
+        if (op.equals("!=")) {
+            return new BoolValue(!l.equals(r));
+        }
 
-            case "or", "||" ->
-                    new BoolValue(((BoolValue) l).value || ((BoolValue) r).value);
+        // Logical
+        if (op.equals("and") || op.equals("&&")) {
+            return new BoolValue(((BoolValue) l).value && ((BoolValue) r).value);
+        }
 
-            default -> throw new TypeCheckException("Unknown operator: " + op);
-        };
+        if (op.equals("or") || op.equals("||")) {
+            return new BoolValue(((BoolValue) l).value || ((BoolValue) r).value);
+        }
+
+        throw new TypeCheckException("Unknown operator: " + op);
     }
 
     private String valueToString(Value value) {
-        if (value instanceof StringValue stringValue) {
+        if (value instanceof StringValue) {
+            StringValue stringValue = (StringValue) value;
             return stringValue.value;
         }
-        if (value instanceof IntValue intValue) {
+        if (value instanceof IntValue) {
+            IntValue intValue = (IntValue) value;
             return Integer.toString(intValue.value);
         }
-        if (value instanceof BoolValue boolValue) {
+        if (value instanceof BoolValue) {
+            BoolValue boolValue = (BoolValue) value;
             return Boolean.toString(boolValue.value);
         }
         return value.toString();

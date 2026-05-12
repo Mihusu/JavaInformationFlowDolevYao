@@ -101,17 +101,17 @@ public interface Information_flowVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitReceiveStatement(Information_flowParser.ReceiveStatementContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Information_flowParser#receivePattern}.
+	 * Visit a parse tree produced by {@link Information_flowParser#format}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitReceivePattern(Information_flowParser.ReceivePatternContext ctx);
+	T visitFormat(Information_flowParser.FormatContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Information_flowParser#receivePatternList}.
+	 * Visit a parse tree produced by {@link Information_flowParser#formatList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitReceivePatternList(Information_flowParser.ReceivePatternListContext ctx);
+	T visitFormatList(Information_flowParser.FormatListContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Information_flowParser#expression}.
 	 * @param ctx the parse tree
