@@ -9,7 +9,7 @@ public class RepairProtocol {
         String high issue = "Broken motherboard";
 
         // SEND REPAIR REQUEST
-        e(kRepair, RepairRequest) low repairMsg =
+        e(kCustomer, RepairRequest) low repairMsg =
             e(kRepair, RepairRequest(String low customerName, String low device, int high serial, String high issue));
 
         send(repairMsg);
@@ -56,7 +56,7 @@ public class RepairProtocol {
 
             String low repair = "repaired";
 
-            e(kCustomer, RepairStatus) low statusMsg = e(kCustomer, RepairStatus(String low repair, int high serial));
+            e(kRepairShop, RepairStatus) low statusMsg = e(kCustomer, RepairStatus(String low repair, int high serial));
 
             send(statusMsg);
         }

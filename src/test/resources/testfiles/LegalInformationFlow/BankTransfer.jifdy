@@ -7,55 +7,61 @@ public class BankTransfer {
 
         int high amount1 = 2000;
         int high amount2 = 3000;
+        int high total;
 
         // encrypted messages (ciphertext is LOW)
-        e(kBank,transfer) low msg1 = e(kBank,
-            Transfer(String low user, int high amount1, String low target)
+        e(kClient,transfer1) low msg1 = e(kBank,
+            Transfer1(String low user, int high amount1, String low target)
         );
 
-        e(kBank,transfer) low msg2 = e(kBank,
-            Transfer(String low user, int high amount2, String low target)
+        e(kClient,transfer2) low msg2 = e(kBank,
+            Transfer2(String low user, int high amount2, String low target)
         );
+
+        total = amount1 + amount2;
 
         send(msg1);
         send(msg2);
 
-        try_rcv(e(kClient,
-          Result(bool high done, int high total, String low target)
-        )) {
-          print("The transfer was sent successfully to " + target + " with the total amount " + total + "Status: " + done);
-        }
+        print("Transferred " + total + " to " + target);
     }
-
 
     public void low bank() {
 
-        int high total = 0;
-        bool high done = false;
+        int high total;
+        bool high done;
+        int high amount1;
+        int high amount2;
 
         // First transfer
         try_rcv(e(kBank,
-          Transfer(String low user, int high amount, String high target)
+          Transfer1(String low user, int high amount1, String high target)
         )) {
         }
-
-        total = total + amount;
 
         // Second transfer
         try_rcv(e(kBank,
-          Transfer(String low user, int high amount2, String low target)
+          Transfer2(String low user, int high amount2, String low target)
         )) {
-          // Ignore the second transfer
+          // Ignore catch
         }
 
-        total = total + amount2;
+        total = amount1 + amount2;
         done = true;
 
         // Encrypt result BEFORE sending
-        e(kClient,transfer) low resultMsg = e(kClient,
-          Result(bool high done, int high total, String low target)
+        e(kBank,transfer) low resultMsg = e(kReceiver,
+          Result(String low user, bool high done, int high total)
         );
 
         send(resultMsg);
+    }
+
+    public void low clientReceiver() {
+        try_rcv(e(kReceiver,
+          Result(String low user, bool high done, int high total)
+        )) {
+          print("You received money from " + user + ". " + user + " has sent you " + total + ". Status: " + done);
+        }
     }
 }

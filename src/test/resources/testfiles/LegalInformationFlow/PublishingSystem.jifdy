@@ -1,13 +1,13 @@
 public class PublishingSystem {
 
-    int low publications = 0;
+    int low publications;
     String low title = "Secure Compilation";
     String high manuscript = "SECRET_BOOK_CONTENT";
 
     // AUTHOR
     public void low author() {
 
-        e(kEditor, Submission) low submissionMsg =
+        e(kAuthor, Submission) low submissionMsg =
             e(kEditor, Submission(String low title, String high manuscript));
 
         send(submissionMsg);
@@ -29,8 +29,8 @@ public class PublishingSystem {
     public void low editor() {
 
         bool high received = false;
-        String low title_in = "";
-        String high manuscript_in = "";
+        String low title_in;
+        String high manuscript_in;
 
         try_rcv(
             e(kEditor,
@@ -52,7 +52,7 @@ public class PublishingSystem {
             if (ok) {
                 String high review = "APPROVED";
 
-                e(kPublisher, Approval) low approvalMsg = e(kPublisher,
+                e(kEditor, Approval) low approvalMsg = e(kPublisher,
                     Approval(String low title_in, String high review)
                 );
 
@@ -84,7 +84,7 @@ public class PublishingSystem {
 
             print(title_in, publications);
 
-            e(kAuthor, Published) low resultMsg =
+            e(kPublisher, Published) low resultMsg =
                 e(kAuthor, Published(String low title_in, int low publications));
 
             send(resultMsg);

@@ -5,21 +5,22 @@ public class PhotoService {
         String low user = "Alice";
         String high password = "1234";
         String high photo = "BINARYDATA";
+        bool high ok;
+        String low msg;
 
         // SEND LOGIN
-        e(kServer, Login) low loginMsg =
+        e(kClient, Login) low loginMsg =
             e(kServer, Login(String low user, String high password));
 
         send(loginMsg);
 
         // SEND UPLOAD
-        e(kServer, Upload) low uploadMsg =
+        e(kClient, Upload) low uploadMsg =
             e(kServer, Upload(String low user, String high photo));
 
         send(uploadMsg);
 
-        bool high ok = true;
-        String low msg = "";
+        ok = true;
 
         // RECEIVE ACK
         try_rcv(e(kClient,Ack(String low msg)
@@ -37,8 +38,8 @@ public class PhotoService {
 
     public void low server() {
 
-        bool high ok = true;
-        String high photo = "";
+        bool high ok;
+        String high photo;
 
         // RECEIVE LOGIN
         try_rcv(e(kServer,
@@ -63,7 +64,7 @@ public class PhotoService {
             String high store = photo;
             String high uploaded = "uploaded";
 
-            e(kClient, Ack) low ackMsg =
+            e(kServer, Ack) low ackMsg =
                 e(kClient, Ack(String high uploaded));
 
             send(ackMsg);

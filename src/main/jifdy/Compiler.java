@@ -21,7 +21,7 @@ public class Compiler {
     public static void main(String[] args) throws Exception {
 
         // 1. Read the input file
-        CharStream input = CharStreams.fromFileName("src/main/jifdy/JifdyFiles/test/BankTransfer.jifdy");
+        CharStream input = CharStreams.fromFileName("src/test/resources/testfiles/legalInformationFlow/BankTransfer.jifdy");
 
         // 2. Lexer
         Information_flowLexer lexer = new Information_flowLexer(input);
