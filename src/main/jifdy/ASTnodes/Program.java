@@ -34,91 +34,94 @@ public class Program extends Node {
         StringBuilder sb = new StringBuilder();
 
         sb.append("""
-        import java.util.*;
-        import javax.crypto.Cipher;
-        import javax.crypto.spec.SecretKeySpec;
-        import java.io.*;
+       package CodeGeneration;         
+        
+       import java.util.*;
+       import javax.crypto.Cipher;
+       import javax.crypto.spec.SecretKeySpec;
+       import java.io.*;
        \s
-        public class GeneratedProgram {
+       public class GeneratedProgram {
        \s
-            static class EncryptedValue implements Serializable {
-                byte[] ciphertext;
-                byte[] salt; // This is just a mock for simplicity.\s
+           static class EncryptedValue implements Serializable {
+               byte[] ciphertext;
+               byte[] salt; // This is just a mock for simplicity.\s
        \s
-                EncryptedValue(byte[] ciphertext) {
-                    this.ciphertext = ciphertext;
-                }
-            }
+               EncryptedValue(byte[] ciphertext) {
+                   this.ciphertext = ciphertext;
+               }
+           }
        \s
-            static class ConstructorValue implements Serializable {
-                String name;
-                List<Object> values;
+           static class ConstructorValue implements Serializable {
+               String name;
+               List<Object> values;
        \s
-                ConstructorValue(String n, List<Object> v) {
-                    name = n;
-                    values = v;
-                }
-            }
+               ConstructorValue(String n, List<Object> v) {
+                   name = n;
+                   values = v;
+               }
+           }
        \s
-            static class Crypto {
-                private static final String ALGORITHM = "AES";
+           static class Crypto {
+               private static final String ALGORITHM = "AES";
 
-                static EncryptedValue encrypt(Object payload, String key) {
-                    try {
-                        byte[] keyBytes = Arrays.copyOf(key.getBytes("UTF-8"), 16);
-                        SecretKeySpec secretKey = new SecretKeySpec(keyBytes, ALGORITHM);
-                        Cipher cipher = Cipher.getInstance(ALGORITHM);
-                        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+               static EncryptedValue encrypt(Object payload, String key) {
+                   try {
+                       byte[] keyBytes = Arrays.copyOf(key.getBytes("UTF-8"), 16);
+                       SecretKeySpec secretKey = new SecretKeySpec(keyBytes, ALGORITHM);
+                       Cipher cipher = Cipher.getInstance(ALGORITHM);
+                       cipher.init(Cipher.ENCRYPT_MODE, secretKey);
                        \s
-                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                        ObjectOutputStream oos = new ObjectOutputStream(bos);
-                        oos.writeObject(payload);
-                        byte[] payloadBytes = bos.toByteArray();
+                       ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                       ObjectOutputStream oos = new ObjectOutputStream(bos);
+                       oos.writeObject(payload);
+                       byte[] payloadBytes = bos.toByteArray();
                        \s
-                        return new EncryptedValue(cipher.doFinal(payloadBytes));
-                    } catch (Exception e) {
-                        throw new RuntimeException("Encryption failed", e);
-                    }
-                }
+                       return new EncryptedValue(cipher.doFinal(payloadBytes));
+                   } catch (Exception e) {
+                       throw new RuntimeException("Encryption failed", e);
+                   }
+               }
 
-                static Object decrypt(EncryptedValue enc, String key) {
-                    try {
-                        byte[] keyBytes = Arrays.copyOf(key.getBytes("UTF-8"), 16);
-                        SecretKeySpec secretKey = new SecretKeySpec(keyBytes, ALGORITHM);
-                        Cipher cipher = Cipher.getInstance(ALGORITHM);
-                        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+               static Object decrypt(EncryptedValue enc, String key) {
+                   try {
+                       byte[] keyBytes = Arrays.copyOf(key.getBytes("UTF-8"), 16);
+                       SecretKeySpec secretKey = new SecretKeySpec(keyBytes, ALGORITHM);
+                       Cipher cipher = Cipher.getInstance(ALGORITHM);
+                       cipher.init(Cipher.DECRYPT_MODE, secretKey);
                        \s
-                        byte[] decryptedBytes = cipher.doFinal(enc.ciphertext);
+                       byte[] decryptedBytes = cipher.doFinal(enc.ciphertext);
                        \s
-                        ByteArrayInputStream bis = new ByteArrayInputStream(decryptedBytes);
-                        ObjectInputStream ois = new ObjectInputStream(bis);
-                        return ois.readObject();
-                    } catch (Exception e) {
-                        throw new RuntimeException("Decryption failed", e);
-                    }
-                }
-            }
+                       ByteArrayInputStream bis = new ByteArrayInputStream(decryptedBytes);
+                       ObjectInputStream ois = new ObjectInputStream(bis);
+                       return ois.readObject();
+                   } catch (Exception e) {
+                       throw new RuntimeException("Decryption failed", e);
+                   }
+               }
+           }
        \s""");
 
         sb.append("""
-            static class Channel {
-                private final Queue<Object> messages = new ArrayDeque<>();
+          \s
+           static class Channel {
+               private final Queue<Object> messages = new ArrayDeque<>();
 
-                void send(Object message) {
-                    messages.add(message);
-                }
+               void send(Object message) {
+                   messages.add(message);
+               }
 
-                Object receive() {
-                    if (messages.isEmpty()) {
-                        throw new RuntimeException("No message available");
-                    }
+               Object receive() {
+                   if (messages.isEmpty()) {
+                       throw new RuntimeException("No message available");
+                   }
 
-                    return messages.remove();
-                }
-            }
+                   return messages.remove();
+               }
+           }
 
-            final Channel channel = new Channel();
-        """);
+           final Channel channel = new Channel();
+       \s""");
 
         for (ClassDecl c : classes) {
             sb.append(c.compile(env));

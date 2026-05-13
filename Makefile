@@ -4,15 +4,16 @@
 # 1. To build the project: 'make' or 'make compile'
 # 2. To run the regression tests: 'make test'
 # 3. To run the compiler: 'make run'
-# 4. To clean the project: 'make clean'
+# 4. To clean the generated program from the compiler: 'make runGen'
+# 5. To clean the project: 'make clean'
 
 # Variables
 MVN = mvn
 # Default Java path. Set JAVA_HOME if you want to use a specific JDK.
 JAVA = java
 
-# Default target: compile everything
-all: compile
+# Default target: run everything except clean
+all: compile test run runGen
 
 # Phase 1: Compilation
 # This phase uses Maven to compile all Java sources and ANTLR generated files.
@@ -34,7 +35,14 @@ run: compile
 	@echo "Running the compiler on BankTransfer.jifdy..."
 	$(MVN) exec:java -Dexec.mainClass="Compiler"
 
-# Phase 4: Cleanup
+# Phase 4: Running a specific file
+# This phase runs a generated file from the main Compiler to test it.
+runGen: compile
+	@echo "Running the generated program from the main Compiler on GeneratedProgram.java..."
+	$(MVN) exec:java -Dexec.mainClass="CodeGeneration.GeneratedProgram"
+
+
+# Phase 5: Cleanup
 # Removes all compiled classes and generated artifacts.
 clean:
 	@echo "Cleaning up..."
