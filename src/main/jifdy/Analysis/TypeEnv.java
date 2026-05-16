@@ -7,6 +7,10 @@ import ASTnodes.FunctionType;
 import ASTnodes.SecLabel;
 import ASTnodes.Type;
 
+/**
+ * Manages types during type checking.
+ * Keeps track of variable types, function signatures, and return types.
+ */
 public class TypeEnv {
 
     private final Map<String, Type> types = new HashMap<>();
@@ -24,6 +28,11 @@ public class TypeEnv {
         this.returnType = other.returnType;
     }
 
+    /**
+     * Associates a type with a variable name.
+     * @param var The name of the variable.
+     * @param type The type to associate.
+     */
     public void putType(String var, Type type) {
         types.put(var, type);
     }
@@ -38,6 +47,12 @@ public class TypeEnv {
         return returnType;
     }
 
+    /**
+     * Retrieves the type associated with a variable name.
+     * @param name The name of the variable.
+     * @return The associated type.
+     * @throws TypeCheckException if the variable is not found.
+     */
     public Type getType(String name) {
         if (!types.containsKey(name))
             throw new TypeCheckException("Unknown variable: " + name);

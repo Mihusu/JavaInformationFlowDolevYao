@@ -3,6 +3,9 @@ package ASTnodes;
 import Analysis.*;
 import CodeGeneration.CodeGenEnv;
 
+/**
+ * Represents an assignment statement in the AST.
+ */
 public class AssignStmt extends Stmt {
     public String name;
     public Expr expr;

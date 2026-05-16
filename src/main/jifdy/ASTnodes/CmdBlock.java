@@ -5,6 +5,9 @@ import CodeGeneration.CodeGenEnv;
 
 import java.util.List;
 
+/**
+ * Represents a block of statements (commands) in the AST.
+ */
 public class CmdBlock extends Stmt {
     public List<Node> statements;
 

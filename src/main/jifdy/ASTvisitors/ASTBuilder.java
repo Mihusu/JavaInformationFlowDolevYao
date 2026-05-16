@@ -11,6 +11,9 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ANTLR visitor that lowers parse-tree nodes into the project's AST representation.
+ */
 public class ASTBuilder extends Information_flowBaseVisitor<Node> {
 
     // =========================

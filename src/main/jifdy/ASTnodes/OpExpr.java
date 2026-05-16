@@ -6,6 +6,9 @@ import Analysis.TypeCheckException;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
+/**
+ * Expression node for binary arithmetic, comparison, equality, and logical operations.
+ */
 public class OpExpr extends Expr {
     public Expr left;
     public Expr right;

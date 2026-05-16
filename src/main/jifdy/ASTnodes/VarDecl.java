@@ -3,12 +3,34 @@ package ASTnodes;
 import Analysis.*;
 import CodeGeneration.CodeGenEnv;
 
+/**
+ * Represents a variable declaration in the AST.
+ */
 public class VarDecl extends Declaration {
+    /**
+     * The type of the variable.
+     */
     public Type type;
+
+    /**
+     * The security label of the variable.
+     */
     public SecLabel label;
+
+    /**
+     * The name of the variable.
+     */
     public String name;
+
+    /**
+     * The optional initializer expression.
+     */
     public Expr init; // optional
 
+    /**
+     * Evaluates the variable declaration, initializing it in the environment.
+     * @param env The execution environment.
+     */
     @Override
     public void eval(Environment env) {
 
@@ -37,6 +59,12 @@ public class VarDecl extends Declaration {
         throw new RuntimeException("Unknown type");
     }
 
+    /**
+     * Performs type checking on the variable declaration.
+     * @param delta The type environment.
+     * @param gamma The label environment.
+     * @param pc The security context (pc).
+     */
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel pc) {
 

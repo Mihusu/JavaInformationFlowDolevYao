@@ -4,6 +4,10 @@ import ASTnodes.*;
 
 import java.util.*;
 
+/**
+ * Represents the runtime environment for program execution.
+ * Manages variables, security labels, procedures, functions, communication channels, and cryptographic state.
+ */
 public class Environment {
 
     // Variables (σ)
@@ -33,12 +37,24 @@ public class Environment {
     // VARIABLES
     // =========================
 
+    /**
+     * Retrieves the value of a variable.
+     * @param name The name of the variable.
+     * @return The value of the variable.
+     * @throws RuntimeException if the variable is undefined.
+     */
     public Value getVariables(String name) {
         if (!variables.containsKey(name))
             throw new RuntimeException("Undefined variable: " + name);
         return variables.get(name);
     }
 
+    /**
+     * Sets the value of an existing variable, checking for illegal information flow.
+     * @param name The name of the variable.
+     * @param value The new value to set.
+     * @throws RuntimeException if information flow is illegal.
+     */
     public void setVariables(String name, Value value) {
         SecLabel varLabel = labels.get(name);
 
@@ -51,6 +67,12 @@ public class Environment {
         variables.put(name, value);
     }
 
+    /**
+     * Declares a new variable with an initial value and security label.
+     * @param name The name of the variable.
+     * @param value The initial value.
+     * @param label The security label.
+     */
     public void declare(String name, Value value, SecLabel label) {
         variables.put(name, value);
         labels.put(name, label);
@@ -140,6 +162,12 @@ public class Environment {
     // SECURITY
     // =========================
 
+    /**
+     * Checks if information can flow from one security label to another.
+     * @param from The source security label.
+     * @param to The target security label.
+     * @return true if the flow is allowed, false otherwise.
+     */
     public boolean canFlow(SecLabel from, SecLabel to) {
         return !(from == SecLabel.HIGH && to == SecLabel.LOW);
     }

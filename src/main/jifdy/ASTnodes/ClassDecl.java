@@ -6,12 +6,34 @@ import CodeGeneration.CodeGenEnv;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a class declaration in the AST.
+ */
 public class ClassDecl extends Node {
+    /**
+     * Optional privacy setting for the class.
+     */
     public Privacy privacy; // optional
+
+    /**
+     * The name of the class.
+     */
     public String name;
+
+    /**
+     * List of field declarations in the class.
+     */
     public List<Declaration> declarations;
+
+    /**
+     * List of function (method) declarations in the class.
+     */
     public List<FunctionDecl> functions;
 
+    /**
+     * Evaluates the class by initializing its fields in the environment.
+     * @param env The execution environment.
+     */
     public void eval(Environment env) {
 
         // 1. Initialize variables
@@ -51,6 +73,11 @@ public class ClassDecl extends Node {
         return sb.toString();
     }
 
+    /**
+     * Performs type checking on the class fields and methods.
+     * @param delta The type environment.
+     * @param gamma The label environment.
+     */
     public void typecheck(TypeEnv delta, LabelEnv gamma) {
 
         // First: register variables

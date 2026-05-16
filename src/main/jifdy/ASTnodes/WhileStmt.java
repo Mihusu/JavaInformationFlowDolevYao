@@ -6,6 +6,9 @@ import Analysis.TypeCheckException;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
+/**
+ * Represents a while loop statement in the AST.
+ */
 public class WhileStmt extends Stmt {
     Expr condition;
     public CmdBlock body;

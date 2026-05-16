@@ -2,12 +2,26 @@ package ASTnodes;
 
 import java.io.Serializable;
 
+/**
+ * Represents a value in the language's runtime.
+ * All values have an associated security label.
+ */
 abstract public class Value implements Serializable {
+    /**
+     * The security label of this value.
+     */
     public SecLabel label;
 
+    /**
+     * Retrieves the type of the value.
+     * @return The type.
+     */
     public abstract Type getType();
 }
 
+/**
+ * Runtime integer value.
+ */
 class IntValue extends Value implements Serializable {
     int value;
 
@@ -21,6 +35,9 @@ class IntValue extends Value implements Serializable {
     }
 }
 
+/**
+ * Runtime boolean value.
+ */
 class BoolValue extends Value implements Serializable {
     boolean value;
 
@@ -34,6 +51,9 @@ class BoolValue extends Value implements Serializable {
     }
 }
 
+/**
+ * Runtime string value.
+ */
 class StringValue extends Value implements Serializable {
     String value;
 

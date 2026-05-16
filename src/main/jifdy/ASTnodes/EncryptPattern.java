@@ -13,6 +13,9 @@ import java.io.ObjectInputStream;
 import java.util.Arrays;
 import java.util.Base64;
 
+/**
+ * Pattern node that decrypts an incoming ciphertext and matches its plaintext structure.
+ */
 public class EncryptPattern extends Format {
     public Expr key;
     public Format inner;

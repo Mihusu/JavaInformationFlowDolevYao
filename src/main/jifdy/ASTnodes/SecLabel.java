@@ -1,5 +1,8 @@
 package ASTnodes;
 
+/**
+ * Two-point security lattice used for information-flow checks.
+ */
 public class SecLabel {
     public static final SecLabel HIGH = new SecLabel("HIGH");
     public static final SecLabel LOW = new SecLabel("LOW");

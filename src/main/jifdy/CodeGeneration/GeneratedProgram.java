@@ -5,8 +5,14 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
  
+/**
+ * Example Java output produced by the compiler backend.
+ */
 public class GeneratedProgram {
  
+    /**
+     * Serializable ciphertext container used by generated encryption code.
+     */
     static class EncryptedValue implements Serializable {
         byte[] ciphertext;
         byte[] salt; // This is just a mock for simplicity. 
@@ -16,6 +22,9 @@ public class GeneratedProgram {
         }
     }
  
+    /**
+     * Serializable constructor-style value used for compound message payloads.
+     */
     static class ConstructorValue implements Serializable {
         String name;
         List<Object> values;
@@ -26,6 +35,9 @@ public class GeneratedProgram {
         }
     }
  
+    /**
+     * Minimal AES-based runtime helper used by generated programs.
+     */
     static class Crypto {
         private static final String ALGORITHM = "AES";
 
@@ -65,6 +77,9 @@ public class GeneratedProgram {
         }
     }
      
+    /**
+     * In-memory message channel used by the generated demo program.
+     */
     static class Channel {
         private final Queue<Object> messages = new ArrayDeque<>();
 

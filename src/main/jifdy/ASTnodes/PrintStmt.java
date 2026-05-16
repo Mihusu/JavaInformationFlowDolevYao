@@ -7,6 +7,9 @@ import CodeGeneration.CodeGenEnv;
 
 import java.util.List;
 
+/**
+ * Statement node that evaluates expressions and prints their results line by line.
+ */
 public class PrintStmt extends Stmt {
     List<Expr> args;
 

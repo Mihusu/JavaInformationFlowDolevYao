@@ -5,6 +5,9 @@ import CodeGeneration.CodeGenEnv;
 
 import java.util.List;
 
+/**
+ * Expression node for invoking a function and optionally consuming its return value.
+ */
 public class FunctionCallExpr extends Expr {
     public String name;
     public List<Expr> args;

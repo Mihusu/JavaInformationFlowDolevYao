@@ -7,6 +7,9 @@ import CodeGeneration.CodeGenEnv;
 
 import java.util.List;
 
+/**
+ * Pattern node that matches constructor-shaped messages and recursively checks each field.
+ */
 public class ConstructorPattern extends Format {
     String name;
     List<Format> args;

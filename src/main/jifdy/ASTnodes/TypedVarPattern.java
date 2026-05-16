@@ -5,6 +5,9 @@ import Analysis.LabelEnv;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
+/**
+ * Pattern node that binds a matched value to a variable, optionally with an explicit type.
+ */
 public class TypedVarPattern extends Format {
 
     public String name;

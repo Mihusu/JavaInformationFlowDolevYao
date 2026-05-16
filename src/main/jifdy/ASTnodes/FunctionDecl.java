@@ -6,20 +6,57 @@ import CodeGeneration.CodeGenEnv;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a function declaration in the AST.
+ */
 public class FunctionDecl extends Declaration {
+    /**
+     * Privacy setting for the function.
+     */
     public Privacy privacy;
+
+    /**
+     * The return type of the function (null if void).
+     */
     public Type returnType; // null = void
+
+    /**
+     * The name of the function.
+     */
     public String name;
+
+    /**
+     * The list of parameters for the function.
+     */
     public List<Param> params;
+
+    /**
+     * The body of the function.
+     */
     public CmdBlock body;
+
+    /**
+     * The declared security label for the function's return value.
+     */
     public SecLabel returnLabel;
 
 
+    /**
+     * Registers the function in the execution environment.
+     * @param env The execution environment.
+     */
     @Override
     public void eval(Environment env) {
         env.putFunction(name, this);
     }
 
+    /**
+     * Performs type checking on the function's parameters and body.
+     * Verifies that the information flow to the return value respects the declared return label.
+     * @param delta The type environment.
+     * @param gamma The label environment.
+     * @param secLabel The security context (pc).
+     */
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel secLabel) {
 

@@ -2,6 +2,9 @@ package ASTnodes;
 
 import java.util.List;
 
+/**
+ * Runtime value that stores a constructor name together with its payload values.
+ */
 public class ConstructorValue extends Value {
     String name;
     List<Value> values;

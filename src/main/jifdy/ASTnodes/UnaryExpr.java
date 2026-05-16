@@ -6,6 +6,9 @@ import Analysis.TypeCheckException;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
+/**
+ * Expression node for unary logical negation and numeric negation.
+ */
 public class UnaryExpr extends Expr {
 
     public String op;

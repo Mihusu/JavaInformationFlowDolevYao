@@ -1,6 +1,9 @@
 package CodeGeneration;
 import java.util.*;
 
+/**
+ * Mutable helper state used while lowering AST nodes to the Java source.
+ */
 public class CodeGenEnv {
 
     private int tempCounter = 0;

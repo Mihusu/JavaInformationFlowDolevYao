@@ -33,6 +33,10 @@ import java.io.File;
  * This acts as an automated validation framework for the
  * information flow type system.
  */
+/**
+ * Provides utility for running regression tests on the compiler.
+ * Iterates through test files and verifies expected compilation/execution outcomes.
+ */
 public class RegressionTest {
 
     public static void main(String[] args) {

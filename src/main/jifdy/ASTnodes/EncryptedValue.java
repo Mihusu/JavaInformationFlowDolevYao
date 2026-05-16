@@ -2,6 +2,9 @@ package ASTnodes;
 
 import java.io.Serializable;
 
+/**
+ * Runtime representation of a ciphertext value produced by {@link EncryptExpr}.
+ */
 public class EncryptedValue extends Value implements Serializable {
 
     public String key;

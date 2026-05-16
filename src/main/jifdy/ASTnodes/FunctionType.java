@@ -2,6 +2,9 @@ package ASTnodes;
 
 import java.util.List;
 
+/**
+ * Captures the parameter and return types, along with their security labels, for a function.
+ */
 public class FunctionType {
 
     public List<Type> paramTypes;

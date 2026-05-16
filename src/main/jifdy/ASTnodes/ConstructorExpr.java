@@ -8,6 +8,9 @@ import CodeGeneration.CodeGenEnv;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Expression node for constructing structured constructor values from evaluated arguments.
+ */
 public class ConstructorExpr extends Expr {
     public String name;
     public List<Expr> args;

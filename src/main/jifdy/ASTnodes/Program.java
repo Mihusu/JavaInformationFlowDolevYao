@@ -9,19 +9,38 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Represents the entire program, consisting of a list of class declarations.
+ */
 public class Program extends Node {
+    /**
+     * The list of classes in the program.
+     */
     public List<ClassDecl> classes;
 
+    /**
+     * Constructs a Program with the given class declarations.
+     * @param classDecls The list of class declarations.
+     */
     public Program(List<ClassDecl> classDecls) {
         this.classes = classDecls;
     }
 
+    /**
+     * Evaluates (interprets) the program.
+     * @param env The execution environment.
+     */
     public void eval(Environment env) {
         for (ClassDecl c : classes) {
             c.eval(env);
         }
     }
 
+    /**
+     * Performs type checking on the entire program.
+     * @param delta The type environment.
+     * @param gamma The label environment.
+     */
     public void typecheck(TypeEnv delta, LabelEnv gamma) {
         for (ClassDecl c : classes) {
             c.typecheck(delta, gamma);

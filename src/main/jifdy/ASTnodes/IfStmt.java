@@ -8,6 +8,9 @@ import CodeGeneration.CodeGenEnv;
 
 import java.util.List;
 
+/**
+ * Represents an if-then-else statement in the AST.
+ */
 public class IfStmt extends Stmt {
     public Expr condition;
     public CmdBlock thenCmdBlock;

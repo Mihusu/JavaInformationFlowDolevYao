@@ -1,21 +1,22 @@
 import ASTnodes.Program;
 import ASTvisitors.ASTBuilder;
 import Analysis.Environment;
-import Analysis.LabelEnv;
 import Analysis.TypeChecker;
 
-import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
-import SymbolTable.SyntaxError;
+import Analysis.SyntaxError;
 import antlr.Information_flowLexer;
 import antlr.Information_flowParser;
 
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.tree.*;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * Entry point for parsing, type checking, code generation, and interpretation
+ * to compile an example from a JIFDY language file.
+ */
 public class Compiler {
 
     public static void main(String[] args) throws Exception {
@@ -63,6 +64,9 @@ public class Compiler {
         program.eval(env);
     }
 
+    /**
+     * Parser error listener that converts ANTLR syntax errors into project exceptions.
+     */
     private static class ThrowingErrorListener extends BaseErrorListener {
         private static final ThrowingErrorListener INSTANCE = new ThrowingErrorListener();
 

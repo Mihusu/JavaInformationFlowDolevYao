@@ -1,6 +1,9 @@
 package Analysis;
 import ASTnodes.SecLabel;
 
+/**
+ * Exception thrown when a type or security label violation is detected during type checking.
+ */
 public class TypeCheckException extends RuntimeException {
     public int lineNumber;
     public String violatingVariable;

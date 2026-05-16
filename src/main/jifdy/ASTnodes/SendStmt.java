@@ -6,6 +6,9 @@ import Analysis.TypeCheckException;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
+/**
+ * Represents a send statement that transmits data over a communication channel.
+ */
 public class SendStmt extends Stmt {
     String name;
 

@@ -1,6 +1,8 @@
 package ASTnodes;
 
-// Param represents a function parameter—one entry in the parameter list of a function declaration.
+/**
+ * Declares one parameter in a function or procedure signature.
+ */
 public class Param {
     public Type type;
     public String name;

@@ -3,6 +3,9 @@ package ASTnodes;
 import Analysis.*;
 import CodeGeneration.CodeGenEnv;
 
+/**
+ * Represents a return statement in the AST.
+ */
 public class ReturnStmt extends Stmt {
     public Expr expr;
 

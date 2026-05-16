@@ -5,6 +5,9 @@ import Analysis.LabelEnv;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
+/**
+ * Statement wrapper for expressions that are evaluated only for their side effects.
+ */
 public class FunctionCallStmt extends Stmt {
     public Expr expr;
 

@@ -5,6 +5,10 @@ import Analysis.LabelEnv;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
+/**
+ * Represents a statement that attempts to receive a message from a channel.
+ * Uses pattern matching to validate the received message.
+ */
 public class TryReceiveStmt extends Stmt {
     public Format format;
     public String resultVar;

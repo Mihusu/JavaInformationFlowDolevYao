@@ -5,6 +5,9 @@ import Analysis.LabelEnv;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
+/**
+ * Base class for receive-side patterns used to destructure and bind incoming values.
+ */
 public abstract class Format extends Node {
 
     public abstract void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedure);

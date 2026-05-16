@@ -5,6 +5,10 @@ import java.util.Map;
 
 import ASTnodes.SecLabel;
 
+/**
+ * Manages security labels during type checking.
+ * Keeps track of variable labels, function labels, and return labels.
+ */
 public class LabelEnv {
 
     private final Map<String, SecLabel> labels = new HashMap<>();
@@ -24,10 +28,21 @@ public class LabelEnv {
         this.observedReturnLabel = other.observedReturnLabel;
     }
 
+    /**
+     * Associates a security label with a variable.
+     * @param var The variable name.
+     * @param label The security label.
+     */
     public void putLabel(String var, SecLabel label) {
         labels.put(var, label);
     }
 
+    /**
+     * Retrieves the security label associated with a variable.
+     * @param var The variable name.
+     * @return The security label.
+     * @throws TypeCheckException if the variable is not declared.
+     */
     public SecLabel getLabel(String var) {
         if (!labels.containsKey(var))
             throw new TypeCheckException("Label error: variable not declared: " + var);
@@ -60,6 +75,11 @@ public class LabelEnv {
         return returnLabel;
     }
 
+    /**
+     * Updates the observed return label by joining it with a new label.
+     * Used for tracking information flow from conditional branches to the return value.
+     * @param l The label to join.
+     */
     public void updateReturnLabel(SecLabel l) {
         if (this.observedReturnLabel == null) {
             this.observedReturnLabel = l;

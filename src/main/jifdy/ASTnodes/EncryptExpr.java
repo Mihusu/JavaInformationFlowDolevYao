@@ -14,6 +14,9 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.UUID;
 
+/**
+ * Expression node that encrypts a payload expression with a string key.
+ */
 public class EncryptExpr extends Expr {
     public Expr payload;
     public Expr key;

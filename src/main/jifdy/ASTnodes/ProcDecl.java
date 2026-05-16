@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Declaration node for a procedure with parameters and a statement body.
+ */
 public class ProcDecl extends Declaration {
     public Privacy privacy;
     public String name;

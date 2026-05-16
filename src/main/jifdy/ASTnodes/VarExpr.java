@@ -5,6 +5,9 @@ import Analysis.LabelEnv;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
+/**
+ * Expression node that reads the current value of a named variable.
+ */
 public class VarExpr extends Expr {
     public String name;
 
