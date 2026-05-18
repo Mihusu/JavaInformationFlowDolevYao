@@ -31,7 +31,7 @@ public class FunctionCallExpr extends Expr {
 
         FunctionDecl f = env.getFunction(name);
 
-        Environment localEnv = new Environment();
+        Environment localEnv = new Environment(env);
 
         // bind parameters
         for (int i = 0; i < f.params.size(); i++) {

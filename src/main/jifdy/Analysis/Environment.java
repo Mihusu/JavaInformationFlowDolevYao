@@ -9,6 +9,7 @@ import java.util.*;
  * Manages variables, security labels, procedures, functions, communication channels, and cryptographic state.
  */
 public class Environment {
+    private final Environment parent;
 
     // Variables (σ)
     private final Map<String, Value> variables = new HashMap<>();
@@ -33,6 +34,21 @@ public class Environment {
     // Observer level (intruder)
     public SecLabel observerLevel = SecLabel.LOW;
 
+    public Environment() {
+        this.parent = null;
+    }
+
+    public Environment(Environment parent) {
+        this.parent = parent;
+        this.labels.putAll(parent.labels);
+        this.procedures.putAll(parent.procedures);
+        this.functions.putAll(parent.functions);
+        this.inbox = parent.inbox;
+        this.outbox = parent.outbox;
+        this.cryptoCounter.putAll(parent.cryptoCounter);
+        this.observerLevel = parent.observerLevel;
+    }
+
     // =========================
     // VARIABLES
     // =========================
@@ -44,9 +60,15 @@ public class Environment {
      * @throws RuntimeException if the variable is undefined.
      */
     public Value getVariables(String name) {
-        if (!variables.containsKey(name))
-            throw new RuntimeException("Undefined variable: " + name);
-        return variables.get(name);
+        if (variables.containsKey(name)) {
+            return variables.get(name);
+        }
+
+        if (parent != null) {
+            return parent.getVariables(name);
+        }
+
+        throw new RuntimeException("Undefined variable: " + name);
     }
 
     /**
@@ -56,6 +78,11 @@ public class Environment {
      * @throws RuntimeException if information flow is illegal.
      */
     public void setVariables(String name, Value value) {
+        if (!labels.containsKey(name) && parent != null) {
+            parent.setVariables(name, value);
+            return;
+        }
+
         SecLabel varLabel = labels.get(name);
 
         if (!canFlow(value.label, varLabel)) {
@@ -79,7 +106,15 @@ public class Environment {
     }
 
     public SecLabel getLabel(String name) {
-        return labels.get(name);
+        if (labels.containsKey(name)) {
+            return labels.get(name);
+        }
+
+        if (parent != null) {
+            return parent.getLabel(name);
+        }
+
+        return null;
     }
 
     // =========================
@@ -101,7 +136,7 @@ public class Environment {
         ProcDecl proc = getProcedure(name);
 
         // create local environment (IMPORTANT)
-        Environment localEnv = new Environment();
+        Environment localEnv = new Environment(this);
 
         // copy global state if needed (optional for now)
         localEnv.procedures = this.procedures;

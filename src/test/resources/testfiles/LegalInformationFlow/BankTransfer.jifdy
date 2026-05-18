@@ -64,4 +64,8 @@ public class BankTransfer {
           print("You received money from " + user + ". " + user + " has sent you " + total + ". Status: " + done);
         }
     }
+
+    client();
+    bank();
+    clientReceiver();
 }

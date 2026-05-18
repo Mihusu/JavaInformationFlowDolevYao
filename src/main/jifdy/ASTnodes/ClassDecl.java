@@ -31,6 +31,11 @@ public class ClassDecl extends Node {
     public List<FunctionDecl> functions;
 
     /**
+     * Statements executed at class scope after declarations and function registration.
+     */
+    public List<Stmt> entryStatements;
+
+    /**
      * Evaluates the class by initializing its fields in the environment.
      * @param env The execution environment.
      */
@@ -49,7 +54,17 @@ public class ClassDecl extends Node {
 
                 env.labels.put(v.name, v.label);
                 env.setVariables(v.name, initVal);
+            } else {
+                d.eval(env);
             }
+        }
+
+        for (FunctionDecl f : functions) {
+            f.eval(env);
+        }
+
+        for (Stmt stmt : entryStatements) {
+            stmt.eval(env);
         }
     }
 
@@ -68,6 +83,20 @@ public class ClassDecl extends Node {
 
         for (FunctionDecl f : functions) {
             sb.append("\n").append(f.compile(env));
+        }
+
+        if (!entryStatements.isEmpty()) {
+            sb.append("\n")
+                    .append(env.indent())
+                    .append("public void entry() {\n");
+
+            env.increaseIndent();
+            for (Stmt stmt : entryStatements) {
+                sb.append(stmt.compile(env));
+            }
+            env.decreaseIndent();
+
+            sb.append(env.indent()).append("}\n");
         }
 
         return sb.toString();
@@ -145,6 +174,10 @@ public class ClassDecl extends Node {
         // Finally: typecheck function bodies
         for (FunctionDecl f : functions) {
             f.typecheck(delta, gamma, SecLabel.LOW);
+        }
+
+        for (Stmt stmt : entryStatements) {
+            stmt.typecheck(delta, gamma, SecLabel.LOW);
         }
     }
 

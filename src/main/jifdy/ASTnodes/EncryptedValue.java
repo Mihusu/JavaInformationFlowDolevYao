@@ -21,4 +21,9 @@ public class EncryptedValue extends Value implements Serializable {
     public Type getType() {
         return Type.CIPHERTEXT;
     }
+
+    @Override
+    public String toString() {
+        return "<ciphertext:" + nonce + ">";
+    }
 }

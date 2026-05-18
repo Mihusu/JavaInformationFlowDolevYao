@@ -18,4 +18,9 @@ public class ConstructorValue extends Value {
     public Type getType() {
         return Type.STRING;
     }
+
+    @Override
+    public String toString() {
+        return name + values;
+    }
 }

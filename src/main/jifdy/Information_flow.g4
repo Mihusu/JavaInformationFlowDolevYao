@@ -47,7 +47,7 @@ class
     ;
 
 classBlock
-    : IDENTIFIER '{' declaration* functionDeclaration* '}'
+    : IDENTIFIER '{' declaration* functionDeclaration* statement* '}'
     ;
 
 declaration

@@ -33,6 +33,11 @@ class IntValue extends Value implements Serializable {
     public Type getType() {
         return Type.INT;
     }
+
+    @Override
+    public String toString() {
+        return Integer.toString(value);
+    }
 }
 
 /**
@@ -49,6 +54,11 @@ class BoolValue extends Value implements Serializable {
     public Type getType() {
         return Type.BOOL;
     }
+
+    @Override
+    public String toString() {
+        return Boolean.toString(value);
+    }
 }
 
 /**
@@ -64,5 +74,10 @@ class StringValue extends Value implements Serializable {
     @Override
     public Type getType() {
         return Type.STRING;
+    }
+
+    @Override
+    public String toString() {
+        return value;
     }
 }

@@ -46,7 +46,7 @@ public class VarDecl extends Declaration {
         initVal.label = label;
 
         // store in environment
-        env.setVariables(name, initVal);
+        env.declare(name, initVal, label);
     }
 
     private Value defaultValue(Type t) {

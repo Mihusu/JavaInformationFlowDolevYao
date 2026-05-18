@@ -34,6 +34,7 @@ public class WhileStmt extends Stmt {
         }
 
         SecLabel condLabel = condition.label(gamma);
+        //
         SecLabel newLabel = SecLabel.join(label, condLabel);
 
         body.typecheck(delta, gamma, newLabel);

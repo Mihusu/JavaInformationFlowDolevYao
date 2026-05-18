@@ -17,7 +17,9 @@ public class CmdBlock extends Stmt {
 
             if (env.hasReturned) break;
 
-            if (s instanceof Stmt stmt) {
+            if (s instanceof VarDecl decl) {
+                decl.eval(env);
+            } else if (s instanceof Stmt stmt) {
                 stmt.eval(env);
             }
         }

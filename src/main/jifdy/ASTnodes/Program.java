@@ -153,7 +153,7 @@ public class Program extends Node {
         """);
 
         for (ClassDecl c : classes) {
-            appendMainCalls(sb, c);
+            appendMainEntry(sb, c);
         }
 
         sb.append("""
@@ -165,7 +165,12 @@ public class Program extends Node {
         return sb.toString();
     }
 
-    private void appendMainCalls(StringBuilder sb, ClassDecl cls) {
+    private void appendMainEntry(StringBuilder sb, ClassDecl cls) {
+        if (!cls.entryStatements.isEmpty()) {
+            sb.append("program.entry();\n");
+            return;
+        }
+
         Set<String> fieldNames = new HashSet<>();
         for (Declaration declaration : cls.declarations) {
             if (declaration instanceof VarDecl varDecl) {
