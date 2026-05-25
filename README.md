@@ -1,30 +1,163 @@
-## Arithmetic Language
+# Java Information Flow Dolev-Yao
 
-### Description
+This project is a Java compiler/interpreter prototype for a small information-flow language named JIFDY. The language combines a security-label type system (`low`/`high`) with Dolev-Yao style message formats, encrypted values, send/receive statements, and simple Java-like control flow.
 
-This language serves as a stepping stone towards our larger
-group project in where we are learning about compilers.
+The compiler pipeline is:
 
-The language should be able to deal with simple arithmetic operations
-such as multiplication, addition, subtraction and so on.
+1. ANTLR lexer/parser reads a `.jifdy` source file.
+2. `ASTBuilder` converts the parse tree into AST nodes.
+3. `TypeChecker` checks ordinary types, security labels, formats, ciphertexts, and legal information flow.
+4. The AST can either be interpreted directly or compiled into `GeneratedProgram.java`.
 
-It contains two datatypes, floating point numbers and integers
+## Requirements
 
-### Getting started
+- Java 17
+- Maven
+- ANTLR 4.13.2 dependencies, resolved through Maven
 
-To try out the grammar with ANTLR, right-click the Board.g4 file
-and choose 'configure'
+The Maven build already includes the custom source directories:
 
-The output directory should be 
+- `src/main/jifdy`
+- `Math-language/src/main/antlr`
 
+Do not move these directories unless you also update the build configuration.
+
+## Important Files
+
+- `src/main/jifdy/Information_flow.g4`  
+  Main ANTLR grammar.
+
+- `Math-language/src/main/antlr`  
+  Generated ANTLR lexer/parser/visitor classes.
+
+- `src/main/jifdy/Compiler.java`  
+  Main compiler entry point. Currently reads `BankTransfer.jifdy`, typechecks it, generates `GeneratedProgram.java`, and interprets the program.
+
+- `src/main/jifdy/ASTBuilder/ASTBuilder.java`  
+  Converts parse tree nodes into AST nodes.
+
+- `src/main/jifdy/ASTnodes`  
+  AST nodes, type representations, expression evaluation, code generation, and runtime value classes.
+
+- `src/main/jifdy/Analysis`  
+  Type checking, environments, security checks, and regression tests.
+
+- `src/test/resources/testfiles/LegalInformationFlow`  
+  Programs expected to pass.
+
+- `src/test/resources/testfiles/IlegalInformationFlow`  
+  Programs expected to fail with type/security errors.
+
+## Language Overview
+
+JIFDY supports:
+
+- primitive types: `int`, `bool`, `String`
+- security labels: `low`, `high`
+- global keys:
+
+```jifdy
+key kClientBank;
 ```
-PATH_TO_THIS_FOLDER/Math-language/src/main/java/
+
+- global message formats:
+
+```jifdy
+format Transfer1(String low user, int high amount, String low target);
 ```
 
-Leave 'location of imported grammar' and 'grammar file enconding' as blank
+- format values:
 
-The package/namespace should be
+```jifdy
+Transfer1 high transfer =
+    Transfer1(String low user, int high amount1 + int high amount2, String low target);
+```
 
+- ciphertext values:
+
+```jifdy
+e(kClientBank,Transfer1) low msg =
+    e(kClientBank, transfer);
 ```
-antlr
+
+- receiving encrypted patterns:
+
+```jifdy
+try_rcv(e(kClientBank,
+    Transfer1(String low user, int high amount, String low target)
+)) {
+    print(user);
+}
 ```
+
+Format payloads can contain arithmetic expressions over typed references, for example:
+
+```jifdy
+Transfer1(String low user, int high amount1 - int high amount2, String low target)
+```
+
+## Makefile
+
+From the project root
+
+```powershell
+make
+```
+Which is to build, run compiler.java, tests, and run a generated program
+
+To clean up the project from unecessary files:
+
+```powershell
+make clean
+```
+
+## Run Regression Tests
+
+After building the runtime classpath:
+
+```powershell
+make test
+```
+
+The regression test runner checks:
+
+- legal examples pass parsing and type checking
+- illegal examples fail with expected type/security errors
+
+Some parser diagnostics may still be printed for illegal examples, but the summary at the end is the important result:
+
+```text
+Tests Passed: 12
+Tests Failed: 0
+```
+
+## IntelliJ Notes
+
+If you use IntelliJ's ANTLR plugin, configure `Information_flow.g4` with:
+
+- package/namespace: `antlr`
+- generated output directory: `Math-language/src/main/antlr`
+
+Keep the generated parser package as `antlr`, because the Java code imports:
+
+```java
+import antlr.Information_flowLexer;
+import antlr.Information_flowParser;
+```
+
+## Development Notes
+
+When changing grammar rules, usually update these areas together:
+
+- `Information_flow.g4`
+- generated parser files in `Math-language/src/main/antlr`
+- `ASTBuilder.java`
+- AST expression/format nodes if a new syntax form needs runtime behavior
+- type checking logic if a new construct has type or label rules
+- regression examples under `src/test/resources/testfiles`
+
+For format/ciphertext types, the code uses both precise and broad runtime types:
+
+- `FormatType` identifies a specific declared format such as `Transfer1`.
+- `CiphertextType` identifies a key/format pair such as `e(kClientBank,Transfer1)`.
+- `Type.FORMAT` and `Type.CIPHERTEXT` are broad runtime categories used for Java generation and default values.
