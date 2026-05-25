@@ -45,9 +45,9 @@ public class UnaryExpr extends Expr {
     }
 
     @Override
-    public Type typecheck(TypeEnv delta, LabelEnv gamma) {
+    public Operators typecheck(TypeEnv delta, LabelEnv gamma) {
 
-        Type t = expr.typecheck(delta, gamma);
+        Type t = Operators.runtimeType(expr.typecheck(delta, gamma));
 
         return switch (op) {
 

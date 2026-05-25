@@ -121,9 +121,9 @@ public class ClassDecl extends Node {
                 // If initialized, check the initializer
                 if (v.init != null) {
 
-                    Type initType = v.init.typecheck(delta, gamma);
+                    Operators initType = v.init.typecheck(delta, gamma);
 
-                    if (initType != v.type) {
+                    if (!Operators.sameType(initType, v.type)) {
                         throw new TypeCheckException(
                                 "Type mismatch in declaration of " + v.name,
                                 v.lineNumber,
@@ -152,7 +152,7 @@ public class ClassDecl extends Node {
         // Then: register function signatures first
         for (FunctionDecl f : functions) {
 
-            List<Type> paramTypes = new ArrayList<>();
+            List<Operators> paramTypes = new ArrayList<>();
             List<SecLabel> paramLabels = new ArrayList<>();
 
             for (Param p : f.params) {
@@ -171,7 +171,12 @@ public class ClassDecl extends Node {
             );
         }
 
-        // Finally: typecheck function bodies
+        // 1. Register class fields
+        for (Declaration d : declarations) {
+            d.typecheck(delta, gamma, SecLabel.LOW);
+        }
+
+        // 2. Register/check functions
         for (FunctionDecl f : functions) {
             f.typecheck(delta, gamma, SecLabel.LOW);
         }
@@ -181,12 +186,13 @@ public class ClassDecl extends Node {
         }
     }
 
-    private Value defaultValue(Type t) {
-        switch (t) {
+    private Value defaultValue(Operators t) {
+        switch (Operators.runtimeType(t)) {
             case INT: return new IntValue(0);
             case BOOL: return new BoolValue(false);
             case STRING: return new StringValue("");
-            case CIPHERTEXT: return new EncryptedValue("", new StringValue(""), "");
+            case CIPHERTEXT: return new EncryptedValue(null, null, "");
+            case FORMAT: return new ConstructorValue("", java.util.List.of());
         }
         throw new TypeCheckException("Unknown type");
     }

@@ -1,3 +1,7 @@
+key kClientBank;
+format Transfer1(String low sender, String low receiver, int high amount1);
+format Transfer2(String low sender, String low receiver, int high amount2);
+format Result(int low publicTotal);
 public class InsecureBankTransfer {
 
     int low publicTotal = 0;
@@ -11,11 +15,11 @@ public class InsecureBankTransfer {
         int high amount1 = 5000;
         int high amount2 = 7000;
 
-        e(kClient, Transfer1) low transfer1 =
-            e(kBank, Transfer1(String low sender, String low receiver, int high amount1));
+        e(kClientBank, Transfer1) low transfer1 =
+            e(kClientBank, Transfer1(String low sender, String low receiver, int high amount1));
 
-        e(kClient, Transfer2) low transfer2 =
-            e(kBank, Transfer2(String low sender, String low receiver, int high amount2));
+        e(kClientBank, Transfer2) low transfer2 =
+            e(kClientBank, Transfer2(String low sender, String low receiver, int high amount2));
 
         send(transfer1);
         send(transfer2);
@@ -35,19 +39,15 @@ public class InsecureBankTransfer {
             String high receiver_in = "";
             int high amount_in = 0;
 
-            try_rcv(
-                e(kBank,
-                    Transfer1(
-                        String low sender,
-                        String low receiver,
-                        int high amount1))
-            ) {
+            try_rcv(e(kClientBank,
+                Transfer1(String low sender, String low receiver, int high amount1)
+            )) {
                 ok = false;
             }
 
             // Second transfer
-            try_rcv(e(kBank,
-              Transfer2(String low user, int high amount2, String low target)
+            try_rcv(e(kClientBank,
+              Transfer2(String low user, String low receiver, int high amount2)
             )) {
                 ok = false;
             }
@@ -71,8 +71,8 @@ public class InsecureBankTransfer {
             }
         }
 
-        e(kBank, Result(int low publicTotal)) low resultMsg =
-            e(kClient, Result(publicTotal));
+        e(kClientBank, Result) low resultMsg =
+            e(kClientBank, Result(int low publicTotal));
 
         send(resultMsg);
     }

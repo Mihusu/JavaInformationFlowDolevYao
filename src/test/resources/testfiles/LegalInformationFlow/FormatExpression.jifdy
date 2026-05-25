@@ -1,0 +1,24 @@
+key kClientBank;
+
+format Transfer1(String low user, int high amount, String low target);
+
+public class FormatExpression {
+
+    String low user = "Alice";
+    String low target = "Bob";
+
+    public void low client() {
+        int high amount1 = 2000;
+        int high amount2 = 3000;
+
+        Transfer1 high transfer =
+            Transfer1(String low user, int high amount1 + int high amount2, String low target);
+
+        e(kClientBank,Transfer1) low msg =
+            e(kClientBank, transfer);
+
+        send(msg);
+    }
+
+    client();
+}

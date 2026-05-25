@@ -1,6 +1,7 @@
 package ASTnodes;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Represents a value in the language's runtime.
@@ -38,6 +39,17 @@ class IntValue extends Value implements Serializable {
     public String toString() {
         return Integer.toString(value);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        // Needed by ExprFormat.match: computed pattern fields compare Value objects.
+        return obj instanceof IntValue other && value == other.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(value);
+    }
 }
 
 /**
@@ -59,6 +71,17 @@ class BoolValue extends Value implements Serializable {
     public String toString() {
         return Boolean.toString(value);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        // Needed by ExprFormat.match: computed pattern fields compare Value objects.
+        return obj instanceof BoolValue other && value == other.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return Boolean.hashCode(value);
+    }
 }
 
 /**
@@ -67,8 +90,8 @@ class BoolValue extends Value implements Serializable {
 class StringValue extends Value implements Serializable {
     String value;
 
-    public StringValue(String key) {
-        this.value = key;
+    public StringValue(String keyName) {
+        this.value = keyName;
     }
 
     @Override
@@ -79,5 +102,16 @@ class StringValue extends Value implements Serializable {
     @Override
     public String toString() {
         return value;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        // Needed by ExprFormat.match: computed pattern fields compare Value objects.
+        return obj instanceof StringValue other && Objects.equals(value, other.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(value);
     }
 }

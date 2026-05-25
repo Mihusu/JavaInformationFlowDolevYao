@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ASTnodes.FunctionType;
-import ASTnodes.SecLabel;
-import ASTnodes.Type;
+import ASTnodes.FormatType;
+import ASTnodes.Operators;
 
 /**
  * Manages types during type checking.
@@ -13,10 +13,10 @@ import ASTnodes.Type;
  */
 public class TypeEnv {
 
-    private final Map<String, Type> types = new HashMap<>();
+    private final Map<String, Operators> types = new HashMap<>();
     private final Map<String, FunctionType> functions = new HashMap<>();
-    private final Map<String, Type> cipherPayloadTypes = new HashMap<>();
-    private Type returnType;
+    private final Map<String, FormatType> formats = new HashMap<>();
+    private Operators returnType;
 
     public TypeEnv() {}
 
@@ -24,7 +24,7 @@ public class TypeEnv {
     public TypeEnv(TypeEnv other) {
         this.types.putAll(other.types);
         this.functions.putAll(other.functions);
-        this.cipherPayloadTypes.putAll(other.cipherPayloadTypes);
+        this.formats.putAll(other.formats);
         this.returnType = other.returnType;
     }
 
@@ -33,15 +33,15 @@ public class TypeEnv {
      * @param var The name of the variable.
      * @param type The type to associate.
      */
-    public void putType(String var, Type type) {
+    public void putType(String var, Operators type) {
         types.put(var, type);
     }
 
-    public void setReturnType(Type type) {
+    public void setReturnType(Operators type) {
         this.returnType = type;
     }
 
-    public Type getReturnType() {
+    public Operators getReturnType() {
         if (returnType == null)
             throw new TypeCheckException("Return type not set");
         return returnType;
@@ -53,7 +53,7 @@ public class TypeEnv {
      * @return The associated type.
      * @throws TypeCheckException if the variable is not found.
      */
-    public Type getType(String name) {
+    public Operators getType(String name) {
         if (!types.containsKey(name))
             throw new TypeCheckException("Unknown variable: " + name);
         return types.get(name);
@@ -61,6 +61,21 @@ public class TypeEnv {
 
     public boolean containsType(String name) {
         return types.containsKey(name);
+    }
+
+    public void putFormat(String name, FormatType formatType) {
+        formats.put(name, formatType);
+    }
+
+    public FormatType getFormat(String name) {
+        if (!formats.containsKey(name)) {
+            throw new TypeCheckException("Unknown format: " + name);
+        }
+        return formats.get(name);
+    }
+
+    public boolean containsFormat(String name) {
+        return formats.containsKey(name);
     }
 
     // functions

@@ -22,11 +22,11 @@ public class ReturnStmt extends Stmt {
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel secLabel) {
 
-        Type expectedType = delta.getReturnType();
+        Operators expectedType = delta.getReturnType();
 
-        Type actualType = expr.typecheck(delta, gamma);
+        Operators actualType = expr.typecheck(delta, gamma);
 
-        if (actualType != expectedType) {
+        if (!Operators.sameType(actualType, expectedType)) {
             throw new TypeCheckException(
                     "Return type mismatch: expected " + expectedType +
                             " but got " + actualType,

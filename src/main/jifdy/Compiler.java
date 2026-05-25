@@ -1,5 +1,5 @@
 import ASTnodes.Program;
-import ASTvisitors.ASTBuilder;
+import ASTBuilder.ASTBuilder;
 import Analysis.Environment;
 import Analysis.TypeChecker;
 

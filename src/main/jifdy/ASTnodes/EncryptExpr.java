@@ -12,24 +12,47 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.UUID;
 
 /**
  * Expression node that encrypts a payload expression with a string key.
  */
 public class EncryptExpr extends Expr {
-    public Expr payload;
-    public Expr key;
+    // Example:
+    // kBank
+    public String keyName;
 
-    public EncryptExpr(Expr payload, Expr key) {
+    // Example:
+    // Transfer
+    public String formatName;
+
+    // Actual payload term
+    public Expr payload;
+
+    public Expr keyExpr;
+
+    public EncryptExpr(String keyName,
+                       String formatName,
+                       Expr payload) {
+
+        this.keyName = keyName;
+        this.formatName = formatName;
         this.payload = payload;
-        this.key = key;
+        this.keyExpr = new Expr.StringLiteral(keyName);
+    }
+
+    public EncryptExpr(Expr payload,
+                       Expr keyExpr) {
+
+        this.payload = payload;
+        this.keyExpr = keyExpr;
+        this.keyName = extractKeyName(keyExpr);
+        this.formatName = extractFormatName(payload);
     }
 
     @Override
     public Value eval(Environment env) {
         Value payloadValue = payload.eval(env);
-        Value keyValue = key.eval(env);
+        Value keyValue = keyExpr.eval(env);
 
         if (!(keyValue instanceof StringValue sk)) {
             throw new RuntimeException("Key must be string");
@@ -61,15 +84,30 @@ public class EncryptExpr extends Expr {
     }
 
     @Override
-    public Type typecheck(TypeEnv delta, LabelEnv gamma) {
-        Type keyType = key.typecheck(delta, gamma);
+    public Operators typecheck(TypeEnv delta,
+                               LabelEnv gamma) {
 
+        Type keyType = Operators.runtimeType(keyExpr.typecheck(delta, gamma));
         if (keyType != Type.STRING) {
             throw new TypeCheckException("Encryption key must have type STRING");
         }
 
-        payload.typecheck(delta, gamma);
-        return Type.CIPHERTEXT;
+        Operators payloadType = payload.typecheck(delta, gamma);
+
+        // Infer the ciphertext's format from the payload type, not from the payload syntax.
+        // In particular: encrypting a variable `u` where `u : Transfer1` should yield
+        // CiphertextType(key, "Transfer1"), not CiphertextType(key, "u").
+        String inferredFormatName = this.formatName;
+        if (payloadType instanceof FormatType ft) {
+            inferredFormatName = ft.name;
+        } else if (payloadType instanceof CiphertextType ct) {
+            // Nested encryption: preserve the inner format name.
+            inferredFormatName = ct.formatName;
+        }
+
+        this.formatName = inferredFormatName;
+
+        return new CiphertextType(keyName, inferredFormatName);
     }
 
     @Override
@@ -79,6 +117,38 @@ public class EncryptExpr extends Expr {
 
     @Override
     public String compile(CodeGenEnv env) {
-        return "Crypto.encrypt(" + payload.compile(env) + ", " + key.compile(env) + ")";
+        return "Crypto.encrypt(" + payload.compile(env) + ", " + keyExpr.compile(env) + ")";
+    }
+
+    private String extractKeyName(Expr keyExpr) {
+        if (keyExpr instanceof Expr.StringLiteral literal) {
+            return literal.value;
+        }
+
+        if (keyExpr instanceof VarExpr varExpr) {
+            return varExpr.name;
+        }
+
+        throw new RuntimeException("Unsupported encryption key expression");
+    }
+
+    private String extractFormatName(Expr expr) {
+        if (expr instanceof ConstructorExpr constructorExpr) {
+            return constructorExpr.name;
+        }
+
+        if (expr instanceof VarExpr varExpr) {
+            return varExpr.name;
+        }
+
+        if (expr instanceof EncryptExpr encryptExpr) {
+            return encryptExpr.formatName;
+        }
+
+        if (expr instanceof Expr.StringLiteral stringLiteral) {
+            return stringLiteral.value;
+        }
+
+        return expr.getClass().getSimpleName();
     }
 }

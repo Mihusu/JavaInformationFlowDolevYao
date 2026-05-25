@@ -15,7 +15,7 @@ import java.util.Map;
 public class ProcDecl extends Declaration {
     public Privacy privacy;
     public String name;
-    public Type returnType;
+    public Operators returnType;
     public SecLabel returnLabel;
     public List<Param> params;
     public List<Stmt> body;
@@ -103,12 +103,13 @@ public class ProcDecl extends Declaration {
         return sb.toString();
     }
 
-    private String toJavaType(Type type) {
-        return switch (type) {
+    private String toJavaType(Operators type) {
+        return switch (Operators.runtimeType(type)) {
             case INT -> "int";
             case BOOL -> "boolean";
             case STRING -> "String";
             case CIPHERTEXT -> "EncryptedValue";
+            case FORMAT -> "ConstructorValue";
             default -> throw new RuntimeException("Unknown type: " + type);
         };
     }

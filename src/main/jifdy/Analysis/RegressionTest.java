@@ -1,7 +1,7 @@
 package Analysis;
 
 import ASTnodes.Program;
-import ASTvisitors.ASTBuilder;
+import ASTBuilder.ASTBuilder;
 import antlr.Information_flowLexer;
 import antlr.Information_flowParser;
 import org.antlr.v4.runtime.CharStreams;

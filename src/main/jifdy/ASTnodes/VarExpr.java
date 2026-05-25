@@ -19,7 +19,7 @@ public class VarExpr extends Expr {
         return env.getVariables(name);
     }
 
-    public Type typecheck(TypeEnv delta, LabelEnv gamma) {
+    public Operators typecheck(TypeEnv delta, LabelEnv gamma) {
         return delta.getType(name);
     }
 

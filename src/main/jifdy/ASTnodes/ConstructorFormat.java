@@ -10,23 +10,46 @@ import java.util.List;
 /**
  * Pattern node that matches constructor-shaped messages and recursively checks each field.
  */
-public class ConstructorPattern extends Format {
+public class ConstructorFormat extends Format {
     String name;
     List<Format> args;
 
-    public ConstructorPattern(String text, List<Format> args) {
+    public ConstructorFormat(String text, List<Format> args) {
         this.name = text;
         this.args = args;
     }
 
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel label) {
+        FormatType formatType = delta.getFormat(name);
 
-        // The constructor name itself needs no checking for now.
-        // Just recursively typecheck all subpatterns.
+        if (args.size() != formatType.fields.size()) {
+            throw new RuntimeException("Wrong number of fields in format pattern " + name);
+        }
 
-        for (Format p : args) {
-            p.typecheck(delta, gamma, label);
+        for (int i = 0; i < args.size(); i++) {
+            Param expected = formatType.fields.get(i);
+            Format actual = args.get(i);
+
+            if (actual instanceof TypedVarFormat typedVarFormat) {
+                if (typedVarFormat.type != null && !Operators.sameType(typedVarFormat.type, expected.type)) {
+                    throw new RuntimeException("Format pattern type mismatch in " + name);
+                }
+                if (typedVarFormat.label != expected.label) {
+                    throw new RuntimeException("Format pattern label mismatch in " + name);
+                }
+            } else if (actual instanceof ConstructorFormat constructorFormat) {
+                if (!Operators.sameType(expected.type, delta.getFormat(constructorFormat.name))) {
+                    throw new RuntimeException("Nested format mismatch in " + name);
+                }
+            } else if (actual instanceof ExprFormat exprFormat) {
+                Operators actualType = exprFormat.expr.typecheck(delta, gamma);
+                if (!Operators.sameType(actualType, expected.type)) {
+                    throw new RuntimeException("Format expression type mismatch in " + name);
+                }
+            }
+
+            actual.typecheck(delta, gamma, label);
         }
     }
 

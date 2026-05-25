@@ -18,7 +18,7 @@ public class FunctionDecl extends Declaration {
     /**
      * The return type of the function (null if void).
      */
-    public Type returnType; // null = void
+    public Operators returnType; // null = void
 
     /**
      * The name of the function.
@@ -60,7 +60,7 @@ public class FunctionDecl extends Declaration {
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel secLabel) {
 
-        List<Type> paramTypes = new ArrayList<>();
+        List<Operators> paramTypes = new ArrayList<>();
         List<SecLabel> paramLabels = new ArrayList<>();
 
         for (Param p : params) {
@@ -144,12 +144,13 @@ public class FunctionDecl extends Declaration {
         return sb.toString();
     }
 
-    private String toJavaType(Type type) {
-        return switch (type) {
+    private String toJavaType(Operators type) {
+        return switch (Operators.runtimeType(type)) {
             case INT -> "int";
             case BOOL -> "boolean";
             case STRING -> "String";
             case CIPHERTEXT -> "EncryptedValue";
+            case FORMAT -> "ConstructorValue";
         };
     }
 }

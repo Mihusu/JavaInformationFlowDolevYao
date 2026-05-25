@@ -8,13 +8,13 @@ import CodeGeneration.CodeGenEnv;
 /**
  * Pattern node that binds a matched value to a variable, optionally with an explicit type.
  */
-public class TypedVarPattern extends Format {
+public class TypedVarFormat extends Format {
 
     public String name;
-    public Type type;
+    public Operators type;
     public SecLabel label;
 
-    public TypedVarPattern(String name, Type type, SecLabel label) {
+    public TypedVarFormat(String name, Operators type, SecLabel label) {
         this.name = name;
         this.type = type;
         this.label = label;
@@ -23,7 +23,7 @@ public class TypedVarPattern extends Format {
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel pc) {
 
-        Type effectiveType = type;
+        Operators effectiveType = type;
 
         if (effectiveType == null) {
             effectiveType = delta.containsType(name) ? delta.getType(name) : Type.STRING;
@@ -72,21 +72,23 @@ public class TypedVarPattern extends Format {
         return this.label;
     }
 
-    private String toJavaType(Type t) {
-        return switch (t) {
+    private String toJavaType(Operators t) {
+        return switch (Operators.runtimeType(t)) {
             case INT -> "int";
             case BOOL -> "boolean";
             case STRING -> "String";
             case CIPHERTEXT -> "EncryptedValue";
+            case FORMAT -> "ConstructorValue";
         };
     }
 
-    private String toJavaCastType(Type t) {
-        return switch (t) {
+    private String toJavaCastType(Operators t) {
+        return switch (Operators.runtimeType(t)) {
             case INT -> "Integer";
             case BOOL -> "Boolean";
             case STRING -> "String";
             case CIPHERTEXT -> "EncryptedValue";
+            case FORMAT -> "ConstructorValue";
         };
     }
 }

@@ -16,8 +16,6 @@ public class TypeChecker {
      * @param program The program AST to check.
      */
     public void check(Program program) {
-        for (ClassDecl c : program.classes) {
-            c.typecheck(delta, gamma);
-        }
+        program.typecheck(delta, gamma);
     }
 }

@@ -36,7 +36,7 @@ public class IfStmt extends Stmt {
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel label) {
 
-        Type condType = condition.typecheck(delta, gamma);
+        Type condType = Operators.runtimeType(condition.typecheck(delta, gamma));
 
         if (condType != Type.BOOL) {
             throw new TypeCheckException("If condition must be boolean");

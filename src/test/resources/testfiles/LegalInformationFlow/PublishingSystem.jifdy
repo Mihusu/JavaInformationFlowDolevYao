@@ -1,3 +1,8 @@
+key kAuthorEditorPublisher;
+format Submission(String low title, String high manuscript);
+format Published(String low title_in, int low publications_in);
+format Approval(String low title_in, String high review);
+
 public class PublishingSystem {
 
     int low publications;
@@ -7,13 +12,13 @@ public class PublishingSystem {
     // AUTHOR
     public void low author() {
 
-        e(kAuthor, Submission) low submissionMsg =
-            e(kEditor, Submission(String low title, String high manuscript));
+        e(kAuthorEditorPublisher, Submission) low submissionMsg =
+            e(kAuthorEditorPublisher, Submission(String low title, String high manuscript));
 
         send(submissionMsg);
 
         try_rcv(
-            e(kAuthor,
+            e(kAuthorEditorPublisher,
                 Published(
                     String low title_in,
                     int low publications_in
@@ -33,7 +38,7 @@ public class PublishingSystem {
         String high manuscript_in;
 
         try_rcv(
-            e(kEditor,
+            e(kAuthorEditorPublisher,
                 Submission(
                     String low t,
                     String high m))
@@ -52,7 +57,7 @@ public class PublishingSystem {
             if (ok) {
                 String high review = "APPROVED";
 
-                e(kEditor, Approval) low approvalMsg = e(kPublisher,
+                e(kAuthorEditorPublisher, Approval) low approvalMsg = e(kAuthorEditorPublisher,
                     Approval(String low title_in, String high review)
                 );
 
@@ -69,7 +74,7 @@ public class PublishingSystem {
         String low title_in = "";
 
         try_rcv(
-            e(kPublisher,
+            e(kAuthorEditorPublisher,
                 Approval(
                     String low t,
                     String high review))
@@ -84,8 +89,8 @@ public class PublishingSystem {
 
             print(title_in, publications);
 
-            e(kPublisher, Published) low resultMsg =
-                e(kAuthor, Published(String low title_in, int low publications));
+            e(kAuthorEditorPublisher, Published) low resultMsg =
+                e(kAuthorEditorPublisher, Published(String low title_in, int low publications));
 
             send(resultMsg);
         }

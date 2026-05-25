@@ -18,7 +18,7 @@ and choose 'configure'
 The output directory should be 
 
 ```
-PATH_TO_THIS_FOLDER/Math-language/src/main/java/bogac
+PATH_TO_THIS_FOLDER/Math-language/src/main/java/
 ```
 
 Leave 'location of imported grammar' and 'grammar file enconding' as blank

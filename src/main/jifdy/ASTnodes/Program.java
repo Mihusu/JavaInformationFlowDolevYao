@@ -7,6 +7,7 @@ import CodeGeneration.CodeGenEnv;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -17,13 +18,23 @@ public class Program extends Node {
      * The list of classes in the program.
      */
     public List<ClassDecl> classes;
+    public Set<String> declaredKeys;
+    public Set<String> declaredFormats;
+    public Map<String, FormatType> formatTypes;
 
     /**
      * Constructs a Program with the given class declarations.
      * @param classDecls The list of class declarations.
      */
     public Program(List<ClassDecl> classDecls) {
+        this(classDecls, Set.of(), Set.of(), Map.of());
+    }
+
+    public Program(List<ClassDecl> classDecls, Set<String> declaredKeys, Set<String> declaredFormats, Map<String, FormatType> formatTypes) {
         this.classes = classDecls;
+        this.declaredKeys = declaredKeys;
+        this.declaredFormats = declaredFormats;
+        this.formatTypes = formatTypes;
     }
 
     /**
@@ -42,6 +53,10 @@ public class Program extends Node {
      * @param gamma The label environment.
      */
     public void typecheck(TypeEnv delta, LabelEnv gamma) {
+        for (FormatType formatType : formatTypes.values()) {
+            delta.putFormat(formatType.name, formatType);
+        }
+
         for (ClassDecl c : classes) {
             c.typecheck(delta, gamma);
         }
@@ -200,12 +215,13 @@ public class Program extends Node {
         }
     }
 
-    private String defaultJavaValue(Type type) {
-        return switch (type) {
+    private String defaultJavaValue(Operators type) {
+        return switch (Operators.runtimeType(type)) {
             case INT -> "0";
             case BOOL -> "false";
             case STRING -> "\"\"";
             case CIPHERTEXT -> "new EncryptedValue(new byte[0])";
+            case FORMAT -> "new ConstructorValue(\"\", Arrays.asList())";
         };
     }
 }

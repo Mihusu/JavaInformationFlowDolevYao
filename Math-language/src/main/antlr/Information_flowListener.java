@@ -18,6 +18,36 @@ public interface Information_flowListener extends ParseTreeListener {
 	 */
 	void exitProgram(Information_flowParser.ProgramContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link Information_flowParser#globalDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterGlobalDeclaration(Information_flowParser.GlobalDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Information_flowParser#globalDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitGlobalDeclaration(Information_flowParser.GlobalDeclarationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Information_flowParser#keyDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterKeyDeclaration(Information_flowParser.KeyDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Information_flowParser#keyDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitKeyDeclaration(Information_flowParser.KeyDeclarationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Information_flowParser#formatDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterFormatDeclaration(Information_flowParser.FormatDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Information_flowParser#formatDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitFormatDeclaration(Information_flowParser.FormatDeclarationContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Information_flowParser#class}.
 	 * @param ctx the parse tree
 	 */
@@ -267,6 +297,16 @@ public interface Information_flowListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPrimary(Information_flowParser.PrimaryContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Information_flowParser#typedRef}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypedRef(Information_flowParser.TypedRefContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Information_flowParser#typedRef}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypedRef(Information_flowParser.TypedRefContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Information_flowParser#functionCall}.
 	 * @param ctx the parse tree

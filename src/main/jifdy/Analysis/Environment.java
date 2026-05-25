@@ -184,16 +184,6 @@ public class Environment {
     }
 
     // =========================
-    // CRYPTO
-    // =========================
-
-    public int nextCryptoCounter(String key) {
-        int c = cryptoCounter.getOrDefault(key, 0);
-        cryptoCounter.put(key, c + 1);
-        return c;
-    }
-
-    // =========================
     // SECURITY
     // =========================
 

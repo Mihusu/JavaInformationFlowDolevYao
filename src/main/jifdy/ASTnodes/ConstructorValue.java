@@ -16,7 +16,7 @@ public class ConstructorValue extends Value {
 
     @Override
     public Type getType() {
-        return Type.STRING;
+        return Type.FORMAT;
     }
 
     @Override

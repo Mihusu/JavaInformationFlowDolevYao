@@ -1,3 +1,7 @@
+key kEditor;
+key kPublisher;
+format Submission(String low title, String high manuscript);
+format Approval(String low title, String high review);
 public class InsecurePublishing {
 
     int low publicationCounter = 0;

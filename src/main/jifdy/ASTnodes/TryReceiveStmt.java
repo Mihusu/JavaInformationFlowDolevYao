@@ -45,7 +45,11 @@ public class TryReceiveStmt extends Stmt {
 
         // Optional ciphertext binding
         if (resultVar != null) {
-            delta.putType(resultVar, Type.CIPHERTEXT);
+            if (format instanceof EncryptFormat encryptFormat) {
+                delta.putType(resultVar, encryptFormat.ciphertextType());
+            } else {
+                delta.putType(resultVar, Type.CIPHERTEXT);
+            }
             gamma.putLabel(resultVar, SecLabel.LOW);
         }
 

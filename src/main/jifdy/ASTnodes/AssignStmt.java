@@ -23,10 +23,10 @@ public class AssignStmt extends Stmt {
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedure) {
 
-        Type rhs = expr.typecheck(delta, gamma);
-        Type lhs = delta.getType(name);
+        Operators rhs = expr.typecheck(delta, gamma);
+        Operators lhs = delta.getType(name);
 
-        if (rhs != lhs) {
+        if (!Operators.sameType(rhs, lhs)) {
             throw new TypeCheckException("Type mismatch in assignment", lineNumber, name);
         }
 

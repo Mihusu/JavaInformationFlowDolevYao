@@ -32,12 +32,23 @@ public class ConstructorExpr extends Expr {
     }
 
     @Override
-    public Type typecheck(TypeEnv delta, LabelEnv gamma) {
-        for (Expr arg : args) {
-            arg.typecheck(delta, gamma);
+    public Operators typecheck(TypeEnv delta, LabelEnv gamma) {
+        FormatType formatType = delta.getFormat(name);
+
+        if (args.size() != formatType.fields.size()) {
+            throw new RuntimeException("Wrong number of arguments for format " + name);
         }
 
-        return Type.STRING;
+        for (int i = 0; i < args.size(); i++) {
+            Operators actualType = args.get(i).typecheck(delta, gamma);
+            Operators expectedType = formatType.fields.get(i).type;
+
+            if (!Operators.sameType(actualType, expectedType)) {
+                throw new RuntimeException("Argument type mismatch for format " + name);
+            }
+        }
+
+        return formatType;
     }
 
     @Override

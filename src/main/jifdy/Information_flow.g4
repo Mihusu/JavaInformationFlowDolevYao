@@ -39,7 +39,20 @@ LINE_COMMENT
     ;
 
 program
-    : class
+    : globalDeclaration* class
+    ;
+
+globalDeclaration
+    : keyDeclaration
+    | formatDeclaration
+    ;
+
+keyDeclaration
+    : 'key' KEY ';'
+    ;
+
+formatDeclaration
+    : 'format' IDENTIFIER '(' decls? ')' ';'
     ;
 
 class
@@ -51,9 +64,10 @@ classBlock
     ;
 
 declaration
-    : type SECLABEL IDENTIFIER ('=' expression)? ';'
-    | PPLABEL IDENTIFIER '(' decls* ')' '{' (assignmentStatement)* '}'
-    | encryptionType SECLABEL IDENTIFIER '=' ENCRYPT '(' KEY ',' ( expression | format ) ')' ';'
+    : type SECLABEL IDENTIFIER ('=' expression )? ';'
+    | PPLABEL IDENTIFIER '(' decls* ')' '{' assignmentStatement* '}' // Constructor decleration
+    | encryptionType SECLABEL IDENTIFIER '=' ENCRYPT '(' KEY ',' (IDENTIFIER | format) ')' ';'
+    | IDENTIFIER SECLABEL IDENTIFIER '=' format ';'
     ;
 
 functionDeclaration
@@ -84,7 +98,7 @@ basicType
     ;
 
 encryptionType
-    : ENCRYPT '(' KEY ',' ( expression | format ) ')'
+    : ENCRYPT '(' KEY ',' IDENTIFIER ')'
     ;
 
 statement
@@ -108,12 +122,16 @@ sendStatement
     ;
 
 receiveStatement
-    : TRY_RCV '(' format ')' ( IDENTIFIER '=')? cmdBlock
+    : TRY_RCV '(' format ')' cmdBlock
     ;
 
 format
-    : (type )? SECLABEL IDENTIFIER                      // Variable OR nested format reference
-    | IDENTIFIER '(' formatList ')'
+    // Format terms are used both as receive patterns and as constructor payload syntax.
+    // Arithmetic forms are lowered by ASTBuilder into Expr nodes for constructor payloads.
+    : format ( '+' | '-' | '*' | '/' ) format
+    | '-' format
+    | (type)? SECLABEL IDENTIFIER  // Variable OR nested format reference
+    | IDENTIFIER '(' formatList? ')'
     | ENCRYPT '(' KEY ',' format ')'
     ;
 
@@ -165,10 +183,15 @@ primary
     : INT
     | BOOL
     | STR
+    | typedRef
     | IDENTIFIER
-    | ENCRYPT '(' KEY ',' ( expression | format ) ')'
     | functionCall
     | '(' expression ')'
+    ;
+
+typedRef // references an existing identifier
+    // In my parser They do not introduce new bindings when used in expressions.
+    : type SECLABEL IDENTIFIER
     ;
 
 functionCall

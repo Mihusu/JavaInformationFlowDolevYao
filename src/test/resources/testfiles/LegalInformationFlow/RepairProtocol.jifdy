@@ -1,3 +1,6 @@
+key kCustomerRepairShop;
+format RepairRequest(String low customerName, String low device, int high serial, String high issue);
+format RepairStatus(String low repair, int high serial_in);
 public class RepairProtocol {
 
     public void low customer() {
@@ -9,25 +12,22 @@ public class RepairProtocol {
         String high issue = "Broken motherboard";
 
         // SEND REPAIR REQUEST
-        e(kCustomer, RepairRequest) low repairMsg =
-            e(kRepair, RepairRequest(String low customerName, String low device, int high serial, String high issue));
+        e(kCustomerRepairShop, RepairRequest) low repairMsg =
+            e(kCustomerRepairShop, RepairRequest(String low customerName, String low device, int high serial, String high issue));
 
         send(repairMsg);
 
-        bool low ok = true;
-        String low status = "";
 
         // RECEIVE STATUS
         try_rcv(
-            e(kCustomer,
+            e(kCustomerRepairShop,
                 RepairStatus(
-                    String low repair,
+                    String low status,
                     int high serial_in))
         ) {
-
         }
 
-        if (ok) {
+        if (status == "repaired") {
             print("Repaired");
         }
     }
@@ -42,7 +42,7 @@ public class RepairProtocol {
 
         // RECEIVE REQUEST
         try_rcv(
-            e(kRepair,
+            e(kCustomerRepairShop,
                 RepairRequest(
                     String low c,
                     String low d,
@@ -54,9 +54,9 @@ public class RepairProtocol {
 
         if (ok) {
 
-            String low repair = "repaired";
+            String low status = "repaired";
 
-            e(kRepairShop, RepairStatus) low statusMsg = e(kCustomer, RepairStatus(String low repair, int high serial));
+            e(kCustomerRepairShop, RepairStatus) low statusMsg = e(kCustomerRepairShop, RepairStatus(String low status, int high serial));
 
             send(statusMsg);
         }

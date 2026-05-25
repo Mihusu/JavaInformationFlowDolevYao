@@ -51,7 +51,7 @@ public class FunctionCallExpr extends Expr {
     }
 
     @Override
-    public Type typecheck(TypeEnv delta, LabelEnv gamma) {
+    public Operators typecheck(TypeEnv delta, LabelEnv gamma) {
 
         FunctionType f = delta.getFunction(name);
 
@@ -59,9 +59,9 @@ public class FunctionCallExpr extends Expr {
             throw new TypeCheckException("Wrong number of arguments");
 
         for (int i = 0; i < args.size(); i++) {
-            Type argType = args.get(i).typecheck(delta, gamma);
+            Operators argType = args.get(i).typecheck(delta, gamma);
 
-            if (argType != f.paramTypes.get(i)) {
+            if (!Operators.sameType(argType, f.paramTypes.get(i))) {
                 throw new TypeCheckException("Argument type mismatch");
             }
 

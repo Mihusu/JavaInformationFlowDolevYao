@@ -1,29 +1,47 @@
+key kClientBank;
+key kReceiverBank;
+format Transfer1(String low user, int high amount1, String low target);
+format Transfer2(String low user, int high amount2, String low target);
+format Transfer3(String low user, int high amounts, String low target);
+format Result(String low user, bool high done, int high total);
+
 public class BankTransfer {
 
     String low user = "Alice";
     String low target = "Bob";
 
     public void low client() {
-
         int high amount1 = 2000;
         int high amount2 = 3000;
+        int high amount3 = 4000;
+        int high amount4 = 5000;
         int high total;
+        Transfer1 high u = Transfer1(String low user, int high amount1, String low target);
 
         // encrypted messages (ciphertext is LOW)
-        e(kClient,transfer1) low msg1 = e(kBank,
-            Transfer1(String low user, int high amount1, String low target)
-        );
+        e(kClientBank,Transfer1) low msg1 = e(kClientBank, u);
 
-        e(kClient,transfer2) low msg2 = e(kBank,
+        e(kClientBank,Transfer2) low msg2 = e(kClientBank,
             Transfer2(String low user, int high amount2, String low target)
         );
 
-        total = amount1 + amount2;
+        e(kClientBank,Transfer3) low msg3 = e(kClientBank,
+                    Transfer3(String low user,
+                    int high amount3 - int high amount4, String low target)
+        );
 
-        send(msg1);
-        send(msg2);
+        total = amount1 + amount2 + amount3 - amount4;
 
-        print("Transferred " + total + " to " + target);
+        if(total < 0) {
+            print("Transfer failed.");
+
+        } else {
+            send(msg1);
+            send(msg2);
+            send(msg3);
+
+            print("Transferred " + total + " to " + target);
+        }
     }
 
     public void low bank() {
@@ -32,36 +50,52 @@ public class BankTransfer {
         bool high done;
         int high amount1;
         int high amount2;
+        int high amount3;
 
         // First transfer
-        try_rcv(e(kBank,
-          Transfer1(String low user, int high amount1, String high target)
+        try_rcv(e(kClientBank,
+          Transfer1(String low user, int high amount1, String low target)
         )) {
         }
 
         // Second transfer
-        try_rcv(e(kBank,
+        try_rcv(e(kClientBank,
           Transfer2(String low user, int high amount2, String low target)
         )) {
-          // Ignore catch
         }
 
-        total = amount1 + amount2;
-        done = true;
+        // Third transfer
+        try_rcv(e(kClientBank,
+          Transfer3(String low user, int high amount3, String low target)
+        )) {
+        }
 
-        // Encrypt result BEFORE sending
-        e(kBank,transfer) low resultMsg = e(kReceiver,
-          Result(String low user, bool high done, int high total)
-        );
+        total = amount1 + amount2 + amount3;
 
-        send(resultMsg);
+        if(total < 0) {
+            print("Transfer failed.");
+
+        } else {
+            done = true;
+
+            // Encrypt result BEFORE sending
+            e(kReceiverBank,Result) low resultMsg = e(kReceiverBank,
+              Result(String low user, bool high done, int high total)
+            );
+
+            send(resultMsg);
+        }
     }
 
     public void low clientReceiver() {
-        try_rcv(e(kReceiver,
+        try_rcv(e(kReceiverBank,
           Result(String low user, bool high done, int high total)
         )) {
-          print("You received money from " + user + ". " + user + " has sent you " + total + ". Status: " + done);
+            if(done && total > 0) {
+                print("From bank:");
+                print("You received money from " + user + ". " + user + " has sent you " + total + ". Status: " + done);
+
+            }
         }
     }
 

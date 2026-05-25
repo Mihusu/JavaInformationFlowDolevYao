@@ -10,7 +10,7 @@ public class VarDecl extends Declaration {
     /**
      * The type of the variable.
      */
-    public Type type;
+    public Operators type;
 
     /**
      * The security label of the variable.
@@ -49,12 +49,13 @@ public class VarDecl extends Declaration {
         env.declare(name, initVal, label);
     }
 
-    private Value defaultValue(Type t) {
-        switch (t) {
+    private Value defaultValue(Operators t) {
+        switch (Operators.runtimeType(t)) {
             case INT: return new IntValue(0);
             case BOOL: return new BoolValue(false);
             case STRING: return new StringValue("");
-            case CIPHERTEXT: return new EncryptedValue("", new StringValue(""), "");
+            case CIPHERTEXT: return new EncryptedValue(null, null, "");
+            case FORMAT: return new ConstructorValue("", java.util.List.of());
         }
         throw new RuntimeException("Unknown type");
     }
@@ -63,19 +64,19 @@ public class VarDecl extends Declaration {
      * Performs type checking on the variable declaration.
      * @param delta The type environment.
      * @param gamma The label environment.
-     * @param pc The security context (pc).
+     * @param variableProcedure The security context (pc).
      */
     @Override
-    public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel pc) {
+    public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel variableProcedure) {
 
         delta.putType(name, type);
         gamma.putLabel(name, label);
 
         if (init != null) {
 
-            Type initType = init.typecheck(delta, gamma);
+            Operators initType = init.typecheck(delta, gamma);
 
-            if (initType != type) {
+            if (!Operators.sameType(initType, type)) {
                 throw new TypeCheckException(
                         "Type mismatch in initialization of " + name,
                         lineNumber,
@@ -84,7 +85,7 @@ public class VarDecl extends Declaration {
             }
 
             SecLabel initLabel = init.label(gamma);
-            SecLabel effective = SecLabel.join(pc, initLabel);
+            SecLabel effective = SecLabel.join(variableProcedure, initLabel);
 
             // SPECIAL CASE: Encryption (EncryptExpr) is a declassification mechanism.
             // It results in a LOW ciphertext even if the payload or context is HIGH.
@@ -121,19 +122,23 @@ public class VarDecl extends Declaration {
         return " = " + defaultJavaValue(type);
     }
 
-    private String toJavaType(Type t) {
-        if (t == Type.INT) return "int";
-        if (t == Type.BOOL) return "boolean";
-        if (t == Type.STRING) return "String";
-        if (t == Type.CIPHERTEXT) return "EncryptedValue";
+    private String toJavaType(Operators t) {
+        Type runtimeType = Operators.runtimeType(t);
+        if (runtimeType == Type.INT) return "int";
+        if (runtimeType == Type.BOOL) return "boolean";
+        if (runtimeType == Type.STRING) return "String";
+        if (runtimeType == Type.CIPHERTEXT) return "EncryptedValue";
+        if (runtimeType == Type.FORMAT) return "ConstructorValue";
         return "";
     }
 
-    private String defaultJavaValue(Type t) {
-        if (t == Type.INT) return "0";
-        if (t == Type.BOOL) return "false";
-        if (t == Type.STRING) return "\"\"";
-        if (t == Type.CIPHERTEXT) return "new EncryptedValue(\"\", \"\", \"\")";
+    private String defaultJavaValue(Operators t) {
+        Type runtimeType = Operators.runtimeType(t);
+        if (runtimeType == Type.INT) return "0";
+        if (runtimeType == Type.BOOL) return "false";
+        if (runtimeType == Type.STRING) return "\"\"";
+        if (runtimeType == Type.CIPHERTEXT) return "new EncryptedValue(new byte[0])";
+        if (runtimeType == Type.FORMAT) return "new ConstructorValue(\"\", Arrays.asList())";
         return "";
     }
 }

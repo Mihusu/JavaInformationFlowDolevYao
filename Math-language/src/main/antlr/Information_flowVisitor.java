@@ -17,6 +17,24 @@ public interface Information_flowVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitProgram(Information_flowParser.ProgramContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Information_flowParser#globalDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGlobalDeclaration(Information_flowParser.GlobalDeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Information_flowParser#keyDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitKeyDeclaration(Information_flowParser.KeyDeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Information_flowParser#formatDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFormatDeclaration(Information_flowParser.FormatDeclarationContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Information_flowParser#class}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -166,6 +184,12 @@ public interface Information_flowVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPrimary(Information_flowParser.PrimaryContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Information_flowParser#typedRef}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypedRef(Information_flowParser.TypedRefContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Information_flowParser#functionCall}.
 	 * @param ctx the parse tree

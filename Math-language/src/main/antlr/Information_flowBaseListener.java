@@ -29,6 +29,42 @@ public class Information_flowBaseListener implements Information_flowListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterGlobalDeclaration(Information_flowParser.GlobalDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGlobalDeclaration(Information_flowParser.GlobalDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterKeyDeclaration(Information_flowParser.KeyDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitKeyDeclaration(Information_flowParser.KeyDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFormatDeclaration(Information_flowParser.FormatDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFormatDeclaration(Information_flowParser.FormatDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterClass(Information_flowParser.ClassContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -324,6 +360,18 @@ public class Information_flowBaseListener implements Information_flowListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitPrimary(Information_flowParser.PrimaryContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTypedRef(Information_flowParser.TypedRefContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTypedRef(Information_flowParser.TypedRefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

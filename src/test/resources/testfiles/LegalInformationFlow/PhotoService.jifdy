@@ -1,3 +1,8 @@
+key kClientServer;
+format Login(String low user, String high password);
+format Upload(String low user, String high photo);
+format Ack(String low msg);
+format AckMsg(String high uploaded);
 public class PhotoService {
 
     public void low client() {
@@ -6,24 +11,24 @@ public class PhotoService {
         String high password = "1234";
         String high photo = "BINARYDATA";
         bool high ok;
-        String low msg;
+        String high msg;
 
         // SEND LOGIN
-        e(kClient, Login) low loginMsg =
-            e(kServer, Login(String low user, String high password));
+        e(kClientServer, Login) low loginMsg =
+            e(kClientServer, Login(String low user, String high password));
 
         send(loginMsg);
 
         // SEND UPLOAD
-        e(kClient, Upload) low uploadMsg =
-            e(kServer, Upload(String low user, String high photo));
+        e(kClientServer, Upload) low uploadMsg =
+            e(kClientServer, Upload(String low user, String high photo));
 
         send(uploadMsg);
 
         ok = true;
 
         // RECEIVE ACK
-        try_rcv(e(kClient,Ack(String low msg)
+        try_rcv(e(kClientServer,AckMsg(String high msg)
         )) {
             // receive FAILED -> mark failure
             ok = false;
@@ -42,7 +47,7 @@ public class PhotoService {
         String high photo;
 
         // RECEIVE LOGIN
-        try_rcv(e(kServer,
+        try_rcv(e(kClientServer,
             Login(String low user, String high password)
         )) {
             ok = false;
@@ -50,7 +55,7 @@ public class PhotoService {
 
         // RECEIVE UPLOAD
         if (ok) {
-            try_rcv(e(kServer,
+            try_rcv(e(kClientServer,
                 Upload(String low user2, String high photo_in)
             )) {
                 ok = false;
@@ -64,8 +69,8 @@ public class PhotoService {
             String high store = photo;
             String high uploaded = "uploaded";
 
-            e(kServer, Ack) low ackMsg =
-                e(kClient, Ack(String high uploaded));
+            e(kClientServer, AckMsg) low ackMsg =
+                e(kClientServer, AckMsg(String high uploaded));
 
             send(ackMsg);
         }

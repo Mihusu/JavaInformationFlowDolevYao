@@ -1,3 +1,6 @@
+key kAliceBob;
+format Message(String low user, String low text);
+
 public class SecureChat {
 
     public bool low isAllowed(String low x) {
@@ -13,13 +16,15 @@ public class SecureChat {
     public void low alice() {
 
         String low user = "Alice";
-        String low text = "Hello";
+        String low text = "Hello ";
 
         isAllowed(text);
 
+        Message high f1 = Message(String low user, String low text);
+
         if(isAllowed(text) == true) {
-            e(kAlice, Message) low msg =
-                    e(kBob, Message(String low user, String low text));
+            e(kAliceBob, Message) low msg =
+                    e(kAliceBob, f1);
 
             send(msg);
         }
@@ -28,20 +33,17 @@ public class SecureChat {
     public void low bob() {
 
         bool high ok = true;
-        String low sender = "";
-        String low text = "";
 
-        try_rcv(e(kBob,
+        try_rcv(e(kAliceBob,
                 Message(String low user, String low text))
         ) {
             ok = false;
         }
 
-        sender = user;
-        text = text;
+        String low sender = user;
 
         if (ok) {
-            print(sender, text);
+            print("Sender: " + sender, text);
         }
     }
 }

@@ -35,9 +35,9 @@ public class CmdBlock extends Stmt {
                 gamma.putLabel(v.name, v.label);
 
                 if (v.init != null) {
-                    Type t = v.init.typecheck(delta, gamma);
+                    Operators t = v.init.typecheck(delta, gamma);
 
-                    if (t != v.type) {
+                    if (!Operators.sameType(t, v.type)) {
                         throw new TypeCheckException(
                                 "Type mismatch in initialization of " + v.name
                         );

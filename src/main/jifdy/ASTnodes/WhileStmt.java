@@ -27,7 +27,7 @@ public class WhileStmt extends Stmt {
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel label) {
 
-        Type condType = condition.typecheck(delta, gamma);
+        Type condType = Operators.runtimeType(condition.typecheck(delta, gamma));
 
         if (condType != Type.BOOL) {
             throw new TypeCheckException("While condition must be boolean");
@@ -35,9 +35,9 @@ public class WhileStmt extends Stmt {
 
         SecLabel condLabel = condition.label(gamma);
         //
-        SecLabel newLabel = SecLabel.join(label, condLabel);
+        SecLabel newSecLabel = SecLabel.join(label, condLabel);
 
-        body.typecheck(delta, gamma, newLabel);
+        body.typecheck(delta, gamma, newSecLabel);
     }
 
 

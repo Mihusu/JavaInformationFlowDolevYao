@@ -16,11 +16,11 @@ import java.util.Base64;
 /**
  * Pattern node that decrypts an incoming ciphertext and matches its plaintext structure.
  */
-public class EncryptPattern extends Format {
+public class EncryptFormat extends Format {
     public Expr key;
     public Format inner;
 
-    public EncryptPattern(Expr key, Format inner) {
+    public EncryptFormat(Expr key, Format inner) {
         this.key = key;
         this.inner = inner;
     }
@@ -60,7 +60,7 @@ public class EncryptPattern extends Format {
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel label) {
 
         // Verify the key expression is well-typed
-        Type keyType = key.typecheck(delta, gamma);
+        Type keyType = Operators.runtimeType(key.typecheck(delta, gamma));
 
         if (keyType != Type.STRING) {
             throw new TypeCheckException(
@@ -69,6 +69,10 @@ public class EncryptPattern extends Format {
         }
 
         inner.typecheck(delta, gamma, label);
+    }
+
+    public CiphertextType ciphertextType() {
+        return new CiphertextType(extractKeyName(key), extractFormatName(inner));
     }
 
     @Override
@@ -104,5 +108,33 @@ public class EncryptPattern extends Format {
     @Override
     public SecLabel label(LabelEnv gamma) {
         return inner.label(gamma);
+    }
+
+    private String extractKeyName(Expr keyExpr) {
+        if (keyExpr instanceof Expr.StringLiteral literal) {
+            return literal.value;
+        }
+
+        if (keyExpr instanceof VarExpr varExpr) {
+            return varExpr.name;
+        }
+
+        throw new RuntimeException("Unsupported encryption key expression");
+    }
+
+    private String extractFormatName(Format format) {
+        if (format instanceof ConstructorFormat constructorFormat) {
+            return constructorFormat.name;
+        }
+
+        if (format instanceof TypedVarFormat typedVarFormat) {
+            return typedVarFormat.name;
+        }
+
+        if (format instanceof EncryptFormat encryptFormat) {
+            return encryptFormat.ciphertextType().formatName;
+        }
+
+        throw new RuntimeException("Unsupported encrypted format pattern");
     }
 }

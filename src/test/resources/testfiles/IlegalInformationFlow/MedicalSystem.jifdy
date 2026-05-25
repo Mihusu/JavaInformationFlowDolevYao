@@ -1,3 +1,7 @@
+key kPublic;
+key kPatient;
+format MedicalData(String low patientName, String high diagnosis, int high patientId);
+format Result(String low received);
 public class MedicalSystem {
 
     public void low patient() {
