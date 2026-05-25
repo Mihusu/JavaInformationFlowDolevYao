@@ -1,4 +1,4 @@
-package Demos;
+package CodeGeneration;
 
 import java.util.*;
 
