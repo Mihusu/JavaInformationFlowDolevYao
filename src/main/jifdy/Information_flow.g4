@@ -66,7 +66,7 @@ classBlock
 declaration
     : type SECLABEL IDENTIFIER ('=' expression )? ';'
     | PPLABEL IDENTIFIER '(' decls* ')' '{' assignmentStatement* '}' // Constructor decleration
-    | encryptionType SECLABEL IDENTIFIER '=' ENCRYPT '(' KEY ',' (IDENTIFIER | format) ')' ';'
+    | encryptionType SECLABEL IDENTIFIER '=' ENCRYPT '(' KEY ',' ( IDENTIFIER | format ) ')' ';'
     | IDENTIFIER SECLABEL IDENTIFIER '=' format ';'
     ;
 
@@ -75,11 +75,11 @@ functionDeclaration
     ;
 
 cmdBlock
-    : '{' (declaration | statement | cmdBlock)* '}'
+    : '{' ( declaration | statement | cmdBlock )* '}'
     ;
 
 decls
-    : declItem (',' declItem)*
+    : declItem ( ',' declItem )*
     ;
 
 declItem
@@ -136,7 +136,7 @@ format
     ;
 
 formatList
-    : format (',' format)*
+    : format ( ',' format )*
     ;
 
 expression
