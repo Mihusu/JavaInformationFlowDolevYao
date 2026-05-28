@@ -49,10 +49,6 @@ public class LabelEnv {
         return labels.get(var);
     }
 
-    public boolean containsLabel(String var) {
-        return labels.containsKey(var);
-    }
-
     // functions
     public void putFunction(String name, FunctionLabel label) {
         functions.put(name, label);
@@ -91,13 +87,4 @@ public class LabelEnv {
     public SecLabel getObservedReturnLabel() {
         return observedReturnLabel != null ? observedReturnLabel : SecLabel.LOW;
     }
-
-    public void putCipherPayloadLabel(String name, SecLabel label) {
-        cipherPayloadLabels.put(name, label);
-    }
-
-    public SecLabel getCipherPayloadLabel(String name) {
-        return cipherPayloadLabels.get(name);
-    }
-
 }

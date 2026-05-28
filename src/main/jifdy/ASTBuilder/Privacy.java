@@ -1,4 +1,4 @@
-package ASTnodes;
+package ASTBuilder;
 
 /**
  * Visibility modifier used for classes, functions, and procedures.

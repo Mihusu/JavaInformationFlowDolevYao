@@ -12,10 +12,6 @@ public class FunctionType {
     public List<SecLabel> paramLabels;
     public SecLabel returnLabel;
 
-    public FunctionType(List<Operators> paramTypes, Operators returnType) {
-        this(paramTypes, returnType, null, null);
-    }
-
     public FunctionType(List<Operators> paramTypes, Operators returnType,
                         List<SecLabel> paramLabels, SecLabel returnLabel) {
         this.paramTypes = paramTypes;

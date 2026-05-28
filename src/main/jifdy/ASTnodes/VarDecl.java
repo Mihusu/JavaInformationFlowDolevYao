@@ -90,9 +90,7 @@ public class VarDecl extends Declaration {
             // SPECIAL CASE: Encryption (EncryptExpr) is a declassification mechanism.
             // It results in a LOW ciphertext even if the payload or context is HIGH.
             // The user explicitly requested that encryption doesn't cause illegal flow.
-            if (init instanceof EncryptExpr && label == SecLabel.LOW) {
-                // Allow it.
-            } else if (!Security.canFlow(effective, label)) {
+            if (!Security.canFlow(effective, label)) {
                 throw new TypeCheckException(
                         "Illegal flow in initialization of " + name,
                         lineNumber,
@@ -132,13 +130,13 @@ public class VarDecl extends Declaration {
         return "";
     }
 
-    private String defaultJavaValue(Operators t) {
-        Type runtimeType = Operators.runtimeType(t);
-        if (runtimeType == Type.INT) return "0";
-        if (runtimeType == Type.BOOL) return "false";
-        if (runtimeType == Type.STRING) return "\"\"";
-        if (runtimeType == Type.CIPHERTEXT) return "new EncryptedValue(new byte[0])";
-        if (runtimeType == Type.FORMAT) return "new ConstructorValue(\"\", Arrays.asList())";
-        return "";
+    private String defaultJavaValue(Operators type) {
+        return switch (Operators.runtimeType(type)) {
+            case INT -> "0";
+            case BOOL -> "false";
+            case STRING -> "\"\"";
+            case CIPHERTEXT -> "new EncryptedValue(new byte[0])";
+            case FORMAT -> "new ConstructorValue(\"\", Arrays.asList())";
+        };
     }
 }

@@ -1,5 +1,6 @@
 package ASTnodes;
 
+import ASTBuilder.Privacy;
 import Analysis.*;
 import CodeGeneration.CodeGenEnv;
 
@@ -33,7 +34,7 @@ public class ClassDecl extends Node {
     /**
      * Statements executed at class scope after declarations and function registration.
      */
-    public List<Stmt> entryStatements;
+    public List<Stmt> statements;
 
     /**
      * Evaluates the class by initializing its fields in the environment.
@@ -41,7 +42,7 @@ public class ClassDecl extends Node {
      */
     public void eval(Environment env) {
 
-        // 1. Initialize variables
+        // 1. Initialize declarations
         for (Declaration d : declarations) {
             if (d instanceof VarDecl) {
                 VarDecl v = (VarDecl) d;
@@ -59,11 +60,13 @@ public class ClassDecl extends Node {
             }
         }
 
+        // 2. Initialize functions
         for (FunctionDecl f : functions) {
             f.eval(env);
         }
 
-        for (Stmt stmt : entryStatements) {
+        // 3. Initialize statements
+        for (Stmt stmt : statements) {
             stmt.eval(env);
         }
     }
@@ -85,13 +88,13 @@ public class ClassDecl extends Node {
             sb.append("\n").append(f.compile(env));
         }
 
-        if (!entryStatements.isEmpty()) {
+        if (!statements.isEmpty()) {
             sb.append("\n")
                     .append(env.indent())
                     .append("public void entry() {\n");
 
             env.increaseIndent();
-            for (Stmt stmt : entryStatements) {
+            for (Stmt stmt : statements) {
                 sb.append(stmt.compile(env));
             }
             env.decreaseIndent();
@@ -181,7 +184,7 @@ public class ClassDecl extends Node {
             f.typecheck(delta, gamma, SecLabel.LOW);
         }
 
-        for (Stmt stmt : entryStatements) {
+        for (Stmt stmt : statements) {
             stmt.typecheck(delta, gamma, SecLabel.LOW);
         }
     }

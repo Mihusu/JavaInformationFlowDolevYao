@@ -181,7 +181,7 @@ public class Program extends Node {
     }
 
     private void appendMainEntry(StringBuilder sb, ClassDecl cls) {
-        if (!cls.entryStatements.isEmpty()) {
+        if (!cls.statements.isEmpty()) {
             sb.append("program.entry();\n");
             return;
         }

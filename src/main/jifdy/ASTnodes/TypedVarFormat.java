@@ -53,7 +53,7 @@ public class TypedVarFormat extends Format {
             return env.indent() + "Object " + name + " = " + assignmentValue + ";\n";
         }
 
-        assignmentValue = "(" + toJavaCastType(type) + ") " + valueVar;
+        assignmentValue = "(" + toJavaType(type) + ") " + valueVar;
         if (env.isVariableDeclared(name)) {
             return env.indent() + name + " = " + assignmentValue + ";\n";
         }
@@ -76,16 +76,6 @@ public class TypedVarFormat extends Format {
         return switch (Operators.runtimeType(t)) {
             case INT -> "int";
             case BOOL -> "boolean";
-            case STRING -> "String";
-            case CIPHERTEXT -> "EncryptedValue";
-            case FORMAT -> "ConstructorValue";
-        };
-    }
-
-    private String toJavaCastType(Operators t) {
-        return switch (Operators.runtimeType(t)) {
-            case INT -> "Integer";
-            case BOOL -> "Boolean";
             case STRING -> "String";
             case CIPHERTEXT -> "EncryptedValue";
             case FORMAT -> "ConstructorValue";

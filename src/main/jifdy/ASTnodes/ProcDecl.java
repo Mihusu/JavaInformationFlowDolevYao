@@ -1,13 +1,12 @@
 package ASTnodes;
 
+import ASTBuilder.Privacy;
 import Analysis.Environment;
 import Analysis.LabelEnv;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Declaration node for a procedure with parameters and a statement body.
@@ -19,18 +18,6 @@ public class ProcDecl extends Declaration {
     public SecLabel returnLabel;
     public List<Param> params;
     public List<Stmt> body;
-
-    Map<String, ProcDecl> procedures  = new HashMap<>();
-
-    public void putProcedure(String name, ProcDecl proc) {
-        procedures.put(name, proc);
-    }
-
-    public ProcDecl getProcedure(String name) {
-        if (!procedures.containsKey(name))
-            throw new RuntimeException("Unknown procedure: " + name);
-        return procedures.get(name);
-    }
 
     @Override
     public void eval(Environment env) {

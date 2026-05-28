@@ -1,5 +1,6 @@
 package ASTnodes;
 
+import ASTBuilder.Privacy;
 import Analysis.*;
 import CodeGeneration.CodeGenEnv;
 

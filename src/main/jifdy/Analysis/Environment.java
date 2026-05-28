@@ -21,7 +21,6 @@ public class Environment {
     private Map<String, ProcDecl> procedures = new HashMap<>();
     private final Map<String, FunctionDecl> functions = new HashMap<>();
 
-
     // Communication channels
     public Queue<Value> inbox = new LinkedList<>();
     public List<Value> outbox = new ArrayList<>();
@@ -129,31 +128,6 @@ public class Environment {
         if (!procedures.containsKey(name))
             throw new RuntimeException("Undefined procedure: " + name);
         return procedures.get(name);
-    }
-
-    public void callProcedure(String name, List<Expr> args) {
-
-        ProcDecl proc = getProcedure(name);
-
-        // create local environment (IMPORTANT)
-        Environment localEnv = new Environment(this);
-
-        // copy global state if needed (optional for now)
-        localEnv.procedures = this.procedures;
-
-        // bind parameters
-        for (int i = 0; i < proc.params.size(); i++) {
-
-            String paramName = proc.params.get(i).name;
-            Value argValue = args.get(i).eval(this);
-
-            localEnv.declare(paramName, argValue, argValue.label);
-        }
-
-        // execute body
-        for (Stmt stmt : proc.body) {
-            stmt.eval(localEnv);
-        }
     }
 
     // =========================

@@ -37,9 +37,8 @@ public class AssignStmt extends Stmt {
         SecLabel varLabel = gamma.getLabel(name);
 
         // SPECIAL CASE: Encryption (EncryptExpr) is a declassification mechanism.
-        if(expr instanceof EncryptExpr && varLabel == SecLabel.LOW) {
-            // Allow it.
-        } else if (!Security.canFlow(effectiveLabel, varLabel)) {
+        // expr instanceof EncryptExpr && varLabel == SecLabel.LOW "continue" and if the following:
+        if(!Security.canFlow(effectiveLabel, varLabel)) {
             throw new TypeCheckException(
                     "Illegal information flow: " +
                             effectiveLabel + " -> " + varLabel,

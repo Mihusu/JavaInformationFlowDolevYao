@@ -70,7 +70,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
 
         cls.declarations = new ArrayList<>();
         cls.functions = new ArrayList<>();
-        cls.entryStatements = new ArrayList<>();
+        cls.statements = new ArrayList<>();
 
         for (Information_flowParser.DeclarationContext d : ctx.declaration()) {
             cls.declarations.add((Declaration) visit(d));
@@ -84,7 +84,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
 
         if (ctx.statement() != null) {
             for (Information_flowParser.StatementContext sctx : ctx.statement()) {
-                cls.entryStatements.add((Stmt) visit(sctx));
+                cls.statements.add((Stmt) visit(sctx));
             }
         }
 
