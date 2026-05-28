@@ -190,7 +190,7 @@ primary
     ;
 
 typedRef // references an existing identifier
-    // In my parser They do not introduce new bindings when used in expressions.
+    // In my parser, they do not introduce new bindings when used in expressions.
     : type SECLABEL IDENTIFIER
     ;
 

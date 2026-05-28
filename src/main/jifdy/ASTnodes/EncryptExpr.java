@@ -10,6 +10,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 
@@ -28,17 +29,8 @@ public class EncryptExpr extends Expr {
     // Actual payload term
     public Expr payload;
 
+    // Actual expression used at runtime/code generation to get the key value
     public Expr keyExpr;
-
-    public EncryptExpr(String keyName,
-                       String formatName,
-                       Expr payload) {
-
-        this.keyName = keyName;
-        this.formatName = formatName;
-        this.payload = payload;
-        this.keyExpr = new Expr.StringLiteral(keyName);
-    }
 
     public EncryptExpr(Expr payload,
                        Expr keyExpr) {
@@ -59,7 +51,7 @@ public class EncryptExpr extends Expr {
         }
 
         try {
-            byte[] keyBytes = Arrays.copyOf(sk.value.getBytes("UTF-8"), 16);
+            byte[] keyBytes = Arrays.copyOf(sk.value.getBytes(StandardCharsets.UTF_8), 16);
             SecretKeySpec secretKey = new SecretKeySpec(keyBytes, "AES");
             Cipher cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
@@ -69,7 +61,7 @@ public class EncryptExpr extends Expr {
             oos.writeObject(payloadValue);
             byte[] payloadBytes = bos.toByteArray();
 
-            // We still use EncryptedValue but we could store the actual ciphertext if we wanted to be 100% realistic
+            // We still use EncryptedValue, but we could store the actual ciphertext if we wanted to be 100% realistic
             // For now, let's keep the EncryptedValue structure but emphasize that it's "encrypted"
             EncryptedValue encrypted = new EncryptedValue(
                     null,

@@ -53,13 +53,13 @@ public class TypedVarFormat extends Format {
             return env.indent() + "Object " + name + " = " + assignmentValue + ";\n";
         }
 
-        assignmentValue = "(" + toJavaType(type) + ") " + valueVar;
+        assignmentValue = "(" + JavaTypeSupport.toJavaType(type) + ") " + valueVar;
         if (env.isVariableDeclared(name)) {
             return env.indent() + name + " = " + assignmentValue + ";\n";
         }
 
         env.declareVariable(name);
-        return env.indent() + toJavaType(type) + " " + name + " = " + assignmentValue + ";\n";
+        return env.indent() + JavaTypeSupport.toJavaType(type) + " " + name + " = " + assignmentValue + ";\n";
     }
 
     @Override
@@ -70,15 +70,5 @@ public class TypedVarFormat extends Format {
     @Override
     public SecLabel label(LabelEnv gamma) {
         return this.label;
-    }
-
-    private String toJavaType(Operators t) {
-        return switch (Operators.runtimeType(t)) {
-            case INT -> "int";
-            case BOOL -> "boolean";
-            case STRING -> "String";
-            case CIPHERTEXT -> "EncryptedValue";
-            case FORMAT -> "ConstructorValue";
-        };
     }
 }

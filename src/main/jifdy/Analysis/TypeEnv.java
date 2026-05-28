@@ -74,10 +74,6 @@ public class TypeEnv {
         return formats.get(name);
     }
 
-    public boolean containsFormat(String name) {
-        return formats.containsKey(name);
-    }
-
     // functions
     public void putFunction(String name, FunctionType type) {
         functions.put(name, type);

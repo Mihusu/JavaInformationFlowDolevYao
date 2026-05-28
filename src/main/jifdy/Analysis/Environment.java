@@ -18,7 +18,7 @@ public class Environment {
     public Map<String, SecLabel> labels = new HashMap<>();
 
     // Procedures (functions)
-    private Map<String, ProcDecl> procedures = new HashMap<>();
+    private final Map<String, ProcDecl> procedures = new HashMap<>();
     private final Map<String, FunctionDecl> functions = new HashMap<>();
 
     // Communication channels
@@ -84,7 +84,7 @@ public class Environment {
 
         SecLabel varLabel = labels.get(name);
 
-        if (!canFlow(value.label, varLabel)) {
+        if (!Security.canFlow(value.label, varLabel)) {
             throw new RuntimeException(
                     "Illegal flow: " + value.label + " → " + varLabel
             );
@@ -155,19 +155,5 @@ public class Environment {
     public void setReturnValue(Value value) {
         this.returnValue = value;
         this.hasReturned = true;
-    }
-
-    // =========================
-    // SECURITY
-    // =========================
-
-    /**
-     * Checks if information can flow from one security label to another.
-     * @param from The source security label.
-     * @param to The target security label.
-     * @return true if the flow is allowed, false otherwise.
-     */
-    public boolean canFlow(SecLabel from, SecLabel to) {
-        return !(from == SecLabel.HIGH && to == SecLabel.LOW);
     }
 }

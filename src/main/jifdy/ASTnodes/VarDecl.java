@@ -39,7 +39,7 @@ public class VarDecl extends Declaration {
         if (init != null) {
             initVal = init.eval(env);
         } else {
-            initVal = defaultValue(type);
+            initVal = JavaTypeSupport.defaultValue(type);
         }
 
         // assign security label
@@ -47,17 +47,6 @@ public class VarDecl extends Declaration {
 
         // store in environment
         env.declare(name, initVal, label);
-    }
-
-    private Value defaultValue(Operators t) {
-        switch (Operators.runtimeType(t)) {
-            case INT: return new IntValue(0);
-            case BOOL: return new BoolValue(false);
-            case STRING: return new StringValue("");
-            case CIPHERTEXT: return new EncryptedValue(null, null, "");
-            case FORMAT: return new ConstructorValue("", java.util.List.of());
-        }
-        throw new RuntimeException("Unknown type");
     }
 
     /**
@@ -104,12 +93,12 @@ public class VarDecl extends Declaration {
     @Override
     public String compile(CodeGenEnv env) {
         env.declareVariable(name);
-        return env.indent() + toJavaType(type) + " " + name + compileInitializer(env) + ";\n";
+        return env.indent() + JavaTypeSupport.toJavaType(type) + " " + name + compileInitializer(env) + ";\n";
     }
 
     public String compileField(CodeGenEnv env) {
         env.declareVariable(name);
-        return env.indent() + "public " + toJavaType(type) + " " + name + compileInitializer(env) + ";\n";
+        return env.indent() + "public " + JavaTypeSupport.toJavaType(type) + " " + name + compileInitializer(env) + ";\n";
     }
 
     private String compileInitializer(CodeGenEnv env) {
@@ -117,26 +106,6 @@ public class VarDecl extends Declaration {
             return " = " + init.compile(env);
         }
 
-        return " = " + defaultJavaValue(type);
-    }
-
-    private String toJavaType(Operators t) {
-        Type runtimeType = Operators.runtimeType(t);
-        if (runtimeType == Type.INT) return "int";
-        if (runtimeType == Type.BOOL) return "boolean";
-        if (runtimeType == Type.STRING) return "String";
-        if (runtimeType == Type.CIPHERTEXT) return "EncryptedValue";
-        if (runtimeType == Type.FORMAT) return "ConstructorValue";
-        return "";
-    }
-
-    private String defaultJavaValue(Operators type) {
-        return switch (Operators.runtimeType(type)) {
-            case INT -> "0";
-            case BOOL -> "false";
-            case STRING -> "\"\"";
-            case CIPHERTEXT -> "new EncryptedValue(new byte[0])";
-            case FORMAT -> "new ConstructorValue(\"\", Arrays.asList())";
-        };
+        return " = " + JavaTypeSupport.defaultValueExpression(type);
     }
 }

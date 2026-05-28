@@ -44,12 +44,11 @@ public class ClassDecl extends Node {
 
         // 1. Initialize declarations
         for (Declaration d : declarations) {
-            if (d instanceof VarDecl) {
-                VarDecl v = (VarDecl) d;
+            if (d instanceof VarDecl v) {
 
                 Value initVal = (v.init != null)
                         ? v.init.eval(env)
-                        : defaultValue(v.type);
+                        : JavaTypeSupport.defaultValue(v.type);
 
                 initVal.label = v.label;
 
@@ -137,9 +136,8 @@ public class ClassDecl extends Node {
                     SecLabel initLabel = v.init.label(gamma);
 
                     // SPECIAL CASE: Encryption (EncryptExpr) is a declassification mechanism.
-                    if (v.init instanceof EncryptExpr && v.label == SecLabel.LOW) {
-                        // Allow it.
-                    } else if (!Security.canFlow(initLabel, v.label)) {
+                    // If the variable is initialized with an encryption expression and the label is LOW, allow the initialization.
+                    if (!Security.canFlow(initLabel, v.label)) {
                         throw new TypeCheckException(
                                 "Illegal information flow in initialization of "
                                         + v.name + ": "
@@ -189,14 +187,4 @@ public class ClassDecl extends Node {
         }
     }
 
-    private Value defaultValue(Operators t) {
-        switch (Operators.runtimeType(t)) {
-            case INT: return new IntValue(0);
-            case BOOL: return new BoolValue(false);
-            case STRING: return new StringValue("");
-            case CIPHERTEXT: return new EncryptedValue(null, null, "");
-            case FORMAT: return new ConstructorValue("", java.util.List.of());
-        }
-        throw new TypeCheckException("Unknown type");
-    }
 }

@@ -482,7 +482,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
     }
 
     // =========================
-    // PATTERNS (DOLEV-YAO)
+    // FORMATS
     // =========================
 
     @Override
@@ -744,49 +744,6 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         return ctx.IDENTIFIER() != null
                 && ctx.getChildCount() >= 3
                 && "(".equals(ctx.getChild(1).getText());
-    }
-
-    private String extractFormatName(Information_flowParser.FormatContext ctx, ParserRuleContext origin) {
-        if (ctx.IDENTIFIER() != null) {
-            String formatName = ctx.IDENTIFIER().getText();
-            requireDeclaredFormat(formatName, origin);
-            return formatName;
-        }
-
-        if (ctx.ENCRYPT() != null) {
-            return extractFormatName(ctx.format(0), origin);
-        }
-
-        throw new RuntimeException("Invalid format name in ciphertext type");
-    }
-
-    private String extractExpressionFormatName(Expr expr, ParserRuleContext origin) {
-        if (expr instanceof ConstructorExpr constructorExpr) {
-            requireDeclaredFormat(constructorExpr.name, origin);
-            return constructorExpr.name;
-        }
-
-        if (expr instanceof VarExpr varExpr) {
-            requireDeclaredFormat(varExpr.name, origin);
-            return varExpr.name;
-        }
-
-        if (expr instanceof Expr.StringLiteral literal) {
-            requireDeclaredFormat(literal.value, origin);
-            return literal.value;
-        }
-
-        if (expr instanceof FunctionCallExpr functionCallExpr) {
-            requireDeclaredFormat(functionCallExpr.name, origin);
-            return functionCallExpr.name;
-        }
-
-        if (expr instanceof EncryptExpr encryptExpr) {
-            requireDeclaredFormat(encryptExpr.formatName, origin);
-            return encryptExpr.formatName;
-        }
-
-        throw new RuntimeException("Cannot derive ciphertext format from expression");
     }
 
     private List<Param> buildParams(Information_flowParser.DeclsContext ctx) {

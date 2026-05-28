@@ -14,8 +14,6 @@ public class Security {
      * @return true if flow is allowed, false if it's an illegal flow (e.g., HIGH to LOW).
      */
     public static boolean canFlow(SecLabel from, SecLabel to) {
-        if (from == SecLabel.HIGH && to == SecLabel.LOW)
-            return false;
-        return true;
+        return from != SecLabel.HIGH || to != SecLabel.LOW;
     }
 }

@@ -203,7 +203,7 @@ public class Program extends Node {
                 if (fieldNames.contains(param.name)) {
                     sb.append("program.").append(param.name);
                 } else {
-                    sb.append(defaultJavaValue(param.type));
+                    sb.append(JavaTypeSupport.defaultValueExpression(param.type));
                 }
 
                 if (i < function.params.size() - 1) {
@@ -213,15 +213,5 @@ public class Program extends Node {
 
             sb.append(");\n");
         }
-    }
-
-    private String defaultJavaValue(Operators type) {
-        return switch (Operators.runtimeType(type)) {
-            case INT -> "0";
-            case BOOL -> "false";
-            case STRING -> "\"\"";
-            case CIPHERTEXT -> "new EncryptedValue(new byte[0])";
-            case FORMAT -> "new ConstructorValue(\"\", Arrays.asList())";
-        };
     }
 }

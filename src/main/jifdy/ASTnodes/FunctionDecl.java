@@ -111,7 +111,7 @@ public class FunctionDecl extends Declaration {
 
         sb.append(env.indent())
                 .append("public ")
-                .append(returnType == null ? "void" : toJavaType(returnType))
+                .append(returnType == null ? "void" : JavaTypeSupport.toJavaType(returnType))
                 .append(" ")
                 .append(name)
                 .append("(");
@@ -119,7 +119,7 @@ public class FunctionDecl extends Declaration {
         for (int i = 0; i < params.size(); i++) {
             Param p = params.get(i);
 
-            sb.append(toJavaType(p.type))
+            sb.append(JavaTypeSupport.toJavaType(p.type))
                     .append(" ")
                     .append(p.name);
 
@@ -143,15 +143,5 @@ public class FunctionDecl extends Declaration {
         sb.append(env.indent()).append("}\n");
 
         return sb.toString();
-    }
-
-    private String toJavaType(Operators type) {
-        return switch (Operators.runtimeType(type)) {
-            case INT -> "int";
-            case BOOL -> "boolean";
-            case STRING -> "String";
-            case CIPHERTEXT -> "EncryptedValue";
-            case FORMAT -> "ConstructorValue";
-        };
     }
 }
