@@ -23,16 +23,16 @@ public class AssignStmt extends Stmt {
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedure) {
 
-        Operators rhs = expr.typecheck(delta, gamma);
-        Operators lhs = delta.getType(name);
+        Operators lhsType = delta.getType(name);
+        Operators rhsType = expr.typecheck(delta, gamma);
 
-        if (!Operators.sameType(rhs, lhs)) {
+        if (!Operators.sameType(lhsType, rhsType)) {
             throw new TypeCheckException("Type mismatch in assignment", lineNumber, name);
         }
 
         SecLabel exprLabel = expr.label(gamma);
 
-        // explicit flow + implicit flow
+        // explicit flow + implicit flow. effectiveLabel is l2 from the paper
         SecLabel effectiveLabel = SecLabel.join(currentProcedure, exprLabel);
         SecLabel varLabel = gamma.getLabel(name);
 
