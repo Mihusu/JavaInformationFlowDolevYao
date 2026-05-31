@@ -11,10 +11,10 @@ public class CiphertextConfusion {
         String high photo = "IMGDATA";
 
         e(kClientServer, Login) low loginMsg =
-            e(kClientServer, Login(String low user, String high password));
+            e(kClientServer, Login(user, password));
 
         e(kClientServer, Upload) low uploadMsg =
-            e(kClientServer, Upload(String low user, String high photo));
+            e(kClientServer, Upload(user, photo));
 
         // TYPE CONFUSION
         user = password;
@@ -26,20 +26,19 @@ public class CiphertextConfusion {
     public void low server() {
 
         bool high ok = true;
-        String low user = "";
 
         try_rcv(
             e(kClientServer,
                 Login(
-                    String low u,
-                    String high password))
+                    user,
+                    password))
         ) {
             ok = false;
         }
 
         try_rcv(
             e(kClientServer,
-                Upload(String low user, String high photo))
+                Upload(user, photo))
         ) {
             ok = false;
         }

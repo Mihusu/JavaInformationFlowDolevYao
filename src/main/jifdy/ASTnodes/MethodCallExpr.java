@@ -6,9 +6,9 @@ import CodeGeneration.CodeGenEnv;
 import java.util.List;
 
 /**
- * Expression node for invoking a function and optionally consuming its return value.
+ * Expression node for invoking a method and optionally consuming its return value.
  */
-public class FunctionCallExpr extends Expr {
+public class MethodCallExpr extends Expr {
     public String name;
     public List<Expr> args;
 
@@ -17,7 +17,7 @@ public class FunctionCallExpr extends Expr {
         Value value = invoke(env);
 
         if (value == null) {
-            throw new RuntimeException("Void function used as an expression: " + name);
+            throw new RuntimeException("Void method used as an expression: " + name);
         }
 
         return value;
@@ -29,7 +29,7 @@ public class FunctionCallExpr extends Expr {
 
     private Value invoke(Environment env) {
 
-        FunctionDecl f = env.getFunction(name);
+        MethodDecl f = env.getMethod(name);
 
         Environment localEnv = new Environment(env);
 
@@ -53,7 +53,7 @@ public class FunctionCallExpr extends Expr {
     @Override
     public Operators typecheck(TypeEnv delta, LabelEnv gamma) {
 
-        FunctionType f = delta.getFunction(name);
+        MethodType f = delta.getMethod(name);
 
         if (args.size() != f.paramTypes.size())
             throw new TypeCheckException("Wrong number of arguments");
@@ -94,10 +94,10 @@ public class FunctionCallExpr extends Expr {
             result = SecLabel.join(result, arg.label(gamma));
         }
 
-        // get function label
-        FunctionLabel fLabel = gamma.getFunction(name);
+        // get method label
+        MethodLabel fLabel = gamma.getMethod(name);
 
-        // include function return label
+        // include method return label
         result = SecLabel.join(result, fLabel.returnLabel);
 
         return result;

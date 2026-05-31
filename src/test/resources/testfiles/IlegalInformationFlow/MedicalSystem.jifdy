@@ -12,12 +12,12 @@ public class MedicalSystem {
 
         // LOW key used for HIGH data
         e(kPublic, MedicalData) low medicalMsg =
-            e(kPublic, MedicalData(String low patientName, String high diagnosis, int high patientId));
+            e(kPublic, MedicalData(patientName, diagnosis, patientId));
 
         send(medicalMsg);
 
         try_rcv(
-            e(kPatient, Result(String low received))) {
+            e(kPatient, Result(received))) {
         }
     }
 
@@ -32,9 +32,9 @@ public class MedicalSystem {
         try_rcv(
             e(kPublic,
                 MedicalData(
-                    String low pName,
-                    String high receivedDiagnosis,
-                    int high pid))
+                    pName,
+                    receivedDiagnosis,
+                    pid))
         ) {
             ok = false;
         }
@@ -50,7 +50,7 @@ public class MedicalSystem {
             String low received = "RECEIVED";
 
             e(kPatient, Result) low resultMsg =
-                e(kPatient, Result(String low received));
+                e(kPatient, Result(received));
 
             send(resultMsg);
         }

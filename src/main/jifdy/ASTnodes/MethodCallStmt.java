@@ -8,16 +8,16 @@ import CodeGeneration.CodeGenEnv;
 /**
  * Statement wrapper for expressions that are evaluated only for their side effects.
  */
-public class FunctionCallStmt extends Stmt {
+public class MethodCallStmt extends Stmt {
     public Expr expr;
 
-    public FunctionCallStmt(Expr expr) {
+    public MethodCallStmt(Expr expr) {
         this.expr = expr;
     }
 
     @Override
     public void eval(Environment env) {
-        if (expr instanceof FunctionCallExpr call) {
+        if (expr instanceof MethodCallExpr call) {
             call.evalAsStatement(env);
             return;
         }

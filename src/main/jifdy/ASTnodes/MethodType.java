@@ -3,16 +3,16 @@ package ASTnodes;
 import java.util.List;
 
 /**
- * Captures the parameter and return types, along with their security labels, for a function.
+ * Captures the parameter and return types, along with their security labels, for a method.
  */
-public class FunctionType {
+public class MethodType {
 
     public List<Operators> paramTypes;
     public Operators returnType;
     public List<SecLabel> paramLabels;
     public SecLabel returnLabel;
 
-    public FunctionType(List<Operators> paramTypes, Operators returnType,
+    public MethodType(List<Operators> paramTypes, Operators returnType,
                         List<SecLabel> paramLabels, SecLabel returnLabel) {
         this.paramTypes = paramTypes;
         this.returnType = returnType;

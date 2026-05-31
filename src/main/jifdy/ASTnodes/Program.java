@@ -193,20 +193,20 @@ public class Program extends Node {
             }
         }
 
-        for (FunctionDecl function : cls.functions) {
+        for (MethodDecl method : cls.methods) {
             sb.append("program.")
-                    .append(function.name)
+                    .append(method.name)
                     .append("(");
 
-            for (int i = 0; i < function.params.size(); i++) {
-                Param param = function.params.get(i);
+            for (int i = 0; i < method.params.size(); i++) {
+                Param param = method.params.get(i);
                 if (fieldNames.contains(param.name)) {
                     sb.append("program.").append(param.name);
                 } else {
                     sb.append(JavaTypeSupport.defaultValueExpression(param.type));
                 }
 
-                if (i < function.params.size() - 1) {
+                if (i < method.params.size() - 1) {
                     sb.append(", ");
                 }
             }

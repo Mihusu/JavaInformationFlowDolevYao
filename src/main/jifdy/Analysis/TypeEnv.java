@@ -3,18 +3,18 @@ package Analysis;
 import java.util.HashMap;
 import java.util.Map;
 
-import ASTnodes.FunctionType;
+import ASTnodes.MethodType;
 import ASTnodes.FormatType;
 import ASTnodes.Operators;
 
 /**
  * Manages types during type checking.
- * Keeps track of variable types, function signatures, and return types.
+ * Keeps track of variable types, method signatures, and return types.
  */
 public class TypeEnv {
 
     private final Map<String, Operators> types = new HashMap<>();
-    private final Map<String, FunctionType> functions = new HashMap<>();
+    private final Map<String, MethodType> methods = new HashMap<>();
     private final Map<String, FormatType> formats = new HashMap<>();
     private Operators returnType;
 
@@ -23,7 +23,7 @@ public class TypeEnv {
     // variables
     public TypeEnv(TypeEnv other) {
         this.types.putAll(other.types);
-        this.functions.putAll(other.functions);
+        this.methods.putAll(other.methods);
         this.formats.putAll(other.formats);
         this.returnType = other.returnType;
     }
@@ -74,14 +74,14 @@ public class TypeEnv {
         return formats.get(name);
     }
 
-    // functions
-    public void putFunction(String name, FunctionType type) {
-        functions.put(name, type);
+    // methods
+    public void putMethod(String name, MethodType type) {
+        methods.put(name, type);
     }
 
-    public FunctionType getFunction(String name) {
-        if (!functions.containsKey(name))
-            throw new TypeCheckException("Unknown function: " + name);
-        return functions.get(name);
+    public MethodType getMethod(String name) {
+        if (!methods.containsKey(name))
+            throw new TypeCheckException("Unknown method: " + name);
+        return methods.get(name);
     }
 }

@@ -6,7 +6,7 @@ import java.util.*;
 
 /**
  * Represents the runtime environment for program execution.
- * Manages variables, security labels, procedures, functions, communication channels, and cryptographic state.
+ * Manages variables, security labels, procedures, methods, communication channels, and cryptographic state.
  */
 public class Environment {
     private final Environment parent;
@@ -17,9 +17,9 @@ public class Environment {
     // Security labels (runtime)
     public Map<String, SecLabel> labels = new HashMap<>();
 
-    // Procedures (functions)
+    // Procedures (methods)
     private final Map<String, ProcDecl> procedures = new HashMap<>();
-    private final Map<String, FunctionDecl> functions = new HashMap<>();
+    private final Map<String, MethodDecl> methods = new HashMap<>();
 
     // Communication channels
     public Queue<Value> inbox = new LinkedList<>();
@@ -41,7 +41,7 @@ public class Environment {
         this.parent = parent;
         this.labels.putAll(parent.labels);
         this.procedures.putAll(parent.procedures);
-        this.functions.putAll(parent.functions);
+        this.methods.putAll(parent.methods);
         this.inbox = parent.inbox;
         this.outbox = parent.outbox;
         this.cryptoCounter.putAll(parent.cryptoCounter);
@@ -131,18 +131,18 @@ public class Environment {
     }
 
     // =========================
-    // FUNCTIONS
+    // METHODS
     // =========================
 
-    public void putFunction(String name, FunctionDecl f) {
-        functions.put(name, f);
+    public void putMethod(String name, MethodDecl f) {
+        methods.put(name, f);
     }
 
-    public FunctionDecl getFunction(String name) {
-        if (!functions.containsKey(name)) {
-            throw new RuntimeException("Unknown function: " + name);
+    public MethodDecl getMethod(String name) {
+        if (!methods.containsKey(name)) {
+            throw new RuntimeException("Unknown method: " + name);
         }
-        return functions.get(name);
+        return methods.get(name);
     }
 
     public Value getReturnValue() {

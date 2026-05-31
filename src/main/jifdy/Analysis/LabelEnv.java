@@ -7,12 +7,12 @@ import ASTnodes.SecLabel;
 
 /**
  * Manages security labels during type checking.
- * Keeps track of variable labels, function labels, and return labels.
+ * Keeps track of variable labels, method labels, and return labels.
  */
 public class LabelEnv {
 
     private final Map<String, SecLabel> labels = new HashMap<>();
-    private final Map<String, FunctionLabel> functions = new HashMap<>();
+    private final Map<String, MethodLabel> methods = new HashMap<>();
     private final Map<String, SecLabel> cipherPayloadLabels = new HashMap<>();
     private SecLabel returnLabel;
     private SecLabel observedReturnLabel;
@@ -22,7 +22,7 @@ public class LabelEnv {
     // variables
     public LabelEnv(LabelEnv other) {
         this.labels.putAll(other.labels);
-        this.functions.putAll(other.functions);
+        this.methods.putAll(other.methods);
         this.cipherPayloadLabels.putAll(other.cipherPayloadLabels);
         this.returnLabel = other.returnLabel;
         this.observedReturnLabel = other.observedReturnLabel;
@@ -49,15 +49,15 @@ public class LabelEnv {
         return labels.get(var);
     }
 
-    // functions
-    public void putFunction(String name, FunctionLabel label) {
-        functions.put(name, label);
+    // methods
+    public void putMethod(String name, MethodLabel label) {
+        methods.put(name, label);
     }
 
-    public FunctionLabel getFunction(String name) {
-        if (!functions.containsKey(name))
-            throw new TypeCheckException("Unknown function: " + name);
-        return functions.get(name);
+    public MethodLabel getMethod(String name) {
+        if (!methods.containsKey(name))
+            throw new TypeCheckException("Unknown method: " + name);
+        return methods.get(name);
     }
 
     public void setReturnLabel(SecLabel label) {

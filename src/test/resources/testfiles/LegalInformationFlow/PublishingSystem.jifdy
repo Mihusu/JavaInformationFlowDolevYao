@@ -13,15 +13,15 @@ public class PublishingSystem {
     public void low author() {
 
         e(kAuthorEditorPublisher, Submission) low submissionMsg =
-            e(kAuthorEditorPublisher, Submission(String low title, String high manuscript));
+            e(kAuthorEditorPublisher, Submission(title, manuscript));
 
         send(submissionMsg);
 
         try_rcv(
             e(kAuthorEditorPublisher,
                 Published(
-                    String low title_in,
-                    int low publications_in
+                    title_in,
+                    publications_in
                 )
             )
         ) {
@@ -39,9 +39,7 @@ public class PublishingSystem {
 
         try_rcv(
             e(kAuthorEditorPublisher,
-                Submission(
-                    String low t,
-                    String high m))
+                Submission(title, manuscript))
         ) {
 
         }
@@ -58,7 +56,7 @@ public class PublishingSystem {
                 String high review = "APPROVED";
 
                 e(kAuthorEditorPublisher, Approval) low approvalMsg = e(kAuthorEditorPublisher,
-                    Approval(String low title_in, String high review)
+                    Approval(title_in, review)
                 );
 
                 send(approvalMsg);
@@ -76,8 +74,8 @@ public class PublishingSystem {
         try_rcv(
             e(kAuthorEditorPublisher,
                 Approval(
-                    String low t,
-                    String high review))
+                    title_in,
+                    review))
         ) {
         }
 
@@ -90,7 +88,7 @@ public class PublishingSystem {
             print(title_in, publications);
 
             e(kAuthorEditorPublisher, Published) low resultMsg =
-                e(kAuthorEditorPublisher, Published(String low title_in, int low publications));
+                e(kAuthorEditorPublisher, Published(title_in, publications));
 
             send(resultMsg);
         }

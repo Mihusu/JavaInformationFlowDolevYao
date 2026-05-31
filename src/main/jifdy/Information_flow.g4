@@ -60,17 +60,15 @@ class
     ;
 
 classBlock
-    : IDENTIFIER '{' declaration* functionDeclaration* statement* '}'
+    : IDENTIFIER '{' declaration* methodDeclaration* statement* '}'
     ;
 
 declaration
     : type SECLABEL IDENTIFIER ('=' expression )? ';'
     | PPLABEL IDENTIFIER '(' decls* ')' '{' assignmentStatement* '}' // Constructor decleration
-    | encryptionType SECLABEL IDENTIFIER '=' ENCRYPT '(' KEY ',' ( IDENTIFIER | format ) ')' ';'
-    | IDENTIFIER SECLABEL IDENTIFIER '=' format ';'
     ;
 
-functionDeclaration
+methodDeclaration
     : PPLABEL ( type | 'void' ) SECLABEL IDENTIFIER '(' (decls)* ')' cmdBlock
     ;
 
@@ -89,6 +87,7 @@ declItem
 type
     : basicType
     | encryptionType
+    | IDENTIFIER
     ;
 
 basicType
@@ -103,7 +102,7 @@ encryptionType
 
 statement
     : assignmentStatement
-    | functionCall ';'
+    | methodCallOrFormat ';'
     | sendStatement
     | receiveStatement
     | returnStatement
@@ -122,21 +121,7 @@ sendStatement
     ;
 
 receiveStatement
-    : TRY_RCV '(' format ')' cmdBlock
-    ;
-
-format
-    // Format terms are used both as receive patterns and as constructor payload syntax.
-    // Arithmetic forms are lowered by ASTBuilder into Expr nodes for constructor payloads.
-    : format ( '+' | '-' | '*' | '/' ) format
-    | '-' format
-    | (type)? SECLABEL IDENTIFIER  // Variable OR nested format reference
-    | IDENTIFIER '(' formatList? ')'
-    | ENCRYPT '(' KEY ',' format ')'
-    ;
-
-formatList
-    : format ( ',' format )*
+    : TRY_RCV '(' expression ')' cmdBlock
     ;
 
 expression
@@ -183,18 +168,13 @@ primary
     : INT
     | BOOL
     | STR
-    | typedRef
     | IDENTIFIER
-    | functionCall
+    | methodCallOrFormat
+    | ENCRYPT '(' KEY ',' expression ')'
     | '(' expression ')'
     ;
 
-typedRef // references an existing identifier
-    // In my parser, they do not introduce new bindings when used in expressions.
-    : type SECLABEL IDENTIFIER
-    ;
-
-functionCall
+methodCallOrFormat
     : IDENTIFIER '(' argumentList? ')'
     ;
 

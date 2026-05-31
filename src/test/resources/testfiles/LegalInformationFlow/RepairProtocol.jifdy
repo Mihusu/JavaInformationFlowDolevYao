@@ -13,7 +13,7 @@ public class RepairProtocol {
 
         // SEND REPAIR REQUEST
         e(kCustomerRepairShop, RepairRequest) low repairMsg =
-            e(kCustomerRepairShop, RepairRequest(String low customerName, String low device, int high serial, String high issue));
+            e(kCustomerRepairShop, RepairRequest(customerName, device, serial, issue));
 
         send(repairMsg);
 
@@ -22,8 +22,8 @@ public class RepairProtocol {
         try_rcv(
             e(kCustomerRepairShop,
                 RepairStatus(
-                    String low status,
-                    int high serial_in))
+                    status,
+                    serial_in))
         ) {
         }
 
@@ -43,20 +43,16 @@ public class RepairProtocol {
         // RECEIVE REQUEST
         try_rcv(
             e(kCustomerRepairShop,
-                RepairRequest(
-                    String low c,
-                    String low d,
-                    int high s,
-                    String high i))
+                RepairRequest(c, d, s, i))
         ) {
-
         }
 
         if (ok) {
 
             String low status = "repaired";
 
-            e(kCustomerRepairShop, RepairStatus) low statusMsg = e(kCustomerRepairShop, RepairStatus(String low status, int high serial));
+            e(kCustomerRepairShop, RepairStatus) low statusMsg = e(
+                kCustomerRepairShop, RepairStatus(status, serial));
 
             send(statusMsg);
         }

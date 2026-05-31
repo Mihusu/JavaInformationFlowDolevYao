@@ -12,7 +12,7 @@ public class FormatExpression {
         int high amount2 = 3000;
 
         Transfer1 high transfer =
-            Transfer1(String low user, int high amount1 + int high amount2, String low target);
+            Transfer1(user, amount1 + amount2, target);
 
         e(kClientBank,Transfer1) low msg =
             e(kClientBank, transfer);

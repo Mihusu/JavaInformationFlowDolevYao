@@ -20,7 +20,7 @@ public class SecureChat {
 
         isAllowed(text);
 
-        Message high f1 = Message(String low user, String low text);
+        Message high f1 = Message(user, text);
 
         if(isAllowed(text) == true) {
             e(kAliceBob, Message) low msg =
@@ -35,7 +35,7 @@ public class SecureChat {
         bool high ok = true;
 
         try_rcv(e(kAliceBob,
-                Message(String low user, String low text))
+                Message(user, text))
         ) {
             ok = false;
         }

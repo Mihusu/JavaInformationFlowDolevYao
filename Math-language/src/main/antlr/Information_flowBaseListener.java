@@ -101,13 +101,13 @@ public class Information_flowBaseListener implements Information_flowListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFunctionDeclaration(Information_flowParser.FunctionDeclarationContext ctx) { }
+	@Override public void enterMethodDeclaration(Information_flowParser.MethodDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFunctionDeclaration(Information_flowParser.FunctionDeclarationContext ctx) { }
+	@Override public void exitMethodDeclaration(Information_flowParser.MethodDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -233,30 +233,6 @@ public class Information_flowBaseListener implements Information_flowListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFormat(Information_flowParser.FormatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitFormat(Information_flowParser.FormatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterFormatList(Information_flowParser.FormatListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitFormatList(Information_flowParser.FormatListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterExpression(Information_flowParser.ExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -365,25 +341,13 @@ public class Information_flowBaseListener implements Information_flowListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypedRef(Information_flowParser.TypedRefContext ctx) { }
+	@Override public void enterMethodCallOrFormat(Information_flowParser.MethodCallOrFormatContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypedRef(Information_flowParser.TypedRefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterFunctionCall(Information_flowParser.FunctionCallContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitFunctionCall(Information_flowParser.FunctionCallContext ctx) { }
+	@Override public void exitMethodCallOrFormat(Information_flowParser.MethodCallOrFormatContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

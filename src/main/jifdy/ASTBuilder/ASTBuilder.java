@@ -69,16 +69,16 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         cls.name = ctx.IDENTIFIER().getText();
 
         cls.declarations = new ArrayList<>();
-        cls.functions = new ArrayList<>();
+        cls.methods = new ArrayList<>();
         cls.statements = new ArrayList<>();
 
         for (Information_flowParser.DeclarationContext d : ctx.declaration()) {
             cls.declarations.add((Declaration) visit(d));
         }
 
-        if (ctx.functionDeclaration() != null) {
-            for (Information_flowParser.FunctionDeclarationContext fctx : ctx.functionDeclaration()) {
-                cls.functions.add((FunctionDecl) visit(fctx));
+        if (ctx.methodDeclaration() != null) {
+            for (Information_flowParser.MethodDeclarationContext fctx : ctx.methodDeclaration()) {
+                cls.methods.add((MethodDecl) visit(fctx));
             }
         }
 
@@ -96,9 +96,9 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
     // =========================
 
     @Override
-    public Node visitFunctionDeclaration(Information_flowParser.FunctionDeclarationContext ctx) {
+    public Node visitMethodDeclaration(Information_flowParser.MethodDeclarationContext ctx) {
 
-        FunctionDecl f = new FunctionDecl();
+        MethodDecl f = new MethodDecl();
 
         // privacy
         f.privacy = parsePrivacy(ctx.PPLABEL().getText());
@@ -137,41 +137,15 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
 
             VarDecl decl = new VarDecl();
 
-            // -------------------------
-            // Variable name + declared type
-            // -------------------------
-            // Grammar alternatives:
-            // 1) type SECLABEL IDENTIFIER ('=' expression)? ';'
-            // 2) encryptionType SECLABEL IDENTIFIER '=' e(KEY, (expression|format)) ';'
-            // 3) IDENTIFIER SECLABEL IDENTIFIER '=' format ';'   // IDENTIFIER is a declared format type
-            if (ctx.type() != null) {
-                decl.type = parseType(ctx.type());
-                decl.name = ctx.IDENTIFIER(0).getText();
-            } else if (ctx.encryptionType() != null) {
-                decl.type = parseEncryptionType(ctx.encryptionType());
-                decl.name = ctx.IDENTIFIER(0).getText();
-            } else if (ctx.format() != null && ctx.IDENTIFIER().size() >= 2) {
-                // Format-typed variable declaration: <FormatName> <sec> <var> = <formatLiteral>;
-                decl.type = requireDeclaredFormatType(ctx.IDENTIFIER(0).getText(), ctx);
-                decl.name = ctx.IDENTIFIER(1).getText();
-            } else {
-                throw new RuntimeException("Invalid declaration at line " + ctx.getStart().getLine());
-            }
+            // Primitive, format, and ciphertext declarations now share one grammar form.
+            decl.type = parseType(ctx.type());
+            decl.name = ctx.IDENTIFIER().getText();
 
             // Variables always have an explicit security label in the grammar.
             decl.label = parseSecLabel(ctx.SECLABEL().getText());
 
-            if (isEncryptedDeclaration(ctx)) {
-                Expr key = buildDeclarationKeyExpr(ctx);
-                Expr payload = buildEncryptedDeclarationPayload(ctx);
-
-                decl.type = parseEncryptionType(ctx.encryptionType());
-                decl.init = setLocation(new EncryptExpr(payload, key), ctx);
-            } else if (ctx.expression() != null) {
+            if (ctx.expression() != null) {
                 decl.init = (Expr) visit(ctx.expression());
-            } else if (ctx.format() != null) {
-                validateFormatLiteral(ctx.format());
-                decl.init = buildPayloadExpr(ctx.format());
             }
 
             return setLocation(decl, ctx);
@@ -180,7 +154,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         // Procedure declaration
         ProcDecl proc = new ProcDecl();
         proc.privacy = parsePrivacy(ctx.PPLABEL().getText());
-        proc.name = ctx.IDENTIFIER(0).getText();
+        proc.name = ctx.IDENTIFIER().getText();
 
         proc.params = new ArrayList<>();
         for (Information_flowParser.DeclsContext dctx : ctx.decls()) {
@@ -225,7 +199,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
     @Override
     public Node visitStatement(Information_flowParser.StatementContext ctx) {
         if (ctx.assignmentStatement() != null) return visit(ctx.assignmentStatement());
-        if (ctx.functionCall() != null) return new FunctionCallStmt((Expr) visit(ctx.functionCall()));
+        if (ctx.methodCallOrFormat() != null) return new MethodCallStmt((Expr) visit(ctx.methodCallOrFormat()));
         if (ctx.sendStatement() != null) return visit(ctx.sendStatement());
         if (ctx.receiveStatement() != null) return visit(ctx.receiveStatement());
         if (ctx.returnStatement() != null) return visit(ctx.returnStatement());
@@ -256,7 +230,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
     @Override
     public Node visitReceiveStatement(Information_flowParser.ReceiveStatementContext ctx) {
 
-        Format pattern = (Format) visit(ctx.format());
+        Format pattern = buildReceivePattern((Expr) visit(ctx.expression()));
         CmdBlock cmdBlock = (CmdBlock) visit(ctx.cmdBlock());
 
         return setLocation(new TryReceiveStmt(pattern, cmdBlock), ctx);
@@ -419,32 +393,22 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         if (ctx.STR() != null)
             return new StringLiteral(stripQuotes(ctx.STR().getText()));
 
-        if (ctx.typedRef() != null)
-            return (Expr) visit(ctx.typedRef());
+        if (ctx.ENCRYPT() != null) {
+            Expr key = buildKeyExpr(ctx.KEY());
+            return setLocation(new EncryptExpr((Expr) visit(ctx.expression()), key), ctx);
+        }
 
         if (ctx.IDENTIFIER() != null)
             return new VarExpr(ctx.IDENTIFIER().getText());
 
-        if (ctx.functionCall() != null)
-            return (Expr) visit(ctx.functionCall());
+        if (ctx.methodCallOrFormat() != null)
+            return (Expr) visit(ctx.methodCallOrFormat());
 
         return (Expr) visit(ctx.expression());
     }
 
     @Override
-    public Expr visitTypedRef(Information_flowParser.TypedRefContext ctx) {
-        return setLocation(
-                new TypedVarExpr(
-                        ctx.IDENTIFIER().getText(),
-                        parseType(ctx.type()),
-                        parseSecLabel(ctx.SECLABEL().getText())
-                ),
-                ctx
-        );
-    }
-
-    @Override
-    public Expr visitFunctionCall(Information_flowParser.FunctionCallContext ctx) {
+    public Expr visitMethodCallOrFormat(Information_flowParser.MethodCallOrFormatContext ctx) {
 
         String name =
                 ctx.IDENTIFIER().getText();
@@ -471,9 +435,9 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
             );
         }
 
-        // NORMAL FUNCTION CALL
-        FunctionCallExpr call =
-                new FunctionCallExpr();
+        // NORMAL METHOD CALL
+        MethodCallExpr call =
+                new MethodCallExpr();
 
         call.name = name;
         call.args = args;
@@ -481,82 +445,13 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         return call;
     }
 
-    // =========================
-    // FORMATS
-    // =========================
-
-    @Override
-    public Format visitFormat(Information_flowParser.FormatContext ctx) {
-
-        // Expression-shaped format field, e.g. `int high amount1 - int high amount2`.
-        // On the receive side this becomes a value-checking ExprFormat; on the send side
-        // buildPayloadExpr applies the same lowering into an Expr payload.
-        if (isFormatBinaryExpr(ctx)) {
-            return new ExprFormat(
-                    new OpExpr(
-                            buildPayloadExpr(ctx.format(0)),
-                            ctx.getChild(1).getText(),
-                            buildPayloadExpr(ctx.format(1))
-                    )
-            );
-        }
-
-        // Unary minus in a format field is also an expression, not a new binding.
-        if (isFormatUnaryExpr(ctx)) {
-            return new ExprFormat(
-                    new UnaryExpr(
-                            ctx.getChild(0).getText(),
-                            buildPayloadExpr(ctx.format(0))
-                    )
-            );
-        }
-
-        // X / int high X: a pattern binding on receive, or a typed variable reference
-        // when buildPayloadExpr handles constructor payload syntax.
-        if (ctx.IDENTIFIER() != null && ctx.formatList() == null && !isConstructorFormat(ctx))
-            return new TypedVarFormat(
-                    ctx.IDENTIFIER().getText(),
-                    ctx.type() == null ? null : parseType(ctx.type()),
-                    parseSecLabel(ctx.SECLABEL().getText())
-            );
-
-        // f(X,Y)
-        if (isConstructorFormat(ctx)) {
-            requireDeclaredFormat(ctx.IDENTIFIER().getText(), ctx);
-            validateFormatLiteral(ctx);
-
-            List<Format> args = new ArrayList<>();
-
-            if (ctx.formatList() != null) {
-                for (var p : ctx.formatList().format()) {
-                    args.add((Format) visit(p));
-                }
-            }
-
-            return new ConstructorFormat(
-                    ctx.IDENTIFIER().getText(),
-                    args
-            );
-        }
-
-        // encrypt(keyExpr, pattern)
-        if (ctx.ENCRYPT() != null) {
-
-            Expr key = buildFormatKeyExpr(ctx);
-
-            Format inner =
-                    (Format) visit(ctx.format(0));
-
-            return new EncryptFormat(key, inner);
-        }
-
-        throw new RuntimeException("Invalid format");
-    }
-
-
     private Operators parseType(Information_flowParser.TypeContext ctx) {
         if (ctx.encryptionType() != null) {
             return parseEncryptionType(ctx.encryptionType());
+        }
+
+        if (ctx.IDENTIFIER() != null) {
+            return requireDeclaredFormatType(ctx.IDENTIFIER().getText(), ctx);
         }
 
         return parseBasicType(ctx.basicType().getText());
@@ -600,49 +495,6 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         return s.substring(1, s.length() - 1);
     }
 
-    private boolean isEncryptedDeclaration(Information_flowParser.DeclarationContext ctx) {
-        return ctx.ENCRYPT() != null
-                && ctx.getToken(Information_flowParser.KEY, 0) != null
-                && (ctx.expression() != null || ctx.format() != null || ctx.IDENTIFIER().size() >= 2);
-    }
-
-    private Expr buildDeclarationKeyExpr(Information_flowParser.DeclarationContext ctx) {
-        TerminalNode keyNode = ctx.getToken(Information_flowParser.KEY, 0);
-        if (keyNode != null) {
-            return buildKeyExpr(keyNode);
-        }
-
-        throw new RuntimeException("Encryption declaration requires a key");
-    }
-
-    private Expr buildEncryptedDeclarationPayload(Information_flowParser.DeclarationContext ctx) {
-        if (ctx.format() != null) {
-            return buildPayloadExpr(ctx.format());
-        }
-
-        if (ctx.expression() != null) {
-            return (Expr) visit(ctx.expression());
-        }
-
-        // In `e(k, u)`, the payload is parsed by the encrypted-declaration
-        // alternative as the second direct IDENTIFIER. The first one is the
-        // declared ciphertext variable name.
-        if (ctx.IDENTIFIER().size() >= 2) {
-            return setLocation(new VarExpr(ctx.IDENTIFIER(1).getText()), ctx);
-        }
-
-        throw new RuntimeException("Encryption declaration requires a payload");
-    }
-
-    private Expr buildFormatKeyExpr(Information_flowParser.FormatContext ctx) {
-        TerminalNode keyNode = ctx.getToken(Information_flowParser.KEY, 0);
-        if (keyNode != null) {
-            return buildKeyExpr(keyNode);
-        }
-
-        throw new RuntimeException("Encryption pattern requires a key");
-    }
-
     private Expr buildKeyExpr(TerminalNode keyNode) {
         if (keyNode == null) {
             throw new RuntimeException("Encryption requires a KEY token");
@@ -661,89 +513,57 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         return text;
     }
 
-    private Expr buildPayloadExpr(Information_flowParser.FormatContext ctx) {
-        // Constructor payloads reuse the `format` grammar so users can write
-        // Transfer(int high a - int high b). Convert those format-shaped terms
-        // into ordinary expression AST nodes before evaluation/code generation.
-        if (isFormatBinaryExpr(ctx)) {
-            return setLocation(
-                    new OpExpr(
-                            buildPayloadExpr(ctx.format(0)),
-                            ctx.getChild(1).getText(),
-                            buildPayloadExpr(ctx.format(1))
-                    ),
-                    ctx
-            );
+    /**
+     * Receive syntax is parsed as an expression and converted into a pattern only
+     * at the try_rcv boundary. This keeps constructors and encryption reusable in
+     * ordinary expressions while preserving the existing matching implementation.
+     */
+    private Format buildReceivePattern(Expr expr) {
+        if (expr instanceof EncryptExpr encryptExpr) {
+            return new EncryptFormat(encryptExpr.keyExpr, buildReceivePattern(encryptExpr.payload));
         }
 
-        // Same conversion for unary minus, e.g. Transfer(- int high amount).
-        if (isFormatUnaryExpr(ctx)) {
-            return setLocation(
-                    new UnaryExpr(
-                            ctx.getChild(0).getText(),
-                            buildPayloadExpr(ctx.format(0))
-                    ),
-                    ctx
-            );
-        }
-
-        if (ctx.IDENTIFIER() != null && ctx.formatList() == null && !isConstructorFormat(ctx)) {
-            // A typed field in payload position is not a declaration; it asserts the
-            // existing variable's type/label and then compiles/evaluates as that variable.
-            Expr var = ctx.type() == null
-                    ? new VarExpr(ctx.IDENTIFIER().getText())
-                    : new TypedVarExpr(
-                            ctx.IDENTIFIER().getText(),
-                            parseType(ctx.type()),
-                            parseSecLabel(ctx.SECLABEL().getText())
-                    );
-            return setLocation(var, ctx);
-        }
-
-        if (isConstructorFormat(ctx)) {
-            requireDeclaredFormat(ctx.IDENTIFIER().getText(), ctx);
-            validateFormatLiteral(ctx);
-            List<Expr> args = new ArrayList<>();
-
-            if (ctx.formatList() != null) {
-                for (var p : ctx.formatList().format()) {
-                    args.add(buildPayloadExpr(p));
-                }
+        if (expr instanceof ConstructorExpr constructorExpr) {
+            requireDeclaredFormat(constructorExpr.name, expr.lineNumber);
+            FormatType formatType = declaredFormatTypes.get(constructorExpr.name);
+            if (constructorExpr.args.size() != formatType.fields.size()) {
+                throw new TypeCheckException("Wrong number of fields in format pattern " + constructorExpr.name);
             }
 
-            return new ConstructorExpr(ctx.IDENTIFIER().getText(), args);
+            List<Format> args = new ArrayList<>();
+            for (int i = 0; i < constructorExpr.args.size(); i++) {
+                args.add(buildReceiveFieldPattern(constructorExpr.args.get(i), formatType.fields.get(i)));
+            }
+            return new ConstructorFormat(constructorExpr.name, args);
         }
 
-        if (ctx.ENCRYPT() != null) {
-            return new EncryptExpr(
-                    buildPayloadExpr(ctx.format(0)),
-                    buildFormatKeyExpr(ctx)
+        throw new RuntimeException("Receive pattern must be an encrypted value or format constructor");
+    }
+
+    private Format buildReceiveFieldPattern(Expr expr, Param expected) {
+        if (expr instanceof TypedVarExpr typedVarExpr) {
+            return new TypedVarFormat(
+                    typedVarExpr.name,
+                    typedVarExpr.assertedType,
+                    typedVarExpr.assertedLabel
             );
         }
 
-        throw new RuntimeException("Invalid encrypted payload expression");
-    }
-
-    private boolean isFormatBinaryExpr(Information_flowParser.FormatContext ctx) {
-        if (ctx.getChildCount() != 3) {
-            return false;
+        if (expr instanceof VarExpr varExpr) {
+            return new TypedVarFormat(
+                    varExpr.name,
+                    expected.type,
+                    expected.label
+            );
         }
 
-        // Keep this list aligned with the binary operators accepted in the `format` rule.
-        return switch (ctx.getChild(1).getText()) {
-            case "+", "-", "*", "/", "%" -> true;
-            default -> false;
-        };
-    }
+        if (expr instanceof ConstructorExpr || expr instanceof EncryptExpr) {
+            return buildReceivePattern(expr);
+        }
 
-    private boolean isFormatUnaryExpr(Information_flowParser.FormatContext ctx) {
-        return ctx.getChildCount() == 2 && "-".equals(ctx.getChild(0).getText());
-    }
-
-    private boolean isConstructorFormat(Information_flowParser.FormatContext ctx) {
-        return ctx.IDENTIFIER() != null
-                && ctx.getChildCount() >= 3
-                && "(".equals(ctx.getChild(1).getText());
+        // Arithmetic and ordinary variable expressions are value checks rather
+        // than new bindings in a receive pattern.
+        return new ExprFormat(expr);
     }
 
     private List<Param> buildParams(Information_flowParser.DeclsContext ctx) {
@@ -798,8 +618,12 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
     }
 
     private void requireDeclaredFormat(String formatName, ParserRuleContext ctx) {
+        requireDeclaredFormat(formatName, ctx.getStart().getLine());
+    }
+
+    private void requireDeclaredFormat(String formatName, int lineNumber) {
         if (!declaredFormats.contains(formatName)) {
-            throw new RuntimeException("Undeclared global format at line " + ctx.getStart().getLine() + ": " + formatName);
+            throw new RuntimeException("Undeclared global format at line " + lineNumber + ": " + formatName);
         }
     }
 
@@ -808,51 +632,4 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         return declaredFormatTypes.get(formatName);
     }
 
-    private void validateFormatLiteral(Information_flowParser.FormatContext ctx) {
-        if (ctx == null || !isConstructorFormat(ctx)) {
-            return;
-        }
-
-        FormatType declaredFormat = requireDeclaredFormatType(ctx.IDENTIFIER().getText(), ctx);
-        List<Information_flowParser.FormatContext> actualArgs = ctx.formatList() == null
-                ? List.of()
-                : ctx.formatList().format();
-
-        if (declaredFormat.fields.size() != actualArgs.size()) {
-            throw new TypeCheckException("Format arity mismatch at line " + ctx.getStart().getLine() + ": " + declaredFormat.name);
-        }
-
-        for (int i = 0; i < actualArgs.size(); i++) {
-            Param expected = declaredFormat.fields.get(i);
-            Information_flowParser.FormatContext actual = actualArgs.get(i);
-
-            if (isFormatBinaryExpr(actual) || isFormatUnaryExpr(actual)) {
-                continue;
-            }
-
-            if (isConstructorFormat(actual)) {
-                FormatType actualFormatType = requireDeclaredFormatType(actual.IDENTIFIER().getText(), actual);
-                if (!Operators.sameType(expected.type, actualFormatType)) {
-                    throw new TypeCheckException("Format field type mismatch at line " + actual.getStart().getLine() + ": expected " + expected.type + " but got " + actualFormatType);
-                }
-                validateFormatLiteral(actual);
-                continue;
-            }
-
-            if (actual.type() == null) {
-                throw new TypeCheckException("Format field must declare type at line " + actual.getStart().getLine());
-            }
-
-            Operators actualType = parseType(actual.type());
-            SecLabel actualLabel = parseSecLabel(actual.SECLABEL().getText());
-
-            if (!Operators.sameType(expected.type, actualType) || expected.label != actualLabel) {
-                throw new TypeCheckException(
-                        "Format field mismatch at line " + actual.getStart().getLine() +
-                                ": expected " + expected.type + " " + expected.label +
-                                " but got " + actualType + " " + actualLabel
-                );
-            }
-        }
-    }
 }

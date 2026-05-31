@@ -70,7 +70,7 @@ format Transfer1(String low user, int high amount, String low target);
 
 ```jifdy
 Transfer1 high transfer =
-    Transfer1(String low user, int high amount1 + int high amount2, String low target);
+    Transfer1(user, amount1 + amount2, target);
 ```
 
 - ciphertext values:
@@ -90,11 +90,26 @@ try_rcv(e(kClientBank,
 }
 ```
 
-Format payloads can contain arithmetic expressions over typed references, for example:
+Formats are available inside ordinary expressions. Payloads can therefore use
+variables, arithmetic expressions, and typed references. For example:
 
 ```jifdy
-Transfer1(String low user, int high amount1 - int high amount2, String low target)
+Transfer1(user, amount1 - amount2, target)
 ```
+
+Receive patterns can use plain identifiers. Their types and security labels are
+inferred from the declared format:
+
+```jifdy
+try_rcv(e(kClientBank,
+    Transfer1(user, amount, target)
+)) {
+    print(user);
+}
+```
+
+Older annotated references such as `String low user` remain accepted for
+compatibility, but they are optional.
 
 ## Makefile
 
@@ -155,6 +170,11 @@ When changing grammar rules, usually update these areas together:
 - AST expression/format nodes if a new syntax form needs runtime behavior
 - type checking logic if a new construct has type or label rules
 - regression examples under `src/test/resources/testfiles`
+
+Formats no longer have a separate grammar rule. Constructor calls and
+encryption are parsed as expressions. At a `try_rcv(...)` boundary,
+`ASTBuilder` converts the expression AST into pattern nodes such as
+`EncryptFormat`, `ConstructorFormat`, and `TypedVarFormat`.
 
 For format/ciphertext types, the code uses both precise and broad runtime types:
 

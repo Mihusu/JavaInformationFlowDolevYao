@@ -8,51 +8,51 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a function declaration in the AST.
+ * Represents a method declaration in the AST.
  */
-public class FunctionDecl extends Declaration {
+public class MethodDecl extends Declaration {
     /**
-     * Privacy setting for the function.
+     * Privacy setting for the method.
      */
     public Privacy privacy;
 
     /**
-     * The return type of the function (null if void).
+     * The return type of the method (null if void).
      */
     public Operators returnType; // null = void
 
     /**
-     * The name of the function.
+     * The name of the method.
      */
     public String name;
 
     /**
-     * The list of parameters for the function.
+     * The list of parameters for the method.
      */
     public List<Param> params;
 
     /**
-     * The body of the function.
+     * The body of the method.
      */
     public CmdBlock body;
 
     /**
-     * The declared security label for the function's return value.
+     * The declared security label for the method's return value.
      */
     public SecLabel returnLabel;
 
 
     /**
-     * Registers the function in the execution environment.
+     * Registers the method in the execution environment.
      * @param env The execution environment.
      */
     @Override
     public void eval(Environment env) {
-        env.putFunction(name, this);
+        env.putMethod(name, this);
     }
 
     /**
-     * Performs type checking on the function's parameters and body.
+     * Performs type checking on the method's parameters and body.
      * Verifies that the information flow to the return value respects the declared return label.
      * @param delta The type environment.
      * @param gamma The label environment.
@@ -69,9 +69,9 @@ public class FunctionDecl extends Declaration {
             paramLabels.add(p.label);
         }
 
-        // register function signature
-        delta.putFunction(name, new FunctionType(paramTypes, returnType, paramLabels, returnLabel));
-        gamma.putFunction(name, new FunctionLabel(paramLabels, returnLabel));
+        // register method signature
+        delta.putMethod(name, new MethodType(paramTypes, returnType, paramLabels, returnLabel));
+        gamma.putMethod(name, new MethodLabel(paramLabels, returnLabel));
 
         // new scope
         TypeEnv localDelta = new TypeEnv(delta);
@@ -87,7 +87,7 @@ public class FunctionDecl extends Declaration {
             localGamma.putLabel(p.name, p.label);
         }
 
-        // body (procedure(function) ALWAYS LOW at entry)
+        // body (procedure(method) ALWAYS LOW at entry)
         body.typecheck(localDelta, localGamma, SecLabel.LOW);
 
         // inferred return label
@@ -96,12 +96,12 @@ public class FunctionDecl extends Declaration {
         // enforce declared label
         if (!Security.canFlow(inferred, returnLabel)) {
             throw new TypeCheckException(
-                    "Function return label too low: " + inferred + " -> " + returnLabel
+                    "Method return label too low: " + inferred + " -> " + returnLabel
             );
         }
 
-        // update function label after checking the body
-        gamma.getFunction(name).returnLabel = returnLabel;
+        // update method label after checking the body
+        gamma.getMethod(name).returnLabel = returnLabel;
     }
 
     @Override

@@ -78,15 +78,15 @@ public interface Information_flowListener extends ParseTreeListener {
 	 */
 	void exitDeclaration(Information_flowParser.DeclarationContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Information_flowParser#functionDeclaration}.
+	 * Enter a parse tree produced by {@link Information_flowParser#methodDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void enterFunctionDeclaration(Information_flowParser.FunctionDeclarationContext ctx);
+	void enterMethodDeclaration(Information_flowParser.MethodDeclarationContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link Information_flowParser#functionDeclaration}.
+	 * Exit a parse tree produced by {@link Information_flowParser#methodDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void exitFunctionDeclaration(Information_flowParser.FunctionDeclarationContext ctx);
+	void exitMethodDeclaration(Information_flowParser.MethodDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Information_flowParser#cmdBlock}.
 	 * @param ctx the parse tree
@@ -188,26 +188,6 @@ public interface Information_flowListener extends ParseTreeListener {
 	 */
 	void exitReceiveStatement(Information_flowParser.ReceiveStatementContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Information_flowParser#format}.
-	 * @param ctx the parse tree
-	 */
-	void enterFormat(Information_flowParser.FormatContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Information_flowParser#format}.
-	 * @param ctx the parse tree
-	 */
-	void exitFormat(Information_flowParser.FormatContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link Information_flowParser#formatList}.
-	 * @param ctx the parse tree
-	 */
-	void enterFormatList(Information_flowParser.FormatListContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Information_flowParser#formatList}.
-	 * @param ctx the parse tree
-	 */
-	void exitFormatList(Information_flowParser.FormatListContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link Information_flowParser#expression}.
 	 * @param ctx the parse tree
 	 */
@@ -298,25 +278,15 @@ public interface Information_flowListener extends ParseTreeListener {
 	 */
 	void exitPrimary(Information_flowParser.PrimaryContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Information_flowParser#typedRef}.
+	 * Enter a parse tree produced by {@link Information_flowParser#methodCallOrFormat}.
 	 * @param ctx the parse tree
 	 */
-	void enterTypedRef(Information_flowParser.TypedRefContext ctx);
+	void enterMethodCallOrFormat(Information_flowParser.MethodCallOrFormatContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link Information_flowParser#typedRef}.
+	 * Exit a parse tree produced by {@link Information_flowParser#methodCallOrFormat}.
 	 * @param ctx the parse tree
 	 */
-	void exitTypedRef(Information_flowParser.TypedRefContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link Information_flowParser#functionCall}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunctionCall(Information_flowParser.FunctionCallContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Information_flowParser#functionCall}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunctionCall(Information_flowParser.FunctionCallContext ctx);
+	void exitMethodCallOrFormat(Information_flowParser.MethodCallOrFormatContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Information_flowParser#argumentList}.
 	 * @param ctx the parse tree

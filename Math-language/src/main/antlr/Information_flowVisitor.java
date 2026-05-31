@@ -53,11 +53,11 @@ public interface Information_flowVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclaration(Information_flowParser.DeclarationContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Information_flowParser#functionDeclaration}.
+	 * Visit a parse tree produced by {@link Information_flowParser#methodDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFunctionDeclaration(Information_flowParser.FunctionDeclarationContext ctx);
+	T visitMethodDeclaration(Information_flowParser.MethodDeclarationContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Information_flowParser#cmdBlock}.
 	 * @param ctx the parse tree
@@ -119,18 +119,6 @@ public interface Information_flowVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitReceiveStatement(Information_flowParser.ReceiveStatementContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Information_flowParser#format}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFormat(Information_flowParser.FormatContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Information_flowParser#formatList}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFormatList(Information_flowParser.FormatListContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link Information_flowParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -185,17 +173,11 @@ public interface Information_flowVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPrimary(Information_flowParser.PrimaryContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Information_flowParser#typedRef}.
+	 * Visit a parse tree produced by {@link Information_flowParser#methodCallOrFormat}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTypedRef(Information_flowParser.TypedRefContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Information_flowParser#functionCall}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunctionCall(Information_flowParser.FunctionCallContext ctx);
+	T visitMethodCallOrFormat(Information_flowParser.MethodCallOrFormatContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Information_flowParser#argumentList}.
 	 * @param ctx the parse tree

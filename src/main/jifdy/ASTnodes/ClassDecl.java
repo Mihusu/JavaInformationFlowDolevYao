@@ -27,12 +27,12 @@ public class ClassDecl extends Node {
     public List<Declaration> declarations;
 
     /**
-     * List of function (method) declarations in the class.
+     * List of method (method) declarations in the class.
      */
-    public List<FunctionDecl> functions;
+    public List<MethodDecl> methods;
 
     /**
-     * Statements executed at class scope after declarations and function registration.
+     * Statements executed at class scope after declarations and method registration.
      */
     public List<Stmt> statements;
 
@@ -59,8 +59,8 @@ public class ClassDecl extends Node {
             }
         }
 
-        // 2. Initialize functions
-        for (FunctionDecl f : functions) {
+        // 2. Initialize methods
+        for (MethodDecl f : methods) {
             f.eval(env);
         }
 
@@ -83,7 +83,7 @@ public class ClassDecl extends Node {
             }
         }
 
-        for (FunctionDecl f : functions) {
+        for (MethodDecl f : methods) {
             sb.append("\n").append(f.compile(env));
         }
 
@@ -150,8 +150,8 @@ public class ClassDecl extends Node {
             }
         }
 
-        // Then: register function signatures first
-        for (FunctionDecl f : functions) {
+        // Then: register method signatures first
+        for (MethodDecl f : methods) {
 
             List<Operators> paramTypes = new ArrayList<>();
             List<SecLabel> paramLabels = new ArrayList<>();
@@ -161,14 +161,14 @@ public class ClassDecl extends Node {
                 paramLabels.add(p.label);
             }
 
-            delta.putFunction(
+            delta.putMethod(
                     f.name,
-                    new FunctionType(paramTypes, f.returnType, paramLabels, f.returnLabel)
+                    new MethodType(paramTypes, f.returnType, paramLabels, f.returnLabel)
             );
 
-            gamma.putFunction(
+            gamma.putMethod(
                     f.name,
-                    new FunctionLabel(paramLabels, f.returnLabel)
+                    new MethodLabel(paramLabels, f.returnLabel)
             );
         }
 
@@ -177,8 +177,8 @@ public class ClassDecl extends Node {
             d.typecheck(delta, gamma, SecLabel.LOW);
         }
 
-        // 2. Register/check functions
-        for (FunctionDecl f : functions) {
+        // 2. Register/check methods
+        for (MethodDecl f : methods) {
             f.typecheck(delta, gamma, SecLabel.LOW);
         }
 

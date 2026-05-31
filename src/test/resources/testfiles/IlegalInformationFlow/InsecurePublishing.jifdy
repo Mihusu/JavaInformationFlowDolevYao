@@ -12,7 +12,7 @@ public class InsecurePublishing {
         String high manuscript = "TOP_SECRET_BOOK";
 
         e(kEditor, Submission) low submissionMsg =
-            e(kEditor, Submission(String low title, String high manuscript));
+            e(kEditor, Submission(title, manuscript));
 
         send(submissionMsg);
     }
@@ -26,9 +26,7 @@ public class InsecurePublishing {
 
         try_rcv(
             e(kEditor,
-                Submission(
-                    String low t,
-                    String high m))
+                Submission(t, m))
         ) {
             ok = false;
         }
@@ -44,7 +42,7 @@ public class InsecurePublishing {
             print(review);
 
             e(kPublisher, Approval) low approvalMsg =
-                e(kPublisher, Approval(String low title, String high review));
+                e(kPublisher, Approval(title, review));
 
             send(approvalMsg);
         }
@@ -59,9 +57,7 @@ public class InsecurePublishing {
 
         try_rcv(
             e(kPublisher,
-                Approval(
-                    String low t,
-                    String high r))
+                Approval(t, r))
         ) {
             ok = false;
         }

@@ -16,10 +16,10 @@ public class InsecureBankTransfer {
         int high amount2 = 7000;
 
         e(kClientBank, Transfer1) low transfer1 =
-            e(kClientBank, Transfer1(String low sender, String low receiver, int high amount1));
+            e(kClientBank, Transfer1(sender, receiver, amount1));
 
         e(kClientBank, Transfer2) low transfer2 =
-            e(kClientBank, Transfer2(String low sender, String low receiver, int high amount2));
+            e(kClientBank, Transfer2(sender, receiver, amount2));
 
         send(transfer1);
         send(transfer2);
@@ -40,14 +40,14 @@ public class InsecureBankTransfer {
             int high amount_in = 0;
 
             try_rcv(e(kClientBank,
-                Transfer1(String low sender, String low receiver, int high amount1)
+                Transfer1(sender, receiver, amount1)
             )) {
                 ok = false;
             }
 
             // Second transfer
             try_rcv(e(kClientBank,
-              Transfer2(String low user, String low receiver, int high amount2)
+              Transfer2(user, receiver, amount2)
             )) {
                 ok = false;
             }
@@ -72,7 +72,7 @@ public class InsecureBankTransfer {
         }
 
         e(kClientBank, Result) low resultMsg =
-            e(kClientBank, Result(int low publicTotal));
+            e(kClientBank, Result(publicTotal));
 
         send(resultMsg);
     }

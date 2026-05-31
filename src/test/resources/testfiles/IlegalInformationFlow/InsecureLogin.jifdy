@@ -10,7 +10,7 @@ public class InsecureLogin {
         String high password = "1234";
 
         e(kServer, Login) low loginMsg =
-            e(kServer, Login(String low user, String high password));
+            e(kServer, Login(user, password));
 
         send(loginMsg);
     }
@@ -23,9 +23,7 @@ public class InsecureLogin {
 
         try_rcv(
             e(kServer,
-                Login(
-                    String low user,
-                    String high p))
+                Login(user, password))
         ) {
             authenticated = false;
         }
@@ -46,7 +44,7 @@ public class InsecureLogin {
             String low success = "SUCCESS";
 
             e(kClient, Ack) low ackMsg =
-                e(kClient, Ack(String low success));
+                e(kClient, Ack(success));
 
             send(ackMsg);
 
@@ -54,7 +52,7 @@ public class InsecureLogin {
 
             String low fail = "FAIL";
             e(kClient, Ack) low failMsg =
-                e(kClient, Ack(String low fail));
+                e(kClient, Ack(fail));
 
             send(failMsg);
         }
