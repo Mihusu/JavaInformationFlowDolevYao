@@ -48,12 +48,4 @@ public class CodeGenEnv {
 
         return false;
     }
-
-    public void declare(String code) {
-        declarations.append(code).append("\n");
-    }
-
-    public String getDeclarations() {
-        return declarations.toString();
-    }
 }
