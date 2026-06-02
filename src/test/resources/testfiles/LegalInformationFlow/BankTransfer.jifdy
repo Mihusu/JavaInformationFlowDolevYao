@@ -30,7 +30,7 @@ public class BankTransfer {
                     amount3 - amount4, target)
         );
 
-        total = amount1 + amount3 + amount2 + amount3 * amount4;
+        total = amount1 + amount3 + amount2 + amount3 - amount4;
 
         if(total < 0) {
             print("Transfer failed.");
