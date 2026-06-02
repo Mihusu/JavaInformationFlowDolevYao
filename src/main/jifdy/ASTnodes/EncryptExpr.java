@@ -64,8 +64,8 @@ public class EncryptExpr extends Expr {
             // We still use EncryptedValue, but we could store the actual ciphertext if we wanted to be 100% realistic
             // For now, let's keep the EncryptedValue structure but emphasize that it's "encrypted"
             EncryptedValue encrypted = new EncryptedValue(
-                    null,
-                    null,
+                    sk.value,
+                    payloadValue,
                     Base64.getEncoder().encodeToString(cipher.doFinal(payloadBytes))
             );
             encrypted.label = SecLabel.LOW;

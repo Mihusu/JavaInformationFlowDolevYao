@@ -108,6 +108,14 @@ public class ConstructorFormat extends Format {
     }
 
     @Override
+    public String describe() {
+        return name + "(" + args.stream()
+                .map(Format::describe)
+                .reduce((left, right) -> left + ", " + right)
+                .orElse("") + ")";
+    }
+
+    @Override
     public SecLabel label(LabelEnv gamma) {
 
         SecLabel result = SecLabel.LOW;

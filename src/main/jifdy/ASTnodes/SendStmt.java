@@ -17,7 +17,9 @@ public class SendStmt extends Stmt {
     }
 
     public void eval(Environment env) {
-        env.outbox.add(env.getVariables(name));
+        Value message = env.getVariables(name);
+        System.out.println("[JIFDY] SEND -> network: " + describe(message));
+        env.outbox.add(message);
     }
 
     @Override
@@ -40,5 +42,17 @@ public class SendStmt extends Stmt {
     public String compile(CodeGenEnv env) {
         return env.indent() +
                 "channel.send(" + name + ");\n";
+    }
+
+    private String describe(Value value) {
+        if (value instanceof EncryptedValue encryptedValue) {
+            return "e(" + encryptedValue.key + ", " + describe(encryptedValue.payload) + ")";
+        }
+
+        if (value instanceof ConstructorValue constructorValue) {
+            return constructorValue.name + "(...)";
+        }
+
+        return value.toString();
     }
 }

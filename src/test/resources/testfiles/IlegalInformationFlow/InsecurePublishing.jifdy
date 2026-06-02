@@ -36,9 +36,9 @@ public class InsecurePublishing {
 
         if (ok) {
 
-            String high review = "REJECTED";
+            // Illegal information flow in initialization
+            String low review = "REJECTED";
 
-            // ILLEGAL FLOW
             print(review);
 
             e(kPublisher, Approval) low approvalMsg =
@@ -51,7 +51,7 @@ public class InsecurePublishing {
 
     public void low publisher() {
 
-        bool high ok = true;
+        bool low ok = true;
         String low title = "";
         String high review = "";
 

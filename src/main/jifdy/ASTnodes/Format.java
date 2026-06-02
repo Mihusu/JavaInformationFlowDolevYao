@@ -16,6 +16,8 @@ public abstract class Format extends Node {
 
     public abstract String compileMatch(CodeGenEnv env, String valueVar);
 
+    public abstract String describe();
+
     // A method to check one label or potentially multiple labels, depending on the label checking
     public abstract SecLabel label(LabelEnv gamma);
 

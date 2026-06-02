@@ -1,5 +1,5 @@
 key kClientServer;
-format Login(String low user, String high password);
+format Login(String low user, int high password);
 format Upload(String low user, String high photo);
 
 public class CiphertextConfusion {
@@ -7,7 +7,7 @@ public class CiphertextConfusion {
     public void low client() {
 
         String low user = "Alice";
-        String high password = "1234";
+        int high password = 1234;
         String high photo = "IMGDATA";
 
         e(kClientServer, Login) low loginMsg =

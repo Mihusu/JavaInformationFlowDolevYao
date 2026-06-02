@@ -9,10 +9,12 @@ public class GeneratedProgram {
  
     static class EncryptedValue implements Serializable {
         byte[] ciphertext;
+        String description;
         byte[] salt; // This is just a mock for simplicity. 
  
-        EncryptedValue(byte[] ciphertext) {
+        EncryptedValue(byte[] ciphertext, String description) {
             this.ciphertext = ciphertext;
+            this.description = description;
         }
     }
  
@@ -41,7 +43,10 @@ public class GeneratedProgram {
                 oos.writeObject(payload);
                 byte[] payloadBytes = bos.toByteArray();
                  
-                return new EncryptedValue(cipher.doFinal(payloadBytes));
+                return new EncryptedValue(
+                        cipher.doFinal(payloadBytes),
+                        "e(" + key + ", " + describe(payload) + ")"
+                );
             } catch (Exception e) {
                 throw new RuntimeException("Encryption failed", e);
             }
@@ -63,21 +68,36 @@ public class GeneratedProgram {
                 throw new RuntimeException("Decryption failed", e);
             }
         }
+
+        static String describe(Object value) {
+            if (value instanceof EncryptedValue encryptedValue) {
+                return encryptedValue.description;
+            }
+            if (value instanceof ConstructorValue constructorValue) {
+                return constructorValue.name + "(...)";
+            }
+            return String.valueOf(value);
+        }
     }
      
     static class Channel {
         private final Queue<Object> messages = new ArrayDeque<>();
 
         void send(Object message) {
+            System.out.println("[JIFDY] SEND -> network: " + Crypto.describe(message));
             messages.add(message);
         }
 
-        Object receive() {
+        Object peek() {
             if (messages.isEmpty()) {
                 throw new RuntimeException("No message available");
             }
 
-            return messages.remove();
+            return messages.element();
+        }
+
+        void remove() {
+            messages.remove();
         }
     }
 
@@ -113,8 +133,9 @@ public void bank() {
     int amount1 = 0;
     int amount2 = 0;
     int amount3 = 0;
+    System.out.println("[JIFDY] network -> TRY_RCV: e(kClientBank, Transfer1(user, amount1, target))");
     try {
-        Object msg_0 = channel.receive();
+        Object msg_0 = channel.peek();
         if (!(msg_0 instanceof EncryptedValue)) throw new RuntimeException();
         EncryptedValue enc_1 = (EncryptedValue)msg_0;
         Object decrypted_2 = Crypto.decrypt(enc_1, "kClientBank");
@@ -124,9 +145,11 @@ public void bank() {
         user = (String) cv_3.values.get(0);
         amount1 = (int) cv_3.values.get(1);
         target = (String) cv_3.values.get(2);
+        channel.remove();
     } catch (Exception e) {}
+    System.out.println("[JIFDY] network -> TRY_RCV: e(kClientBank, Transfer2(user, amount2, target))");
     try {
-        Object msg_4 = channel.receive();
+        Object msg_4 = channel.peek();
         if (!(msg_4 instanceof EncryptedValue)) throw new RuntimeException();
         EncryptedValue enc_5 = (EncryptedValue)msg_4;
         Object decrypted_6 = Crypto.decrypt(enc_5, "kClientBank");
@@ -136,9 +159,11 @@ public void bank() {
         user = (String) cv_7.values.get(0);
         amount2 = (int) cv_7.values.get(1);
         target = (String) cv_7.values.get(2);
+        channel.remove();
     } catch (Exception e) {}
+    System.out.println("[JIFDY] network -> TRY_RCV: e(kClientBank, Transfer3(user, amount3, target))");
     try {
-        Object msg_8 = channel.receive();
+        Object msg_8 = channel.peek();
         if (!(msg_8 instanceof EncryptedValue)) throw new RuntimeException();
         EncryptedValue enc_9 = (EncryptedValue)msg_8;
         Object decrypted_10 = Crypto.decrypt(enc_9, "kClientBank");
@@ -148,6 +173,7 @@ public void bank() {
         user = (String) cv_11.values.get(0);
         amount3 = (int) cv_11.values.get(1);
         target = (String) cv_11.values.get(2);
+        channel.remove();
     } catch (Exception e) {}
     total = amount1 + amount2 + amount3;
     if (total < 0) {
@@ -161,8 +187,9 @@ public void bank() {
 }
 
 public void clientReceiver() {
+    System.out.println("[JIFDY] network -> TRY_RCV: e(kReceiverBank, Result(user, done, total))");
     try {
-        Object msg_12 = channel.receive();
+        Object msg_12 = channel.peek();
         if (!(msg_12 instanceof EncryptedValue)) throw new RuntimeException();
         EncryptedValue enc_13 = (EncryptedValue)msg_12;
         Object decrypted_14 = Crypto.decrypt(enc_13, "kReceiverBank");
@@ -172,6 +199,7 @@ public void clientReceiver() {
         user = (String) cv_15.values.get(0);
         boolean done = (boolean) cv_15.values.get(1);
         int total = (int) cv_15.values.get(2);
+        channel.remove();
         if (done && total > 0) {
             System.out.println("From bank:");
             System.out.println("You received money from " + user + ". " + user + " has sent you " + total + ". Status: " + done);

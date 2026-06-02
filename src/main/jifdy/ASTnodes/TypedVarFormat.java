@@ -68,6 +68,11 @@ public class TypedVarFormat extends Format {
     }
 
     @Override
+    public String describe() {
+        return name;
+    }
+
+    @Override
     public SecLabel label(LabelEnv gamma) {
         return this.label;
     }

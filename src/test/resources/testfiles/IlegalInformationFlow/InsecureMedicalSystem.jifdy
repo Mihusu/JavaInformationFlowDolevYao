@@ -1,0 +1,48 @@
+key kPatientHospital;
+format MedicalData(String low patientName, String high diagnosis, int high patientId);
+format Result(String low received);
+public class InsecureMedicalSystem {
+
+    public void low patient() {
+
+        String low patientName = "Alice";
+        String high diagnosis = "Cancer";
+        int high patientId = 777;
+
+        e(kPatientHospital, MedicalData) low medicalMsg =
+            e(kPatientHospital, MedicalData(patientName, diagnosis, patientId));
+
+        send(medicalMsg);
+
+        try_rcv(
+            e(kPatientHospital, Result(received))) {
+        }
+    }
+
+
+    public void low hospital() {
+
+        String low patientName = "";
+        String high diagnosis = "";
+        int high patientId = 0;
+        String low publicDiagnosis = "";
+
+        try_rcv(
+            e(kPatientHospital, MedicalData(patientName, diagnosis, patientId))
+        ) {
+        }
+
+        // ILLEGAL EXPLICIT FLOW: confidential medical data becomes public.
+        publicDiagnosis = diagnosis;
+
+        print(patientName);
+        print(publicDiagnosis);
+
+        String low received = "RECEIVED";
+
+        e(kPatientHospital, Result) low resultMsg =
+            e(kPatientHospital, Result(received));
+
+        send(resultMsg);
+    }
+}

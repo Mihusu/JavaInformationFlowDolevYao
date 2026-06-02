@@ -44,6 +44,11 @@ public class ExprFormat extends Format {
     }
 
     @Override
+    public String describe() {
+        return expr.compile(new CodeGenEnv());
+    }
+
+    @Override
     public String compile(CodeGenEnv env) {
         return "";
     }

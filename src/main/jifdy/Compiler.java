@@ -22,7 +22,11 @@ public class Compiler {
     public static void main(String[] args) throws Exception {
 
         // 1. Read the input file
-        CharStream input = CharStreams.fromFileName("src/test/resources/testfiles/legalInformationFlow/BankTransfer.jifdy");
+        String inputFile = args.length > 0
+                ? args[0]
+                : "src/test/resources/testfiles/legalInformationFlow/BankTransfer.jifdy";
+
+        CharStream input = CharStreams.fromFileName(inputFile);
 
         // 2. Lexer
         Information_flowLexer lexer = new Information_flowLexer(input);

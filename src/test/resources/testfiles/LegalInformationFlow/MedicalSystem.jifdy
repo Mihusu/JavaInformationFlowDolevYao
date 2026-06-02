@@ -1,5 +1,4 @@
-key kPublic;
-key kPatient;
+key kPatientHospital;
 format MedicalData(String low patientName, String high diagnosis, int high patientId);
 format Result(String low received);
 public class MedicalSystem {
@@ -11,46 +10,39 @@ public class MedicalSystem {
         int high patientId = 777;
 
         // LOW key used for HIGH data
-        e(kPublic, MedicalData) low medicalMsg =
-            e(kPublic, MedicalData(patientName, diagnosis, patientId));
+        e(kPatientHospital, MedicalData) low medicalMsg =
+            e(kPatientHospital, MedicalData(patientName, diagnosis, patientId));
 
         send(medicalMsg);
 
         try_rcv(
-            e(kPatient, Result(received))) {
+            e(kPatientHospital, Result(received))) {
         }
     }
 
 
     public void low hospital() {
 
-        bool high ok = true;
+        bool low ok = true;
         String low patientName = "";
         String high diagnosis = "";
         int high patientId = 0;
 
         try_rcv(
-            e(kPublic,
-                MedicalData(
-                    pName,
-                    receivedDiagnosis,
-                    pid))
+            e(kPatientHospital, MedicalData(patientName, diagnosis, patientId))
         ) {
-            ok = false;
         }
 
         if (ok) {
 
             print(patientName);
-
-            patientName = pName;
-            diagnosis = receivedDiagnosis;
-            patientId = pid;
+            print(diagnosis);
+            print(patientId);
 
             String low received = "RECEIVED";
 
-            e(kPatient, Result) low resultMsg =
-                e(kPatient, Result(received));
+            e(kPatientHospital, Result) low resultMsg =
+                e(kPatientHospital, Result(received));
 
             send(resultMsg);
         }

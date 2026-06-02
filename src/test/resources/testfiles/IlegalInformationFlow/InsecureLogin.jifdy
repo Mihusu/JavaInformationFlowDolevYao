@@ -19,16 +19,12 @@ public class InsecureLogin {
     public void low server() {
 
         bool low authenticated = false;
-        String high password = "";
 
         try_rcv(
             e(kServer,
                 Login(user, password))
         ) {
-            authenticated = false;
         }
-
-        password = p;
 
         // HIGH condition
         if (password == "1234") {

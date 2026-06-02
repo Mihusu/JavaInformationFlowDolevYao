@@ -106,6 +106,14 @@ public class EncryptFormat extends Format {
     }
 
     @Override
+    public String describe() {
+        String keyName = key instanceof Expr.StringLiteral literal
+                ? literal.value
+                : key.compile(new CodeGenEnv());
+        return "e(" + keyName + ", " + inner.describe() + ")";
+    }
+
+    @Override
     public SecLabel label(LabelEnv gamma) {
         return inner.label(gamma);
     }

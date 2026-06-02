@@ -79,10 +79,12 @@ public class Program extends Node {
        \s
            static class EncryptedValue implements Serializable {
                byte[] ciphertext;
+               String description;
                byte[] salt; // This is just a mock for simplicity.\s
        \s
-               EncryptedValue(byte[] ciphertext) {
+               EncryptedValue(byte[] ciphertext, String description) {
                    this.ciphertext = ciphertext;
+                   this.description = description;
                }
            }
        \s
@@ -111,7 +113,10 @@ public class Program extends Node {
                        oos.writeObject(payload);
                        byte[] payloadBytes = bos.toByteArray();
                        \s
-                       return new EncryptedValue(cipher.doFinal(payloadBytes));
+                       return new EncryptedValue(
+                               cipher.doFinal(payloadBytes),
+                               "e(" + key + ", " + describe(payload) + ")"
+                       );
                    } catch (Exception e) {
                        throw new RuntimeException("Encryption failed", e);
                    }
@@ -133,6 +138,16 @@ public class Program extends Node {
                        throw new RuntimeException("Decryption failed", e);
                    }
                }
+
+               static String describe(Object value) {
+                   if (value instanceof EncryptedValue encryptedValue) {
+                       return encryptedValue.description;
+                   }
+                   if (value instanceof ConstructorValue constructorValue) {
+                       return constructorValue.name + "(...)";
+                   }
+                   return String.valueOf(value);
+               }
            }
        \s""");
 
@@ -142,15 +157,20 @@ public class Program extends Node {
                private final Queue<Object> messages = new ArrayDeque<>();
 
                void send(Object message) {
+                   System.out.println("[JIFDY] SEND -> network: " + Crypto.describe(message));
                    messages.add(message);
                }
 
-               Object receive() {
+               Object peek() {
                    if (messages.isEmpty()) {
                        throw new RuntimeException("No message available");
                    }
 
-                   return messages.remove();
+                   return messages.element();
+               }
+
+               void remove() {
+                   messages.remove();
                }
            }
 

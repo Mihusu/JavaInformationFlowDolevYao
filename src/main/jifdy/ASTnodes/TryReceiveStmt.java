@@ -25,11 +25,13 @@ public class TryReceiveStmt extends Stmt {
     }
 
     public void eval(Environment env) {
+        System.out.println("[JIFDY] network -> TRY_RCV: " + format.describe());
         if (env.inbox.isEmpty()) return;
 
-        Value msg = env.inbox.poll();
+        Value msg = env.inbox.peek();
 
         if (format.match(msg, env)) {
+            env.inbox.poll();
             if (resultVar != null) {
                 env.setVariables(resultVar, msg);
             }
@@ -75,14 +77,19 @@ public class TryReceiveStmt extends Stmt {
 
         StringBuilder sb = new StringBuilder();
 
+        sb.append(env.indent())
+                .append("System.out.println(\"[JIFDY] network -> TRY_RCV: ")
+                .append(escapeJava(format.describe()))
+                .append("\");\n");
         sb.append(env.indent()).append("try {\n");
         env.increaseIndent();
 
         sb.append(env.indent())
                 .append("Object ").append(msg)
-                .append(" = channel.receive();\n");
+                .append(" = channel.peek();\n");
 
         sb.append(format.compileMatch(env, msg));
+        sb.append(env.indent()).append("channel.remove();\n");
 
         if (resultVar != null) {
             if (env.isVariableDeclared(resultVar)) {
@@ -99,5 +106,10 @@ public class TryReceiveStmt extends Stmt {
         sb.append(env.indent()).append("} catch (Exception e) {}\n");
 
         return sb.toString();
+    }
+
+    private String escapeJava(String text) {
+        return text.replace("\\", "\\\\")
+                .replace("\"", "\\\"");
     }
 }
