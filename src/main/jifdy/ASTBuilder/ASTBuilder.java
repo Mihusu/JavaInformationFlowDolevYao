@@ -296,94 +296,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
     // =========================
 
     @Override
-    public Expr visitLogicalOr(Information_flowParser.LogicalOrContext ctx) {
-        if (ctx.logicalOr() != null) {
-            return new OpExpr(
-                    (Expr) visit(ctx.logicalOr()),
-                    "||",
-                    (Expr) visit(ctx.logicalAnd())
-            );
-        }
-        return (Expr) visit(ctx.logicalAnd());
-    }
-
-    @Override
-    public Expr visitLogicalAnd(Information_flowParser.LogicalAndContext ctx) {
-        if (ctx.logicalAnd() != null) {
-            return new OpExpr(
-                    (Expr) visit(ctx.logicalAnd()),
-                    "&&",
-                    (Expr) visit(ctx.equality())
-            );
-        }
-        return (Expr) visit(ctx.equality());
-    }
-
-    @Override
-    public Expr visitEquality(Information_flowParser.EqualityContext ctx) {
-        if (ctx.equality() != null) {
-            return new OpExpr(
-                    (Expr) visit(ctx.equality()),
-                    ctx.getChild(1).getText(),
-                    (Expr) visit(ctx.relational())
-            );
-        }
-        return (Expr) visit(ctx.relational());
-    }
-
-    @Override
-    public Expr visitRelational(Information_flowParser.RelationalContext ctx) {
-        if (ctx.relational() != null) {
-            return new OpExpr(
-                    (Expr) visit(ctx.relational()),
-                    ctx.getChild(1).getText(),
-                    (Expr) visit(ctx.additive())
-            );
-        }
-        return (Expr) visit(ctx.additive());
-    }
-
-    @Override
-    public Expr visitAdditive(Information_flowParser.AdditiveContext ctx) {
-
-        if (ctx.additive() != null) {
-            Expr left = (Expr) visit(ctx.additive());
-            Expr right = (Expr) visit(ctx.multiplicative());
-
-            String op = ctx.getChild(1).getText();
-
-            return new OpExpr(left, op, right);
-        }
-
-        return (Expr) visit(ctx.multiplicative());
-    }
-
-    @Override
-    public Expr visitMultiplicative(Information_flowParser.MultiplicativeContext ctx) {
-        if (ctx.multiplicative() != null) {
-            return new OpExpr(
-                    (Expr) visit(ctx.multiplicative()),
-                    ctx.getChild(1).getText(),
-                    (Expr) visit(ctx.unary())
-            );
-        }
-        return (Expr) visit(ctx.unary());
-    }
-
-    @Override
-    public Expr visitUnary(Information_flowParser.UnaryContext ctx) {
-        if (ctx.unary() != null) {
-            return new UnaryExpr(
-                    ctx.getChild(0).getText(),
-                    (Expr) visit(ctx.unary())
-            );
-        }
-        return (Expr) visit(ctx.primary());
-    }
-
-    @Override
-    public Expr visitPrimary(Information_flowParser.PrimaryContext ctx) {
-
+    public Expr visitExpression(Information_flowParser.ExpressionContext ctx) {
         if (ctx.INT() != null)
             return new IntLiteral(Integer.parseInt(ctx.INT().getText()));
 
@@ -395,7 +308,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
 
         if (ctx.ENCRYPT() != null) {
             Expr key = buildKeyExpr(ctx.KEY());
-            return setLocation(new EncryptExpr((Expr) visit(ctx.expression()), key), ctx);
+            return setLocation(new EncryptExpr((Expr) visit(ctx.expression(0)), key), ctx);
         }
 
         if (ctx.IDENTIFIER() != null)
@@ -404,7 +317,19 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         if (ctx.methodCallOrFormat() != null)
             return (Expr) visit(ctx.methodCallOrFormat());
 
-        return (Expr) visit(ctx.expression());
+        if (ctx.expression().size() == 1) {
+            Expr operand = (Expr) visit(ctx.expression(0));
+            if (ctx.getChildCount() == 3) {
+                return operand;
+            }
+            return new UnaryExpr(ctx.getChild(0).getText(), operand);
+        }
+
+        return new OpExpr(
+                (Expr) visit(ctx.expression(0)),
+                ctx.getChild(1).getText(),
+                (Expr) visit(ctx.expression(1))
+        );
     }
 
     @Override

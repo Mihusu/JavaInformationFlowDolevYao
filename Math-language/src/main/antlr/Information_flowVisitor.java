@@ -125,54 +125,6 @@ public interface Information_flowVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExpression(Information_flowParser.ExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Information_flowParser#logicalOr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLogicalOr(Information_flowParser.LogicalOrContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Information_flowParser#logicalAnd}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLogicalAnd(Information_flowParser.LogicalAndContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Information_flowParser#equality}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitEquality(Information_flowParser.EqualityContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Information_flowParser#relational}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitRelational(Information_flowParser.RelationalContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Information_flowParser#additive}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAdditive(Information_flowParser.AdditiveContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Information_flowParser#multiplicative}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMultiplicative(Information_flowParser.MultiplicativeContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Information_flowParser#unary}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitUnary(Information_flowParser.UnaryContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Information_flowParser#primary}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPrimary(Information_flowParser.PrimaryContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link Information_flowParser#methodCallOrFormat}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

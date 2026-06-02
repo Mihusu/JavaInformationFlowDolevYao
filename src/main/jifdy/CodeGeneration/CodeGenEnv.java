@@ -10,8 +10,6 @@ public class CodeGenEnv {
     private int indent = 0;
     private final Deque<Set<String>> variableScopes = new ArrayDeque<>();
 
-    private final StringBuilder declarations = new StringBuilder();
-
     public String freshVar(String prefix) {
         return prefix + "_" + (tempCounter++);
     }
@@ -36,7 +34,9 @@ public class CodeGenEnv {
             pushScope();
         }
 
-        variableScopes.peek().add(name);
+        if(variableScopes.peek() != null) {
+            variableScopes.peek().add(name);
+        }
     }
 
     public boolean isVariableDeclared(String name) {

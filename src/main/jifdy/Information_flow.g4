@@ -125,46 +125,6 @@ receiveStatement
     ;
 
 expression
-    : logicalOr
-    ;
-
-logicalOr
-    : logicalOr OR logicalAnd
-    | logicalAnd
-    ;
-
-logicalAnd
-    : logicalAnd AND equality
-    | equality
-    ;
-
-equality
-    : equality ('==' | '!=') relational
-    | relational
-    ;
-
-relational
-    : relational ('>' | '<' | '>=' | '<=') additive
-    | additive
-    ;
-
-additive
-    : additive ('+' | '-') multiplicative
-    | multiplicative
-    ;
-
-multiplicative
-    : multiplicative ('*' | '/' | '%') unary
-    | unary
-    ;
-
-unary
-    : NOT unary
-    | '-' unary
-    | primary
-    ;
-
-primary
     : INT
     | BOOL
     | STR
@@ -172,6 +132,14 @@ primary
     | methodCallOrFormat
     | ENCRYPT '(' KEY ',' expression ')'
     | '(' expression ')'
+    | NOT expression
+    | '-' expression
+    | expression ('*' | '/' | '%') expression
+    | expression ('+' | '-') expression
+    | expression ('>' | '<' | '>=' | '<=') expression
+    | expression ('==' | '!=') expression
+    | expression AND expression
+    | expression OR expression
     ;
 
 methodCallOrFormat
