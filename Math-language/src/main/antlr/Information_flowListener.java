@@ -1,4 +1,4 @@
-// Generated from C:/Users/ming2/GitHub/Java_information_flow_dolev_yao/src/main/jifdy/Information_flow.g4 by ANTLR 4.13.2
+// Generated from src/main/jifdy/Information_flow.g4 by ANTLR 4.13.2
 package antlr;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -177,6 +177,16 @@ public interface Information_flowListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSendStatement(Information_flowParser.SendStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Information_flowParser#inputStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterInputStatement(Information_flowParser.InputStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Information_flowParser#inputStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitInputStatement(Information_flowParser.InputStatementContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Information_flowParser#receiveStatement}.
 	 * @param ctx the parse tree

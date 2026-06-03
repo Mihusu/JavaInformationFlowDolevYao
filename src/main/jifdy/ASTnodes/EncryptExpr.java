@@ -68,8 +68,10 @@ public class EncryptExpr extends Expr {
                     payloadValue,
                     Base64.getEncoder().encodeToString(cipher.doFinal(payloadBytes))
             );
+
             encrypted.label = SecLabel.LOW;
             return encrypted;
+
         } catch (Exception e) {
             throw new RuntimeException("Encryption failed", e);
         }

@@ -58,7 +58,7 @@ public class TypedVarFormat extends Format {
             return env.indent() + name + " = " + assignmentValue + ";\n";
         }
 
-        env.declareVariable(name);
+        env.declareVariable(name, type);
         return env.indent() + JavaTypeSupport.toJavaType(type) + " " + name + " = " + assignmentValue + ";\n";
     }
 

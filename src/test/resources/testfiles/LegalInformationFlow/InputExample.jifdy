@@ -1,0 +1,18 @@
+public class InputExample {
+
+    public void low run() {
+        String low name = "";
+        int low age = 0;
+        bool low approved = false;
+
+        input(name);
+        input(age);
+        input(approved);
+
+        print("Name: " + name);
+        print("Age: " + age);
+        print("Approved: " + approved);
+    }
+
+    run();
+}

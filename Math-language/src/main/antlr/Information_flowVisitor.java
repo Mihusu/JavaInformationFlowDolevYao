@@ -1,4 +1,4 @@
-// Generated from C:/Users/ming2/GitHub/Java_information_flow_dolev_yao/src/main/jifdy/Information_flow.g4 by ANTLR 4.13.2
+// Generated from src/main/jifdy/Information_flow.g4 by ANTLR 4.13.2
 package antlr;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -112,6 +112,12 @@ public interface Information_flowVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitSendStatement(Information_flowParser.SendStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Information_flowParser#inputStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInputStatement(Information_flowParser.InputStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Information_flowParser#receiveStatement}.
 	 * @param ctx the parse tree

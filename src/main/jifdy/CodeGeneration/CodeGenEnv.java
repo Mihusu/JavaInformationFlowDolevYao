@@ -8,7 +8,7 @@ public class CodeGenEnv {
 
     private int tempCounter = 0;
     private int indent = 0;
-    private final Deque<Set<String>> variableScopes = new ArrayDeque<>();
+    private final Deque<Map<String, ASTnodes.Operators>> variableScopes = new ArrayDeque<>();
 
     public String freshVar(String prefix) {
         return prefix + "_" + (tempCounter++);
@@ -22,7 +22,7 @@ public class CodeGenEnv {
     public void decreaseIndent() { indent--; }
 
     public void pushScope() {
-        variableScopes.push(new HashSet<>());
+        variableScopes.push(new HashMap<>());
     }
 
     public void popScope() {
@@ -30,22 +30,36 @@ public class CodeGenEnv {
     }
 
     public void declareVariable(String name) {
+        declareVariable(name, null);
+    }
+
+    public void declareVariable(String name, ASTnodes.Operators type) {
         if (variableScopes.isEmpty()) {
             pushScope();
         }
 
         if(variableScopes.peek() != null) {
-            variableScopes.peek().add(name);
+            variableScopes.peek().put(name, type);
         }
     }
 
     public boolean isVariableDeclared(String name) {
-        for (Set<String> scope : variableScopes) {
-            if (scope.contains(name)) {
+        for (Map<String, ASTnodes.Operators> scope : variableScopes) {
+            if (scope.containsKey(name)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    public ASTnodes.Operators getVariableType(String name) {
+        for (Map<String, ASTnodes.Operators> scope : variableScopes) {
+            if (scope.containsKey(name)) {
+                return scope.get(name);
+            }
+        }
+
+        return null;
     }
 }

@@ -6,6 +6,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
  
 public class GeneratedProgram {
+    private static final Scanner INPUT = new Scanner(System.in);
  
     static class EncryptedValue implements Serializable {
         byte[] ciphertext;

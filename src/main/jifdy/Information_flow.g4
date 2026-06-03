@@ -4,7 +4,6 @@ grammar Information_flow;
 PPLABEL     : 'public' | 'private';
 SEND        : 'send';
 TRY_RCV     : 'try_rcv';
-ENCRYPT     : 'e';
 KEY         : 'k'[a-zA-Z0-9_]*;
 
 // Security labels
@@ -97,13 +96,14 @@ basicType
     ;
 
 encryptionType
-    : ENCRYPT '(' KEY ',' IDENTIFIER ')'
+    : 'e' '(' KEY ',' IDENTIFIER ')'
     ;
 
 statement
     : assignmentStatement
     | methodCallOrFormat ';'
     | sendStatement
+    | inputStatement
     | receiveStatement
     | returnStatement
     | ifStatement
@@ -120,6 +120,10 @@ sendStatement
     : SEND '(' IDENTIFIER ')' ';'
     ;
 
+inputStatement
+    : 'input' '(' IDENTIFIER ')' ';'
+    ;
+
 receiveStatement
     : TRY_RCV '(' expression ')' cmdBlock
     ;
@@ -130,7 +134,7 @@ expression
     | STR
     | IDENTIFIER
     | methodCallOrFormat
-    | ENCRYPT '(' KEY ',' expression ')'
+    | 'e' '(' KEY ',' expression ')'
     | '(' expression ')'
     | NOT expression
     | '-' expression

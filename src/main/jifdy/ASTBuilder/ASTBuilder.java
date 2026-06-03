@@ -201,6 +201,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         if (ctx.assignmentStatement() != null) return visit(ctx.assignmentStatement());
         if (ctx.methodCallOrFormat() != null) return new MethodCallStmt((Expr) visit(ctx.methodCallOrFormat()));
         if (ctx.sendStatement() != null) return visit(ctx.sendStatement());
+        if (ctx.inputStatement() != null) return visit(ctx.inputStatement());
         if (ctx.receiveStatement() != null) return visit(ctx.receiveStatement());
         if (ctx.returnStatement() != null) return visit(ctx.returnStatement());
         if (ctx.ifStatement() != null) return visit(ctx.ifStatement());
@@ -225,6 +226,11 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
     @Override
     public Stmt visitSendStatement(Information_flowParser.SendStatementContext ctx) {
         return setLocation(new SendStmt(ctx.IDENTIFIER().getText()), ctx);
+    }
+
+    @Override
+    public Stmt visitInputStatement(Information_flowParser.InputStatementContext ctx) {
+        return setLocation(new InputStmt(ctx.IDENTIFIER().getText()), ctx);
     }
 
     @Override

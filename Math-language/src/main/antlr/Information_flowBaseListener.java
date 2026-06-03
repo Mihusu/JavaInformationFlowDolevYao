@@ -1,4 +1,4 @@
-// Generated from C:/Users/ming2/GitHub/Java_information_flow_dolev_yao/src/main/jifdy/Information_flow.g4 by ANTLR 4.13.2
+// Generated from src/main/jifdy/Information_flow.g4 by ANTLR 4.13.2
 package antlr;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -216,6 +216,18 @@ public class Information_flowBaseListener implements Information_flowListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitSendStatement(Information_flowParser.SendStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterInputStatement(Information_flowParser.InputStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitInputStatement(Information_flowParser.InputStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

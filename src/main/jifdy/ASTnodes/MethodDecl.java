@@ -130,7 +130,7 @@ public class MethodDecl extends Declaration {
 
         env.pushScope();
         for (Param p : params) {
-            env.declareVariable(p.name);
+            env.declareVariable(p.name, p.type);
         }
 
         env.increaseIndent();

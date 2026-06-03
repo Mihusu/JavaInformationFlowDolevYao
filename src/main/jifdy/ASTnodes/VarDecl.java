@@ -92,12 +92,12 @@ public class VarDecl extends Declaration {
 
     @Override
     public String compile(CodeGenEnv env) {
-        env.declareVariable(name);
+        env.declareVariable(name, type);
         return env.indent() + JavaTypeSupport.toJavaType(type) + " " + name + compileInitializer(env) + ";\n";
     }
 
     public String compileField(CodeGenEnv env) {
-        env.declareVariable(name);
+        env.declareVariable(name, type);
         return env.indent() + "public " + JavaTypeSupport.toJavaType(type) + " " + name + compileInitializer(env) + ";\n";
     }
 

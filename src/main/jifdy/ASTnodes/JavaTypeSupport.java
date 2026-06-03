@@ -38,7 +38,7 @@ public final class JavaTypeSupport {
             case INT -> "0";
             case BOOL -> "false";
             case STRING -> "\"\"";
-            case CIPHERTEXT -> "new EncryptedValue(new byte[0])";
+            case CIPHERTEXT -> "new EncryptedValue(new byte[0], \"<empty>\")";
             case FORMAT -> "new ConstructorValue(\"\", Arrays.asList())";
         };
     }
