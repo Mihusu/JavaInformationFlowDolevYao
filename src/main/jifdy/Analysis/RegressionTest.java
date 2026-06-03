@@ -151,15 +151,12 @@ public class RegressionTest {
             checker.check(program);
 
             if (shouldPass) {
-
                 System.out.println("PASSED");
                 return true;
 
             } else {
 
-                System.out.println(
-                        "FAILED (Expected TypeCheckException but it passed)"
-                );
+                System.out.println("FAILED (Expected TypeCheckException but it passed)");
 
                 return false;
             }
@@ -168,27 +165,20 @@ public class RegressionTest {
 
             if (!shouldPass) {
 
-                System.out.println(
-                        "PASSED (Caught expected exception: "
-                                + e.getMessage() + ")"
-                );
+                System.out.println( "PASSED (Caught expected exception: " + e.getMessage() + ")");
 
                 return true;
 
             } else {
 
-                System.out.println(
-                        "FAILED (Unexpected TypeCheckException: "
-                                + e.getMessage() + ")"
-                );
+                System.out.println("FAILED (Unexpected TypeCheckException: " + e.getMessage() + ")");
 
                 return false;
             }
 
         } catch (Exception e) {
 
-            System.out.println(
-                    "FAILED (Unexpected exception: "
+            System.out.println("FAILED (Unexpected exception: "
                             + e.getClass().getSimpleName()
                             + ": "
                             + e.getMessage()

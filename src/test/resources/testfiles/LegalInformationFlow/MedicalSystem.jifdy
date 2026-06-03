@@ -17,6 +17,7 @@ public class MedicalSystem {
 
         try_rcv(
             e(kPatientHospital, Result(received))) {
+            print(received);
         }
     }
 

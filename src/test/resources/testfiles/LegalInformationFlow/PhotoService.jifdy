@@ -33,8 +33,6 @@ public class PhotoService {
         print("[JIFJIFDY] network -> client: e(kClientServer, AckMsg(msg))");
         try_rcv(e(kClientServer,AckMsg(msg)
         )) {
-            // receive FAILED -> mark failure
-            ok = false;
         }
 
         // Only use msg if receive succeeded
