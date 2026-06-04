@@ -1,0 +1,158 @@
+package ASTNodes;
+
+import Analysis.Environment;
+import Analysis.LabelEnv;
+import Analysis.TypeCheckException;
+import Analysis.TypeEnv;
+import CodeGeneration.CodeGenEnv;
+
+/**
+ * Expression node for binary arithmetic, comparison, equality, and logical operations.
+ */
+public class OpExpr extends Expr {
+    public Expr left;
+    public Expr right;
+    String op;
+
+    public OpExpr(Expr left, String op, Expr right) {
+        this.left = left;
+        this.right = right;
+        this.op = op;
+    }
+
+    @Override
+    public Operators typecheck(TypeEnv delta, LabelEnv gamma) {
+
+        Operators leftType = left.typecheck(delta, gamma);
+        Operators rightType = right.typecheck(delta, gamma);
+        Type t1 = Operators.runtimeType(leftType);
+        Type t2 = Operators.runtimeType(rightType);
+
+        switch (op) {
+            case "+" -> {
+                if (t1 == Type.STRING || t2 == Type.STRING) {
+                    return Type.STRING;
+                }
+
+                if (t1 != Type.INT || t2 != Type.INT)
+                    throw new TypeCheckException("Arithmetic needs INT");
+                return Type.INT;
+            }
+            case "-", "*", "/", "%", "^" -> {
+                if (t1 != Type.INT || t2 != Type.INT)
+                    throw new TypeCheckException("Arithmetic needs INT");
+                return Type.INT;
+            }
+            case ">", "<", ">=", "<=" -> {
+                if (t1 != Type.INT || t2 != Type.INT)
+                    throw new TypeCheckException("Comparison needs INT");
+                return Type.BOOL;
+            }
+            case "==", "!=" -> {
+                if (!Operators.sameType(leftType, rightType))
+                    throw new TypeCheckException("Type mismatch in equality");
+                return Type.BOOL;
+            }
+            case "&&", "||" -> {
+                if (t1 != Type.BOOL || t2 != Type.BOOL)
+                    throw new TypeCheckException("Logical needs BOOL");
+                return Type.BOOL;
+            }
+        }
+
+        throw new RuntimeException("Unknown op: " + op);
+    }
+
+    @Override
+    public SecLabel label(LabelEnv gamma) {
+        SecLabel l1 = left.label(gamma);
+        SecLabel l2 = right.label(gamma);
+
+        return SecLabel.join(l1, l2);
+    }
+
+    public Value eval(Environment env) {
+        Value l = left.eval(env);
+        Value r = right.eval(env);
+
+        switch (op) {
+            case "+" -> {
+                if (l instanceof StringValue || r instanceof StringValue) {
+                    return new StringValue(valueToString(l) + valueToString(r));
+                }
+                return new IntValue(((IntValue) l).value + ((IntValue) r).value);
+            }
+            case "-" -> {
+                return new IntValue(((IntValue) l).value - ((IntValue) r).value);
+            }
+            case "*" -> {
+                return new IntValue(((IntValue) l).value * ((IntValue) r).value);
+            }
+            case "/" -> {
+                return new IntValue(((IntValue) l).value / ((IntValue) r).value);
+            }
+            case "%" -> {
+                return new IntValue(((IntValue) l).value % ((IntValue) r).value);
+            }
+            case "^" -> {
+                int leftVal = ((IntValue) l).value;
+                int rightVal = ((IntValue) r).value;
+                return new IntValue((int) Math.pow(leftVal, rightVal));
+            }
+
+
+            // Comparisons
+            case ">" -> {
+                return new BoolValue(((IntValue) l).value > ((IntValue) r).value);
+            }
+            case "<" -> {
+                return new BoolValue(((IntValue) l).value < ((IntValue) r).value);
+            }
+            case ">=" -> {
+                return new BoolValue(((IntValue) l).value >= ((IntValue) r).value);
+            }
+            case "<=" -> {
+                return new BoolValue(((IntValue) l).value <= ((IntValue) r).value);
+            }
+
+
+            // Equality
+            case "==" -> {
+                return new BoolValue(l.equals(r));
+            }
+            case "!=" -> {
+                return new BoolValue(!l.equals(r));
+            }
+
+
+            // Logical
+            case "and", "&&" -> {
+                return new BoolValue(((BoolValue) l).value && ((BoolValue) r).value);
+            }
+            case "or", "||" -> {
+                return new BoolValue(((BoolValue) l).value || ((BoolValue) r).value);
+            }
+        }
+
+        throw new TypeCheckException("Unknown operator: " + op);
+    }
+
+    private String valueToString(Value value) {
+        if (value instanceof StringValue stringValue) {
+            return stringValue.value;
+        }
+        if (value instanceof IntValue intValue) {
+            return Integer.toString(intValue.value);
+        }
+        if (value instanceof BoolValue boolValue) {
+            return Boolean.toString(boolValue.value);
+        }
+        return value.toString();
+    }
+
+
+    @Override
+    public String compile(CodeGenEnv env) {
+        return left.compile(env) + " " + op + " " + right.compile(env);
+    }
+}

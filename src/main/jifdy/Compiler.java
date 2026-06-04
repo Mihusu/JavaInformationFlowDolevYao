@@ -1,4 +1,4 @@
-import ASTnodes.Program;
+import ASTNodes.Program;
 import ASTBuilder.ASTBuilder;
 import Analysis.Environment;
 import Analysis.TypeChecker;

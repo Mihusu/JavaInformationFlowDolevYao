@@ -36,7 +36,7 @@ Do not move these directories unless you also update the build configuration.
 - `src/main/jifdy/ASTBuilder/ASTBuilder.java`  
   Converts parse tree nodes into AST nodes.
 
-- `src/main/jifdy/ASTnodes`  
+- `src/main/jifdy/ASTNodes`  
   AST nodes, type representations, expression evaluation, code generation, and runtime value classes.
 
 - `src/main/jifdy/Analysis`  

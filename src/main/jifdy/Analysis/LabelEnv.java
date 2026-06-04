@@ -3,7 +3,7 @@ package Analysis;
 import java.util.HashMap;
 import java.util.Map;
 
-import ASTnodes.SecLabel;
+import ASTNodes.SecLabel;
 
 /**
  * Manages security labels during type checking.

@@ -1,6 +1,6 @@
 package Analysis;
 
-import ASTnodes.*;
+import ASTNodes.*;
 
 import java.util.*;
 
@@ -20,6 +20,7 @@ public class Environment {
     // Procedures (methods)
     private final Map<String, ProcDecl> procedures = new HashMap<>();
     private final Map<String, MethodDecl> methods = new HashMap<>();
+    private final Map<String, ClassDecl> classes = new HashMap<>();
 
     // Communication channels
     public Queue<Value> inbox = new LinkedList<>();
@@ -29,6 +30,7 @@ public class Environment {
     private final Map<String, Integer> cryptoCounter = new HashMap<>();
     private Value returnValue = null;
     public boolean hasReturned = false;
+    private ObjectValue thisObject = null;
 
     // Observer level (intruder)
     public SecLabel observerLevel = SecLabel.LOW;
@@ -42,10 +44,12 @@ public class Environment {
         this.labels.putAll(parent.labels);
         this.procedures.putAll(parent.procedures);
         this.methods.putAll(parent.methods);
+        this.classes.putAll(parent.classes);
         this.inbox = parent.inbox;
         this.outbox = parent.outbox;
         this.cryptoCounter.putAll(parent.cryptoCounter);
         this.observerLevel = parent.observerLevel;
+        this.thisObject = parent.thisObject;
     }
 
     // =========================
@@ -63,6 +67,10 @@ public class Environment {
             return variables.get(name);
         }
 
+        if (thisObject != null && thisObject.fields.containsKey(name)) {
+            return thisObject.fields.get(name);
+        }
+
         if (parent != null) {
             return parent.getVariables(name);
         }
@@ -77,6 +85,11 @@ public class Environment {
      * @throws RuntimeException if information flow is illegal.
      */
     public void setVariables(String name, Value value) {
+        if (!labels.containsKey(name) && thisObject != null && thisObject.fields.containsKey(name)) {
+            setField(thisObject, name, value);
+            return;
+        }
+
         if (!labels.containsKey(name) && parent != null) {
             parent.setVariables(name, value);
             return;
@@ -109,11 +122,45 @@ public class Environment {
             return labels.get(name);
         }
 
+        if (thisObject != null && thisObject.fieldLabels.containsKey(name)) {
+            return thisObject.fieldLabels.get(name);
+        }
+
         if (parent != null) {
             return parent.getLabel(name);
         }
 
         return null;
+    }
+
+    public void setThisObject(ObjectValue object) {
+        this.thisObject = object;
+        declare("this", object, SecLabel.LOW);
+    }
+
+    public ObjectValue getThisObject() {
+        return thisObject;
+    }
+
+    public void setField(ObjectValue object, String name, Value value) {
+        if (!object.fieldLabels.containsKey(name)) {
+            throw new RuntimeException("Unknown field " + name + " on " + object.className);
+        }
+
+        SecLabel fieldLabel = object.fieldLabels.get(name);
+        if (!Security.canFlow(value.label, fieldLabel)) {
+            throw new RuntimeException("Illegal flow: " + value.label + " â†’ " + fieldLabel);
+        }
+
+        object.fields.put(name, value);
+    }
+
+    public Value getField(ObjectValue object, String name) {
+        if (!object.fields.containsKey(name)) {
+            throw new RuntimeException("Unknown field " + name + " on " + object.className);
+        }
+
+        return object.fields.get(name);
     }
 
     // =========================
@@ -143,6 +190,34 @@ public class Environment {
             throw new RuntimeException("Unknown method: " + name);
         }
         return methods.get(name);
+    }
+
+    public void putClass(ClassDecl cls) {
+        classes.put(cls.name, cls);
+    }
+
+    public ClassDecl getClassDecl(String name) {
+        if (!classes.containsKey(name)) {
+            throw new RuntimeException("Unknown class: " + name);
+        }
+
+        return classes.get(name);
+    }
+
+    public ObjectValue instantiate(String className) {
+        ClassDecl cls = getClassDecl(className);
+        ObjectValue object = new ObjectValue(className);
+        cls.initializeObject(this, object);
+        return object;
+    }
+
+    public MethodDecl resolveMethod(String className, String methodName) {
+        ClassDecl cls = getClassDecl(className);
+        MethodDecl method = cls.findMethod(methodName, this);
+        if (method == null) {
+            throw new RuntimeException("Unknown method " + methodName + " on " + className);
+        }
+        return method;
     }
 
     public Value getReturnValue() {

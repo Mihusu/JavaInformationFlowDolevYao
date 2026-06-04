@@ -1,6 +1,6 @@
 package Analysis;
 
-import ASTnodes.Program;
+import ASTNodes.Program;
 import ASTBuilder.ASTBuilder;
 import antlr.Information_flowLexer;
 import antlr.Information_flowParser;

@@ -1,6 +1,6 @@
 package Analysis;
 
-import ASTnodes.SecLabel;
+import ASTNodes.SecLabel;
 
 import java.util.List;
 

@@ -3,9 +3,10 @@ package Analysis;
 import java.util.HashMap;
 import java.util.Map;
 
-import ASTnodes.MethodType;
-import ASTnodes.FormatType;
-import ASTnodes.Operators;
+import ASTNodes.MethodType;
+import ASTNodes.FormatType;
+import ASTNodes.Operators;
+import ASTNodes.*;
 
 /**
  * Manages types during type checking.
@@ -16,6 +17,7 @@ public class TypeEnv {
     private final Map<String, Operators> types = new HashMap<>();
     private final Map<String, MethodType> methods = new HashMap<>();
     private final Map<String, FormatType> formats = new HashMap<>();
+    private final Map<String, ClassDecl> classes = new HashMap<>();
     private Operators returnType;
 
     public TypeEnv() {}
@@ -25,6 +27,7 @@ public class TypeEnv {
         this.types.putAll(other.types);
         this.methods.putAll(other.methods);
         this.formats.putAll(other.formats);
+        this.classes.putAll(other.classes);
         this.returnType = other.returnType;
     }
 
@@ -83,5 +86,63 @@ public class TypeEnv {
         if (!methods.containsKey(name))
             throw new TypeCheckException("Unknown method: " + name);
         return methods.get(name);
+    }
+
+    public void putClass(ClassDecl cls) {
+        classes.put(cls.name, cls);
+    }
+
+    public boolean containsClass(String name) {
+        return classes.containsKey(name);
+    }
+
+    public ClassDecl getClassDecl(String name) {
+        if (!classes.containsKey(name)) {
+            throw new TypeCheckException("Unknown class: " + name);
+        }
+
+        return classes.get(name);
+    }
+
+    public MethodDecl resolveMethod(String className, String methodName) {
+        ClassDecl cls = getClassDecl(className);
+        MethodDecl method = cls.findMethod(methodName, this);
+        if (method == null) {
+            throw new TypeCheckException("Unknown method " + methodName + " on " + className);
+        }
+        return method;
+    }
+
+    public VarDecl resolveField(String className, String fieldName) {
+        ClassDecl cls = getClassDecl(className);
+        VarDecl field = cls.findField(fieldName, this);
+        if (field == null) {
+            throw new TypeCheckException("Unknown field " + fieldName + " on " + className);
+        }
+        return field;
+    }
+
+    public boolean isSubtype(Operators actual, Operators expected) {
+        if (Operators.sameType(actual, expected)) {
+            return true;
+        }
+
+        if (!(actual instanceof ClassType actualClass) || !(expected instanceof ClassType expectedClass)) {
+            return false;
+        }
+
+        String current = actualClass.name();
+        while (classes.containsKey(current)) {
+            ClassDecl cls = classes.get(current);
+            if (expectedClass.name().equals(cls.superName)) {
+                return true;
+            }
+            current = cls.superName;
+            if (current == null) {
+                return false;
+            }
+        }
+
+        return false;
     }
 }

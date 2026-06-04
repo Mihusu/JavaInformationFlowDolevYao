@@ -1,6 +1,6 @@
 package Analysis;
 
-import ASTnodes.SecLabel;
+import ASTNodes.SecLabel;
 
 /**
  * Utility class for security label operations.

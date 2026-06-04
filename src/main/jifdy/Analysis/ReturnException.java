@@ -1,6 +1,6 @@
 package Analysis;
 
-import ASTnodes.Value;
+import ASTNodes.Value;
 
 /**
  * Exception used to signal a return from a method during interpretation.

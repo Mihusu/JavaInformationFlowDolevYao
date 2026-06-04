@@ -1,10 +1,10 @@
 package ASTBuilder;
 
-import ASTnodes.*;
+import ASTNodes.*;
 import Analysis.TypeCheckException;
 import antlr.Information_flowBaseVisitor;
 import antlr.Information_flowParser;
-import ASTnodes.Expr.*;
+import ASTNodes.Expr.*;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -23,6 +23,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
 
     private final Set<String> declaredKeys = new HashSet<>();
     private final Set<String> declaredFormats = new HashSet<>();
+    private final Set<String> declaredClasses = new HashSet<>();
     private final Map<String, FormatType> declaredFormatTypes = new LinkedHashMap<>();
 
     // =========================
@@ -39,9 +40,17 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
             }
         }
 
-        ClassDecl cls = (ClassDecl) visit(ctx.class_());
+        for (Information_flowParser.ClassContext classCtx : ctx.class_()) {
+            declareClass(classCtx.classBlock().IDENTIFIER(0).getText(), classCtx.classBlock().IDENTIFIER(0).getSymbol().getLine());
+        }
+
+        List<ClassDecl> classes = new ArrayList<>();
+        for (Information_flowParser.ClassContext classCtx : ctx.class_()) {
+            classes.add((ClassDecl) visit(classCtx));
+        }
+
         return setLocation(new Program(
-                List.of(cls),
+                classes,
                 new HashSet<>(declaredKeys),
                 new HashSet<>(declaredFormats),
                 new LinkedHashMap<>(declaredFormatTypes)
@@ -66,7 +75,13 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
     public Node visitClassBlock(Information_flowParser.ClassBlockContext ctx) {
 
         ClassDecl cls = new ClassDecl();
-        cls.name = ctx.IDENTIFIER().getText();
+        cls.name = ctx.IDENTIFIER(0).getText();
+        if (ctx.IDENTIFIER().size() > 1) {
+            cls.superName = ctx.IDENTIFIER(1).getText();
+            if (!declaredClasses.contains(cls.superName)) {
+                throw new RuntimeException("Unknown superclass: " + cls.superName);
+            }
+        }
 
         cls.declarations = new ArrayList<>();
         cls.methods = new ArrayList<>();
@@ -214,13 +229,17 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
     @Override
     public Stmt visitAssignmentStatement(Information_flowParser.AssignmentStatementContext ctx) {
         if (ctx.expression() == null) {
-            throw new RuntimeException("Invalid assignment statement: missing right-hand expression for " + ctx.IDENTIFIER().getText());
+            throw new RuntimeException("Invalid assignment statement: missing right-hand expression for " + ctx.lvalue().getText());
         }
 
-        return setLocation(new AssignStmt(
-                ctx.IDENTIFIER().getText(),
-                (Expr) visit(ctx.expression())
-        ), ctx);
+        List<TerminalNode> names = ctx.lvalue().IDENTIFIER();
+        Expr rhs = (Expr) visit(ctx.expression());
+
+        if (names.size() == 1) {
+            return setLocation(new AssignStmt(names.get(0).getText(), rhs), ctx);
+        }
+
+        return setLocation(new FieldAssignStmt(buildReceiver(names), names.get(names.size() - 1).getText(), rhs), ctx);
     }
 
     @Override
@@ -230,7 +249,12 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
 
     @Override
     public Stmt visitInputStatement(Information_flowParser.InputStatementContext ctx) {
-        return setLocation(new InputStmt(ctx.IDENTIFIER().getText()), ctx);
+        List<TerminalNode> names = ctx.lvalue().IDENTIFIER();
+        if (names.size() == 1) {
+            return setLocation(new InputStmt(names.get(0).getText()), ctx);
+        }
+
+        return setLocation(new InputStmt(buildFieldAccess(names)), ctx);
     }
 
     @Override
@@ -312,9 +336,24 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         if (ctx.STR() != null)
             return new StringLiteral(stripQuotes(ctx.STR().getText()));
 
+        if (ctx.getChildCount() == 4 && "new".equals(ctx.getChild(0).getText())) {
+            return setLocation(new NewObjectExpr(ctx.IDENTIFIER().getText()), ctx);
+        }
+
         if (ctx.ENCRYPT() != null) {
             Expr key = buildKeyExpr(ctx.KEY());
             return setLocation(new EncryptExpr((Expr) visit(ctx.expression(0)), key), ctx);
+        }
+
+        if (ctx.getChildCount() == 3 && ".".equals(ctx.getChild(1).getText())) {
+            Expr receiver = (Expr) visit(ctx.expression(0));
+            if (ctx.methodCallOrFormat() != null) {
+                MethodCallExpr call = (MethodCallExpr) visit(ctx.methodCallOrFormat());
+                call.receiver = receiver;
+                return setLocation(call, ctx);
+            }
+
+            return setLocation(new FieldAccessExpr(receiver, ctx.IDENTIFIER().getText()), ctx);
         }
 
         if (ctx.IDENTIFIER() != null)
@@ -382,7 +421,14 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         }
 
         if (ctx.IDENTIFIER() != null) {
-            return requireDeclaredFormatType(ctx.IDENTIFIER().getText(), ctx);
+            String typeName = ctx.IDENTIFIER().getText();
+            if (declaredFormats.contains(typeName)) {
+                return requireDeclaredFormatType(typeName, ctx);
+            }
+            if (declaredClasses.contains(typeName)) {
+                return new ClassType(typeName);
+            }
+            throw new RuntimeException("Unknown type: " + typeName);
         }
 
         return parseBasicType(ctx.basicType().getText());
@@ -521,6 +567,18 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         return node;
     }
 
+    private Expr buildReceiver(List<TerminalNode> names) {
+        Expr receiver = new VarExpr(names.get(0).getText());
+        for (int i = 1; i < names.size() - 1; i++) {
+            receiver = new FieldAccessExpr(receiver, names.get(i).getText());
+        }
+        return receiver;
+    }
+
+    private FieldAccessExpr buildFieldAccess(List<TerminalNode> names) {
+        return new FieldAccessExpr(buildReceiver(names), names.get(names.size() - 1).getText());
+    }
+
     private void declareKey(Information_flowParser.KeyDeclarationContext ctx) {
         String keyName = normalizeKey(ctx.KEY().getText());
         if (!declaredKeys.add(keyName)) {
@@ -536,6 +594,12 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
 
         List<Param> fields = ctx.decls() == null ? List.of() : buildParams(ctx.decls());
         declaredFormatTypes.put(formatName, new FormatType(formatName, fields));
+    }
+
+    private void declareClass(String className, int lineNumber) {
+        if (!declaredClasses.add(className)) {
+            throw new RuntimeException("Duplicate class declaration at line " + lineNumber + ": " + className);
+        }
     }
 
     private void requireDeclaredKey(String keyName, ParserRuleContext ctx) {
@@ -562,5 +626,4 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         requireDeclaredFormat(formatName, ctx);
         return declaredFormatTypes.get(formatName);
     }
-
 }

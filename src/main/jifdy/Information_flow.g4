@@ -3,7 +3,9 @@ grammar Information_flow;
 // Labels
 PPLABEL     : 'public' | 'private';
 SEND        : 'send';
+INPUT       : 'input';
 TRY_RCV     : 'try_rcv';
+ENCRYPT     : 'e';
 KEY         : 'k'[a-zA-Z0-9_]*;
 
 // Security labels
@@ -38,7 +40,7 @@ LINE_COMMENT
     ;
 
 program
-    : globalDeclaration* class
+    : globalDeclaration* class+
     ;
 
 globalDeclaration
@@ -59,7 +61,7 @@ class
     ;
 
 classBlock
-    : IDENTIFIER '{' declaration* methodDeclaration* statement* '}'
+    : IDENTIFIER ( 'extends' IDENTIFIER )? '{' declaration* methodDeclaration* statement* '}'
     ;
 
 declaration
@@ -121,7 +123,7 @@ sendStatement
     ;
 
 inputStatement
-    : 'input' '(' IDENTIFIER ')' ';'
+    : 'input' '(' lvalue ')' ';'
     ;
 
 receiveStatement
@@ -132,10 +134,13 @@ expression
     : INT
     | BOOL
     | STR
+    | 'new' IDENTIFIER '(' ')'
     | IDENTIFIER
     | methodCallOrFormat
     | 'e' '(' KEY ',' expression ')'
     | '(' expression ')'
+    | expression '.' IDENTIFIER
+    | expression '.' methodCallOrFormat
     | NOT expression
     | '-' expression
     | expression ('*' | '/' | '%') expression
@@ -155,7 +160,11 @@ argumentList
     ;
 
 assignmentStatement
-    : IDENTIFIER '=' expression ';'
+    : lvalue '=' expression ';'
+    ;
+
+lvalue
+    : IDENTIFIER ('.' IDENTIFIER)*
     ;
 
 ifStatement

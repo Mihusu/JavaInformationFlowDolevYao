@@ -1,6 +1,6 @@
 package Analysis;
 
-import ASTnodes.*;
+import ASTNodes.*;
 
 /**
  * Orchestrates the type checking process for the entire program.

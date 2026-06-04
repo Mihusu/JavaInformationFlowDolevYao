@@ -238,6 +238,16 @@ public interface Information_flowListener extends ParseTreeListener {
 	 */
 	void exitAssignmentStatement(Information_flowParser.AssignmentStatementContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link Information_flowParser#lvalue}.
+	 * @param ctx the parse tree
+	 */
+	void enterLvalue(Information_flowParser.LvalueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Information_flowParser#lvalue}.
+	 * @param ctx the parse tree
+	 */
+	void exitLvalue(Information_flowParser.LvalueContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Information_flowParser#ifStatement}.
 	 * @param ctx the parse tree
 	 */

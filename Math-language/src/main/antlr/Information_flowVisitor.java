@@ -149,6 +149,12 @@ public interface Information_flowVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAssignmentStatement(Information_flowParser.AssignmentStatementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Information_flowParser#lvalue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLvalue(Information_flowParser.LvalueContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Information_flowParser#ifStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
