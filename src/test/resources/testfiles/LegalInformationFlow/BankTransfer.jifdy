@@ -11,11 +11,25 @@ public class BankTransfer {
     String low target = "Bob";
 
     public void low client() {
-        int high amount1 = 2000;
-        int high amount2 = 3000;
-        int high amount3 = 4000;
-        int high amount4 = 5000;
+        int high amount1;
+        int high amount2;
+        int high amount3;
+        int high amount4;
         int high total;
+
+        print("Welcome to the bank.");
+        print("Please enter the amounts you want to transfer.");
+        print("In this program you can transfer money up to 3 times. You can deduct money after the third transfer.");
+
+        print("Enter amount1:");
+        input(amount1);
+        print("Enter amount2:");
+        input(amount2);
+        print("Enter amount3:");
+        input(amount3);
+        print("Enter how much you want to deduct: ");
+        input(amount4);
+
         Transfer1 high u = Transfer1(user, amount1 + amount3, target);
 
         // encrypted messages (ciphertext is LOW)

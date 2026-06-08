@@ -108,11 +108,30 @@ public class GeneratedProgram {
     public String target = "Bob";
 
     public void client() {
-        int amount1 = 2000;
-        int amount2 = 3000;
-        int amount3 = 4000;
-        int amount4 = 5000;
+        int amount1 = 0;
+        int amount2 = 0;
+        int amount3 = 0;
+        int amount4 = 0;
         int total = 0;
+        System.out.println("Welcome to the bank.");
+        System.out.println("Please enter the amounts you want to transfer.");
+        System.out.println("In this program you will be given up to 3 times to transfer. The fourth time you can deduct money.");
+        System.out.println("Enter amount1:");
+        System.out.print("[INPUT] amount1 = ");
+        String input_0 = INPUT.nextLine();
+        amount1 = Integer.parseInt(input_0.trim());
+        System.out.println("Enter amount2:");
+        System.out.print("[INPUT] amount2 = ");
+        String input_1 = INPUT.nextLine();
+        amount2 = Integer.parseInt(input_1.trim());
+        System.out.println("Enter amount3:");
+        System.out.print("[INPUT] amount3 = ");
+        String input_2 = INPUT.nextLine();
+        amount3 = Integer.parseInt(input_2.trim());
+        System.out.println("Enter how much you want to deduct: ");
+        System.out.print("[INPUT] amount4 = ");
+        String input_3 = INPUT.nextLine();
+        amount4 = Integer.parseInt(input_3.trim());
         ConstructorValue u = new ConstructorValue("Transfer1", Arrays.asList(user, amount1 + amount3, target));
         EncryptedValue msg1 = Crypto.encrypt(u, "kClientBank");
         EncryptedValue msg2 = Crypto.encrypt(new ConstructorValue("Transfer2", Arrays.asList(user, amount2, target)), "kClientBank");
@@ -137,33 +156,19 @@ public class GeneratedProgram {
         int amount3 = 0;
         System.out.println("[JIFDY] network -> TRY_RCV: e(kClientBank, Transfer1(user, amount1, target))");
         try {
-            Object msg_0 = channel.peek();
-            if (!(msg_0 instanceof EncryptedValue)) throw new RuntimeException();
-            EncryptedValue enc_1 = (EncryptedValue)msg_0;
-            Object decrypted_2 = Crypto.decrypt(enc_1, "kClientBank");
-            if (!(decrypted_2 instanceof ConstructorValue)) throw new RuntimeException();
-            ConstructorValue cv_3 = (ConstructorValue)decrypted_2;
-            if (!cv_3.name.equals("Transfer1")) throw new RuntimeException();
-            user = (String) cv_3.values.get(0);
-            amount1 = (int) cv_3.values.get(1);
-            target = (String) cv_3.values.get(2);
-            channel.remove();
-        } catch (Exception e) {}
-        System.out.println("[JIFDY] network -> TRY_RCV: e(kClientBank, Transfer2(user, amount2, target))");
-        try {
             Object msg_4 = channel.peek();
             if (!(msg_4 instanceof EncryptedValue)) throw new RuntimeException();
             EncryptedValue enc_5 = (EncryptedValue)msg_4;
             Object decrypted_6 = Crypto.decrypt(enc_5, "kClientBank");
             if (!(decrypted_6 instanceof ConstructorValue)) throw new RuntimeException();
             ConstructorValue cv_7 = (ConstructorValue)decrypted_6;
-            if (!cv_7.name.equals("Transfer2")) throw new RuntimeException();
+            if (!cv_7.name.equals("Transfer1")) throw new RuntimeException();
             user = (String) cv_7.values.get(0);
-            amount2 = (int) cv_7.values.get(1);
+            amount1 = (int) cv_7.values.get(1);
             target = (String) cv_7.values.get(2);
             channel.remove();
         } catch (Exception e) {}
-        System.out.println("[JIFDY] network -> TRY_RCV: e(kClientBank, Transfer3(user, amount3, target))");
+        System.out.println("[JIFDY] network -> TRY_RCV: e(kClientBank, Transfer2(user, amount2, target))");
         try {
             Object msg_8 = channel.peek();
             if (!(msg_8 instanceof EncryptedValue)) throw new RuntimeException();
@@ -171,10 +176,24 @@ public class GeneratedProgram {
             Object decrypted_10 = Crypto.decrypt(enc_9, "kClientBank");
             if (!(decrypted_10 instanceof ConstructorValue)) throw new RuntimeException();
             ConstructorValue cv_11 = (ConstructorValue)decrypted_10;
-            if (!cv_11.name.equals("Transfer3")) throw new RuntimeException();
+            if (!cv_11.name.equals("Transfer2")) throw new RuntimeException();
             user = (String) cv_11.values.get(0);
-            amount3 = (int) cv_11.values.get(1);
+            amount2 = (int) cv_11.values.get(1);
             target = (String) cv_11.values.get(2);
+            channel.remove();
+        } catch (Exception e) {}
+        System.out.println("[JIFDY] network -> TRY_RCV: e(kClientBank, Transfer3(user, amount3, target))");
+        try {
+            Object msg_12 = channel.peek();
+            if (!(msg_12 instanceof EncryptedValue)) throw new RuntimeException();
+            EncryptedValue enc_13 = (EncryptedValue)msg_12;
+            Object decrypted_14 = Crypto.decrypt(enc_13, "kClientBank");
+            if (!(decrypted_14 instanceof ConstructorValue)) throw new RuntimeException();
+            ConstructorValue cv_15 = (ConstructorValue)decrypted_14;
+            if (!cv_15.name.equals("Transfer3")) throw new RuntimeException();
+            user = (String) cv_15.values.get(0);
+            amount3 = (int) cv_15.values.get(1);
+            target = (String) cv_15.values.get(2);
             channel.remove();
         } catch (Exception e) {}
         total = amount1 + amount2 + amount3;
@@ -191,16 +210,16 @@ public class GeneratedProgram {
     public void clientReceiver() {
         System.out.println("[JIFDY] network -> TRY_RCV: e(kReceiverBank, Result(user, done, total))");
         try {
-            Object msg_12 = channel.peek();
-            if (!(msg_12 instanceof EncryptedValue)) throw new RuntimeException();
-            EncryptedValue enc_13 = (EncryptedValue)msg_12;
-            Object decrypted_14 = Crypto.decrypt(enc_13, "kReceiverBank");
-            if (!(decrypted_14 instanceof ConstructorValue)) throw new RuntimeException();
-            ConstructorValue cv_15 = (ConstructorValue)decrypted_14;
-            if (!cv_15.name.equals("Result")) throw new RuntimeException();
-            user = (String) cv_15.values.get(0);
-            boolean done = (boolean) cv_15.values.get(1);
-            int total = (int) cv_15.values.get(2);
+            Object msg_16 = channel.peek();
+            if (!(msg_16 instanceof EncryptedValue)) throw new RuntimeException();
+            EncryptedValue enc_17 = (EncryptedValue)msg_16;
+            Object decrypted_18 = Crypto.decrypt(enc_17, "kReceiverBank");
+            if (!(decrypted_18 instanceof ConstructorValue)) throw new RuntimeException();
+            ConstructorValue cv_19 = (ConstructorValue)decrypted_18;
+            if (!cv_19.name.equals("Result")) throw new RuntimeException();
+            user = (String) cv_19.values.get(0);
+            boolean done = (boolean) cv_19.values.get(1);
+            int total = (int) cv_19.values.get(2);
             channel.remove();
             if (done && total > 0) {
                 System.out.println("From bank:");

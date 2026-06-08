@@ -340,7 +340,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
             return setLocation(new NewObjectExpr(ctx.IDENTIFIER().getText()), ctx);
         }
 
-        if (ctx.ENCRYPT() != null) {
+        if (ctx.KEY() != null && "e".equals(ctx.getChild(0).getText()) && ctx.expression().size() == 1) {
             Expr key = buildKeyExpr(ctx.KEY());
             return setLocation(new EncryptExpr((Expr) visit(ctx.expression(0)), key), ctx);
         }

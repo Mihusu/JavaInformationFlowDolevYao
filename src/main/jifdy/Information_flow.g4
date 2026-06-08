@@ -5,7 +5,6 @@ PPLABEL     : 'public' | 'private';
 SEND        : 'send';
 INPUT       : 'input';
 TRY_RCV     : 'try_rcv';
-ENCRYPT     : 'e';
 KEY         : 'k'[a-zA-Z0-9_]*;
 
 // Security labels
@@ -117,7 +116,7 @@ returnStatement
     : 'return' expression ';'
     ;
 
-// EXAMPLE: t = encrypt(z,k); send(t);
+// EXAMPLE: t = e(k,z); send(t);
 sendStatement
     : SEND '(' IDENTIFIER ')' ';'
     ;

@@ -55,9 +55,9 @@ public class InputStmt extends Stmt {
 
         Value value;
         if (current instanceof IntValue) {
-            value = new IntValue(Integer.parseInt(text));
+            value = new IntValue(Integer.parseInt(text.trim()));
         } else if (current instanceof BoolValue) {
-            value = new BoolValue(Boolean.parseBoolean(text));
+            value = new BoolValue(Boolean.parseBoolean(text.trim()));
         } else if (current instanceof StringValue) {
             value = new StringValue(text);
         } else {
@@ -119,8 +119,8 @@ public class InputStmt extends Stmt {
 
     private String parseExpression(Operators type, String input) {
         return switch (Operators.runtimeType(type)) {
-            case INT -> "Integer.parseInt(" + input + ")";
-            case BOOL -> "Boolean.parseBoolean(" + input + ")";
+            case INT -> "Integer.parseInt(" + input + ".trim())";
+            case BOOL -> "Boolean.parseBoolean(" + input + ".trim())";
             case STRING -> input;
             case CIPHERTEXT, FORMAT, OBJECT -> throw new RuntimeException(
                     "input only supports int, bool, and String variables: " + name
