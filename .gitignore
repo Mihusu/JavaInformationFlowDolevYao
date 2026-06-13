@@ -24,7 +24,7 @@ hs_err_pid*
 replay_pid*
 
 #Autogen from ANTLR
-/src/main/jifdy/antlr
+/src/main/antlr
 
 **/.DS_Store
 *.asm

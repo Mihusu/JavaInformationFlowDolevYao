@@ -1,17 +1,42 @@
 key kPatientHospital;
 format MedicalData(String low patientName, String high diagnosis, int high patientId);
 format Result(String low received);
+
+class PersonRecord {
+    String low patientName = "";
+
+    public String low getName() {
+        return this.patientName;
+    }
+}
+
+class PatientRecord extends PersonRecord {
+    String high diagnosis = "";
+    int high patientId = 0;
+
+    public int high getPatientId() {
+        return this.patientId;
+    }
+}
+
 public class MedicalSystem {
 
     public void low patient() {
 
-        String low patientName = "Alice";
-        String high diagnosis = "Cancer";
-        int high patientId = 777;
+        PatientRecord low patientRecord = new PatientRecord();
+        PersonRecord low publicRecord = patientRecord;
+
+        input(publicRecord.patientName);
+        input(patientRecord.diagnosis);
+        input(patientRecord.patientId);
 
         // LOW key used for HIGH data
         e(kPatientHospital, MedicalData) low medicalMsg =
-            e(kPatientHospital, MedicalData(patientName, diagnosis, patientId));
+            e(kPatientHospital, MedicalData(
+                publicRecord.getName(),
+                patientRecord.diagnosis,
+                patientRecord.getPatientId()
+            ));
 
         send(medicalMsg);
 

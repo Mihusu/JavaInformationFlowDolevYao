@@ -9,6 +9,9 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.Test;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import static org.junit.Assert.assertTrue;
 
 public class OOPSmokeTest {
@@ -49,5 +52,25 @@ public class OOPSmokeTest {
         assertTrue(generated.contains("class Child extends Parent"));
         assertTrue(generated.contains("c.sum()"));
         assertTrue(generated.contains("c.x"));
+    }
+
+    @Test
+    public void medicalSystemExampleSupportsInputAndInheritance() throws Exception {
+        String source = Files.readString(Path.of(
+                "src/test/resources/testfiles/LegalInformationFlow/MedicalSystem.jifdy"
+        ));
+
+        Information_flowLexer lexer = new Information_flowLexer(CharStreams.fromString(source));
+        Information_flowParser parser = new Information_flowParser(new CommonTokenStream(lexer));
+        Program program = (Program) new ASTBuilder().visit(parser.program());
+
+        new TypeChecker().check(program);
+        String generated = program.compile(new CodeGenEnv());
+
+        assertTrue(generated.contains("class PatientRecord extends PersonRecord"));
+        assertTrue(generated.contains("input"));
+        assertTrue(generated.contains("publicRecord.patientName"));
+        assertTrue(generated.contains("patientRecord.diagnosis"));
+        assertTrue(generated.contains("patientRecord.getPatientId()"));
     }
 }
