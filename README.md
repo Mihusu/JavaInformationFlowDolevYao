@@ -1,6 +1,7 @@
 # Java Information Flow Dolev-Yao
 
-This project is a Java compiler/interpreter prototype for a small information-flow language named JIFDY. The language combines a security-label type system (`low`/`high`) with Dolev-Yao style message formats, encrypted values, send/receive statements, and simple Java-like control flow.
+This project is a Java compiler/interpreter that uses a fraction of it which will be utilized to make a small information-flow language named JIFDY. 
+The language combines a security-label type system (`low`/`high`) with Dolev-Yao style message formats, encrypted values, send/receive statements, and simple Java-like control flow.
 
 The compiler pipeline is:
 
@@ -142,7 +143,7 @@ The regression test runner checks:
 Some parser diagnostics may still be printed for illegal examples, but the summary at the end is the important result:
 
 ```text
-Tests Passed: 12
+Tests Passed: 14
 Tests Failed: 0
 ```
 
