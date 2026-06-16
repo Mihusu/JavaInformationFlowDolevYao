@@ -115,7 +115,7 @@ public class GeneratedProgram {
         int total = 0;
         System.out.println("Welcome to the bank.");
         System.out.println("Please enter the amounts you want to transfer.");
-        System.out.println("In this program you will be given up to 3 times to transfer. The fourth time you can deduct money.");
+        System.out.println("In this program you can transfer money up to 3 times. You can deduct money after the third transfer.");
         System.out.println("Enter amount1:");
         System.out.print("[INPUT] amount1 = ");
         String input_0 = INPUT.nextLine();
