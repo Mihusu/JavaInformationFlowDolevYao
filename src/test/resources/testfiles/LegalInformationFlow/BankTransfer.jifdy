@@ -30,7 +30,7 @@ public class BankTransfer {
         print("Enter how much you want to deduct: ");
         input(amount4);
 
-        Transfer1 high u = Transfer1(user, amount1 + amount3, target);
+        Transfer1 high u = Transfer1(user, amount1, target);
 
         // encrypted messages (ciphertext is LOW)
         e(kClientBank,Transfer1) low msg1 = e(kClientBank, u);
@@ -44,7 +44,7 @@ public class BankTransfer {
                     amount3 - amount4, target)
         );
 
-        total = amount1 + amount3 + amount2 + amount3 - amount4;
+        total = amount1 + amount2 + amount3 - amount4;
 
         if(total < 0) {
             print("Transfer failed.");
