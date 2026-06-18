@@ -31,11 +31,12 @@ OR      : 'or'|'||';
 //Delimiters
 IDENTIFIER  : [a-zA-Z][a-zA-Z0-9_]*;
 
+WHITESPACE : [ \n\t]+  -> skip ;
 CARRIAGE_RETURN : '\r' -> skip;
-QUOTE   : ' '       -> skip;
-NEWLINE : '\n'      -> skip;
+QUOTE   : ' '          -> skip;
+NEWLINE : '\n'         -> skip;
 LINE_COMMENT
-    : '//' ~[\r\n]* -> skip
+    : '//' ~[\r\n]*    -> skip
     ;
 
 program

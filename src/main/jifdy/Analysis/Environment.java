@@ -138,10 +138,6 @@ public class Environment {
         declare("this", object, SecLabel.LOW);
     }
 
-    public ObjectValue getThisObject() {
-        return thisObject;
-    }
-
     public void setField(ObjectValue object, String name, Value value) {
         if (!object.fieldLabels.containsKey(name)) {
             throw new RuntimeException("Unknown field " + name + " on " + object.className);
@@ -171,11 +167,6 @@ public class Environment {
         procedures.put(name, proc);
     }
 
-    public ProcDecl getProcedure(String name) {
-        if (!procedures.containsKey(name))
-            throw new RuntimeException("Undefined procedure: " + name);
-        return procedures.get(name);
-    }
 
     // =========================
     // METHODS
