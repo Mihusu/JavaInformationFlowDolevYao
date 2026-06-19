@@ -5,7 +5,7 @@ import java.util.Map;
 
 import ASTNodes.MethodType;
 import ASTNodes.FormatType;
-import ASTNodes.Operators;
+import ASTNodes.Types;
 import ASTNodes.*;
 
 /**
@@ -14,11 +14,11 @@ import ASTNodes.*;
  */
 public class TypeEnv {
 
-    private final Map<String, Operators> types = new HashMap<>();
+    private final Map<String, Types> types = new HashMap<>();
     private final Map<String, MethodType> methods = new HashMap<>();
     private final Map<String, FormatType> formats = new HashMap<>();
     private final Map<String, ClassDecl> classes = new HashMap<>();
-    private Operators returnType;
+    private Types returnType;
 
     public TypeEnv() {}
 
@@ -36,15 +36,15 @@ public class TypeEnv {
      * @param var The name of the variable.
      * @param type The type to associate.
      */
-    public void putType(String var, Operators type) {
+    public void putType(String var, Types type) {
         types.put(var, type);
     }
 
-    public void setReturnType(Operators type) {
+    public void setReturnType(Types type) {
         this.returnType = type;
     }
 
-    public Operators getReturnType() {
+    public Types getReturnType() {
         if (returnType == null)
             throw new TypeCheckException("Return type not set");
         return returnType;
@@ -56,7 +56,7 @@ public class TypeEnv {
      * @return The associated type.
      * @throws TypeCheckException if the variable is not found.
      */
-    public Operators getType(String name) {
+    public Types getType(String name) {
         if (!types.containsKey(name))
             throw new TypeCheckException("Unknown variable: " + name);
         return types.get(name);
@@ -122,8 +122,8 @@ public class TypeEnv {
         return field;
     }
 
-    public boolean isSubtype(Operators actual, Operators expected) {
-        if (Operators.sameType(actual, expected)) {
+    public boolean isSubtype(Types actual, Types expected) {
+        if (Types.sameType(actual, expected)) {
             return true;
         }
 
@@ -131,10 +131,10 @@ public class TypeEnv {
             return false;
         }
 
-        String current = actualClass.name();
+        String current = actualClass.name;
         while (classes.containsKey(current)) {
             ClassDecl cls = classes.get(current);
-            if (expectedClass.name().equals(cls.superName)) {
+            if (expectedClass.name.equals(cls.superName)) {
                 return true;
             }
             current = cls.superName;

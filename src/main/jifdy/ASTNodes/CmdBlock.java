@@ -35,7 +35,7 @@ public class CmdBlock extends Stmt {
                 gamma.putLabel(v.name, v.label);
 
                 if (v.init != null) {
-                    Operators t = v.init.typecheck(delta, gamma);
+                    Types t = v.init.typecheck(delta, gamma);
 
                     if (!delta.isSubtype(t, v.type)) {
                         throw new TypeCheckException(

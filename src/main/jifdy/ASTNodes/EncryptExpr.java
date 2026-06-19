@@ -78,18 +78,17 @@ public class EncryptExpr extends Expr {
     }
 
     @Override
-    public Operators typecheck(TypeEnv delta,
-                               LabelEnv gamma) {
+    public Types typecheck(TypeEnv delta,LabelEnv gamma) {
 
-        Type keyType = Operators.runtimeType(keyExpr.typecheck(delta, gamma));
+        Type keyType = Types.type(keyExpr.typecheck(delta, gamma));
         if (keyType != Type.STRING) {
             throw new TypeCheckException("Encryption key must have type STRING");
         }
 
-        Operators payloadType = payload.typecheck(delta, gamma);
+        Types payloadType = payload.typecheck(delta, gamma);
 
         // Infer the ciphertext's format from the payload type, not from the payload syntax.
-        // In particular: encrypting a variable `u` where `u : Transfer1` should yield
+        // In particular: encrypting a variable `u` where `u: Transfer1` should yield
         // CiphertextType(key, "Transfer1"), not CiphertextType(key, "u").
         String inferredFormatName = this.formatName;
         if (payloadType instanceof FormatType ft) {
@@ -101,7 +100,7 @@ public class EncryptExpr extends Expr {
 
         this.formatName = inferredFormatName;
 
-        return new CiphertextType(keyName, inferredFormatName);
+        return new Types(keyName, inferredFormatName);
     }
 
     @Override

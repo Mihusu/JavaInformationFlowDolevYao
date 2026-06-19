@@ -1,6 +1,6 @@
 package ASTNodes;
 
-public class CiphertextType implements Operators {
+public class CiphertextType extends Types {
 
     public String keyName;
     public String formatName;
@@ -8,6 +8,7 @@ public class CiphertextType implements Operators {
     public CiphertextType(String keyName,
                           String formatName) {
 
+        super(keyName, formatName);
         this.keyName = keyName;
         this.formatName = formatName;
     }

@@ -29,13 +29,13 @@ public class FieldAssignStmt extends Stmt {
 
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedure) {
-        Operators receiverType = receiver.typecheck(delta, gamma);
+        Types receiverType = receiver.typecheck(delta, gamma);
         if (!(receiverType instanceof ClassType classType)) {
             throw new TypeCheckException("Field assignment receiver is not an object: " + fieldName);
         }
 
-        VarDecl field = delta.resolveField(classType.name(), fieldName);
-        Operators rhsType = expr.typecheck(delta, gamma);
+        VarDecl field = delta.resolveField(classType.name, fieldName);
+        Types rhsType = expr.typecheck(delta, gamma);
 
         if (!delta.isSubtype(rhsType, field.type)) {
             throw new TypeCheckException("Type mismatch in field assignment", lineNumber, fieldName);

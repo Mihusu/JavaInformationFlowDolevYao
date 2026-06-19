@@ -23,8 +23,8 @@ public class Information_flowParser extends Parser {
 		T__24=25, T__25=26, T__26=27, T__27=28, T__28=29, T__29=30, T__30=31, 
 		PPLABEL=32, SEND=33, INPUT=34, TRY_RCV=35, KEY=36, SECLABEL=37, INT=38, 
 		BOOL=39, STR=40, IF=41, ELSEIF=42, ELSE=43, FOR=44, WHILE=45, OP=46, NOT=47, 
-		AND=48, OR=49, IDENTIFIER=50, CARRIAGE_RETURN=51, QUOTE=52, NEWLINE=53, 
-		LINE_COMMENT=54;
+		AND=48, OR=49, IDENTIFIER=50, WHITESPACE=51, CARRIAGE_RETURN=52, QUOTE=53, 
+		NEWLINE=54, LINE_COMMENT=55;
 	public static final int
 		RULE_program = 0, RULE_globalDeclaration = 1, RULE_keyDeclaration = 2, 
 		RULE_formatDeclaration = 3, RULE_class = 4, RULE_classBlock = 5, RULE_declaration = 6, 
@@ -55,7 +55,7 @@ public class Information_flowParser extends Parser {
 			"'e'", "'return'", "'new'", "'.'", "'-'", "'*'", "'/'", "'%'", "'+'", 
 			"'>'", "'<'", "'>='", "'<='", "'=='", "'!='", "'print'", null, "'send'", 
 			"'input'", "'try_rcv'", null, null, null, null, null, "'if'", "'elseif'", 
-			"'else'", "'for'", "'while'", null, null, null, null, null, "'\\r'", 
+			"'else'", "'for'", "'while'", null, null, null, null, null, null, "'\\r'", 
 			"' '", "'\\n'"
 		};
 	}
@@ -66,8 +66,8 @@ public class Information_flowParser extends Parser {
 			null, null, null, null, null, null, null, null, null, null, null, null, 
 			null, null, null, null, null, null, null, null, "PPLABEL", "SEND", "INPUT", 
 			"TRY_RCV", "KEY", "SECLABEL", "INT", "BOOL", "STR", "IF", "ELSEIF", "ELSE", 
-			"FOR", "WHILE", "OP", "NOT", "AND", "OR", "IDENTIFIER", "CARRIAGE_RETURN", 
-			"QUOTE", "NEWLINE", "LINE_COMMENT"
+			"FOR", "WHILE", "OP", "NOT", "AND", "OR", "IDENTIFIER", "WHITESPACE", 
+			"CARRIAGE_RETURN", "QUOTE", "NEWLINE", "LINE_COMMENT"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -2444,7 +2444,7 @@ public class Information_flowParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u00016\u016c\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0004\u00017\u016c\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
 		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
 		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0002"+
 		"\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0002\u000b\u0007\u000b\u0002"+

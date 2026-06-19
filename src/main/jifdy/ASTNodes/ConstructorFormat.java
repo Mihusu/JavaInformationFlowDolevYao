@@ -32,19 +32,19 @@ public class ConstructorFormat extends Format {
             Format actual = args.get(i);
 
             if (actual instanceof TypedVarFormat typedVarFormat) {
-                if (typedVarFormat.type != null && !Operators.sameType(typedVarFormat.type, expected.type)) {
+                if (typedVarFormat.type != null && !Types.sameType(typedVarFormat.type, expected.type)) {
                     throw new RuntimeException("Format pattern type mismatch in " + name);
                 }
                 if (typedVarFormat.label != expected.label) {
                     throw new RuntimeException("Format pattern label mismatch in " + name);
                 }
             } else if (actual instanceof ConstructorFormat constructorFormat) {
-                if (!Operators.sameType(expected.type, delta.getFormat(constructorFormat.name))) {
+                if (!Types.sameType(expected.type, delta.getFormat(constructorFormat.name))) {
                     throw new RuntimeException("Nested format mismatch in " + name);
                 }
             } else if (actual instanceof ExprFormat exprFormat) {
-                Operators actualType = exprFormat.expr.typecheck(delta, gamma);
-                if (!Operators.sameType(actualType, expected.type)) {
+                Types actualType = exprFormat.expr.typecheck(delta, gamma);
+                if (!Types.sameType(actualType, expected.type)) {
                     throw new RuntimeException("Format expression type mismatch in " + name);
                 }
             }

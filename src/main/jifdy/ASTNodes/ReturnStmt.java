@@ -22,9 +22,9 @@ public class ReturnStmt extends Stmt {
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel secLabel) {
 
-        Operators expectedType = delta.getReturnType();
+        Types expectedType = delta.getReturnType();
 
-        Operators actualType = expr.typecheck(delta, gamma);
+        Types actualType = expr.typecheck(delta, gamma);
 
         if (!delta.isSubtype(actualType, expectedType)) {
             throw new TypeCheckException(

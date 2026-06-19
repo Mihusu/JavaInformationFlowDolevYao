@@ -21,42 +21,42 @@ public class OpExpr extends Expr {
     }
 
     @Override
-    public Operators typecheck(TypeEnv delta, LabelEnv gamma) {
+    public Types typecheck(TypeEnv delta, LabelEnv gamma) {
 
-        Operators leftType = left.typecheck(delta, gamma);
-        Operators rightType = right.typecheck(delta, gamma);
-        Type t1 = Operators.runtimeType(leftType);
-        Type t2 = Operators.runtimeType(rightType);
+        Types leftType = left.typecheck(delta, gamma);
+        Types rightType = right.typecheck(delta, gamma);
+        Type t1 = Types.type(leftType);
+        Type t2 = Types.type(rightType);
 
         switch (op) {
             case "+" -> {
                 if (t1 == Type.STRING || t2 == Type.STRING) {
-                    return Type.STRING;
+                    return new BasicType(Type.STRING);
                 }
 
                 if (t1 != Type.INT || t2 != Type.INT)
                     throw new TypeCheckException("Arithmetic needs INT");
-                return Type.INT;
+                return new BasicType(Type.INT);
             }
             case "-", "*", "/", "%", "^" -> {
                 if (t1 != Type.INT || t2 != Type.INT)
                     throw new TypeCheckException("Arithmetic needs INT");
-                return Type.INT;
+                return new BasicType(Type.INT);
             }
             case ">", "<", ">=", "<=" -> {
                 if (t1 != Type.INT || t2 != Type.INT)
                     throw new TypeCheckException("Comparison needs INT");
-                return Type.BOOL;
+                return new BasicType(Type.BOOL);
             }
             case "==", "!=" -> {
-                if (!Operators.sameType(leftType, rightType))
+                if (!Types.sameType(leftType, rightType))
                     throw new TypeCheckException("Type mismatch in equality");
-                return Type.BOOL;
+                return new BasicType(Type.BOOL);
             }
             case "&&", "||" -> {
                 if (t1 != Type.BOOL || t2 != Type.BOOL)
                     throw new TypeCheckException("Logical needs BOOL");
-                return Type.BOOL;
+                return new BasicType(Type.BOOL);
             }
         }
 

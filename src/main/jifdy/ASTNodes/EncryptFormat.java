@@ -60,7 +60,7 @@ public class EncryptFormat extends Format {
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel label) {
 
         // Verify the key expression is well-typed
-        Type keyType = Operators.runtimeType(key.typecheck(delta, gamma));
+        Type keyType = Types.type(key.typecheck(delta, gamma));
 
         if (keyType != Type.STRING) {
             throw new TypeCheckException(

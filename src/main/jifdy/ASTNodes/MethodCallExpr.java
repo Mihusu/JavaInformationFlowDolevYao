@@ -65,16 +65,16 @@ public class MethodCallExpr extends Expr {
     }
 
     @Override
-    public Operators typecheck(TypeEnv delta, LabelEnv gamma) {
+    public Types typecheck(TypeEnv delta, LabelEnv gamma) {
 
         MethodType f;
         if (receiver != null) {
-            Operators receiverType = receiver.typecheck(delta, gamma);
+            Types receiverType = receiver.typecheck(delta, gamma);
             if (!(receiverType instanceof ClassType classType)) {
                 throw new TypeCheckException("Method call receiver is not an object: " + name);
             }
 
-            MethodDecl method = delta.resolveMethod(classType.name(), name);
+            MethodDecl method = delta.resolveMethod(classType.name, name);
             f = new MethodType(
                     method.params.stream().map(p -> p.type).toList(),
                     method.returnType,
@@ -91,7 +91,7 @@ public class MethodCallExpr extends Expr {
             throw new TypeCheckException("Wrong number of arguments");
 
         for (int i = 0; i < args.size(); i++) {
-            Operators argType = args.get(i).typecheck(delta, gamma);
+            Types argType = args.get(i).typecheck(delta, gamma);
 
             if (!delta.isSubtype(argType, f.paramTypes.get(i))) {
                 throw new TypeCheckException("Argument type mismatch");

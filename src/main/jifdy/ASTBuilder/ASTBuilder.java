@@ -415,7 +415,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         return call;
     }
 
-    private Operators parseType(Information_flowParser.TypeContext ctx) {
+    private Types parseType(Information_flowParser.TypeContext ctx) {
         if (ctx.encryptionType() != null) {
             return parseEncryptionType(ctx.encryptionType());
         }
@@ -434,11 +434,11 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         return parseBasicType(ctx.basicType().getText());
     }
 
-    private Type parseBasicType(String t) {
+    private BasicType parseBasicType(String t) {
         return switch (t) {
-            case "int" -> Type.INT;
-            case "bool" -> Type.BOOL;
-            case "String" -> Type.STRING;
+            case "int" -> new BasicType(Type.INT);
+            case "bool" -> new BasicType(Type.BOOL);
+            case "String" -> new BasicType(Type.STRING);
             default -> throw new RuntimeException("Unknown type: " + t);
         };
     }

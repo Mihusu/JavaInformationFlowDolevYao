@@ -32,7 +32,7 @@ public class ConstructorExpr extends Expr {
     }
 
     @Override
-    public Operators typecheck(TypeEnv delta, LabelEnv gamma) {
+    public Types typecheck(TypeEnv delta, LabelEnv gamma) {
         FormatType formatType = delta.getFormat(name);
 
         if (args.size() != formatType.fields.size()) {
@@ -40,10 +40,10 @@ public class ConstructorExpr extends Expr {
         }
 
         for (int i = 0; i < args.size(); i++) {
-            Operators actualType = args.get(i).typecheck(delta, gamma);
-            Operators expectedType = formatType.fields.get(i).type;
+            Types actualType = args.get(i).typecheck(delta, gamma);
+            Types expectedType = formatType.fields.get(i).type;
 
-            if (!Operators.sameType(actualType, expectedType)) {
+            if (!Types.sameType(actualType, expectedType)) {
                 throw new RuntimeException("Argument type mismatch for format " + name);
             }
         }

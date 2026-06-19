@@ -3,12 +3,14 @@ package ASTNodes;
 import java.util.List;
 import java.util.Objects;
 
-public class FormatType implements Operators {
+public class FormatType extends Types {
     public String name;
     public List<Param> fields;
 
     public FormatType(String name, List<Param> fields) {
+        super(Type.FORMAT);
         this.name = name;
+        this.formatName = name;
         this.fields = fields;
     }
 

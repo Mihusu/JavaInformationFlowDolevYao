@@ -12,7 +12,7 @@ import CodeGeneration.CodeGenEnv;
 public class FieldAccessExpr extends Expr {
     public final Expr receiver;
     public final String fieldName;
-    private Operators cachedType;
+    private Types cachedType;
     private SecLabel cachedLabel;
 
     public FieldAccessExpr(Expr receiver, String fieldName) {
@@ -31,13 +31,13 @@ public class FieldAccessExpr extends Expr {
     }
 
     @Override
-    public Operators typecheck(TypeEnv delta, LabelEnv gamma) {
-        Operators receiverType = receiver.typecheck(delta, gamma);
+    public Types typecheck(TypeEnv delta, LabelEnv gamma) {
+        Types receiverType = receiver.typecheck(delta, gamma);
         if (!(receiverType instanceof ClassType classType)) {
             throw new TypeCheckException("Field access receiver is not an object: " + fieldName);
         }
 
-        VarDecl field = delta.resolveField(classType.name(), fieldName);
+        VarDecl field = delta.resolveField(classType.name, fieldName);
         cachedType = field.type;
         cachedLabel = field.label;
         return cachedType;

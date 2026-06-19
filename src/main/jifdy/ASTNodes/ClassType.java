@@ -5,11 +5,22 @@ import java.util.Objects;
 /**
  * Type descriptor for a source-language class.
  */
-public record ClassType(String name) implements Operators {
+public class ClassType extends Types {
+    public final String name;
+
+    public ClassType(String name) {
+        super(Type.OBJECT);
+        this.name = name;
+    }
 
     @Override
     public boolean equals(Object obj) {
         return obj instanceof ClassType other && Objects.equals(name, other.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 
     @Override

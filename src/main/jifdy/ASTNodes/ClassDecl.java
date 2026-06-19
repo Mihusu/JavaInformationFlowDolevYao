@@ -147,7 +147,7 @@ public class ClassDecl extends Node {
                 // If initialized, check the initializer
                 if (v.init != null) {
 
-                    Operators initType = v.init.typecheck(delta, gamma);
+                    Types initType = v.init.typecheck(delta, gamma);
 
                     if (!delta.isSubtype(initType, v.type)) {
                         throw new TypeCheckException(
@@ -177,7 +177,7 @@ public class ClassDecl extends Node {
         // Then: register method signatures first
         for (MethodDecl f : methods) {
 
-            List<Operators> paramTypes = new ArrayList<>();
+            List<Types> paramTypes = new ArrayList<>();
             List<SecLabel> paramLabels = new ArrayList<>();
 
             for (Param p : f.params) {
@@ -232,9 +232,9 @@ public class ClassDecl extends Node {
         }
     }
 
-    private Value defaultObjectFieldValue(Environment env, Operators type) {
+    private Value defaultObjectFieldValue(Environment env, Types type) {
         if (type instanceof ClassType classType) {
-            return env.instantiate(classType.name());
+            return env.instantiate(classType.name);
         }
 
         return JavaTypeSupport.defaultValue(type);

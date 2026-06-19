@@ -19,7 +19,7 @@ public class MethodDecl extends Declaration {
     /**
      * The return type of the method (null if void).
      */
-    public Operators returnType; // null = void
+    public Types returnType; // null = void
 
     /**
      * The name of the method.
@@ -61,7 +61,7 @@ public class MethodDecl extends Declaration {
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel secLabel) {
 
-        List<Operators> paramTypes = new ArrayList<>();
+        List<Types> paramTypes = new ArrayList<>();
         List<SecLabel> paramLabels = new ArrayList<>();
 
         for (Param p : params) {

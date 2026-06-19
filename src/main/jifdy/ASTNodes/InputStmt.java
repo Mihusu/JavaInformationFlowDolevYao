@@ -17,7 +17,7 @@ public class InputStmt extends Stmt {
 
     private final String name;
     private final FieldAccessExpr field;
-    private Operators cachedType;
+    private Types cachedType;
 
     public InputStmt(String name) {
         this.name = name;
@@ -74,9 +74,9 @@ public class InputStmt extends Stmt {
 
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel secLabel) {
-        Operators type = field == null ? delta.getType(name) : field.typecheck(delta, gamma);
+        Types type = field == null ? delta.getType(name) : field.typecheck(delta, gamma);
         cachedType = type;
-        Type runtimeType = Operators.runtimeType(type);
+        Type runtimeType = Types.type(type);
 
         if (runtimeType != Type.INT && runtimeType != Type.BOOL && runtimeType != Type.STRING) {
             throw new TypeCheckException("input only supports int, bool, and String variables", lineNumber, name);
@@ -92,7 +92,7 @@ public class InputStmt extends Stmt {
     @Override
     public String compile(CodeGenEnv env) {
         String target = field == null ? name : field.compile(env);
-        Operators type = field == null ? env.getVariableType(name) : cachedType;
+        Types type = field == null ? env.getVariableType(name) : cachedType;
         if (type == null) {
             throw new RuntimeException("Cannot generate input for undeclared variable: " + target);
         }
@@ -117,8 +117,8 @@ public class InputStmt extends Stmt {
         return sb.toString();
     }
 
-    private String parseExpression(Operators type, String input) {
-        return switch (Operators.runtimeType(type)) {
+    private String parseExpression(Types type, String input) {
+        return switch (Types.type(type)) {
             case INT -> "Integer.parseInt(" + input + ".trim())";
             case BOOL -> "Boolean.parseBoolean(" + input + ".trim())";
             case STRING -> input;

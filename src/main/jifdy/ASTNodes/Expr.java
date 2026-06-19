@@ -22,7 +22,7 @@
          * @param gamma The label environment.
          * @return The type of the expression.
          */
-        abstract public Operators typecheck(TypeEnv delta, LabelEnv gamma);
+        abstract public Types typecheck(TypeEnv delta, LabelEnv gamma);
 
         /**
          * Determines the security label of the expression.
@@ -46,8 +46,8 @@
             }
 
             @Override
-            public Operators typecheck(TypeEnv delta, LabelEnv gamma) {
-                return Type.INT;
+            public Types typecheck(TypeEnv delta, LabelEnv gamma) {
+                return new BasicType(Type.INT);
             }
 
             @Override
@@ -76,8 +76,8 @@
             }
 
             @Override
-            public Operators typecheck(TypeEnv delta, LabelEnv gamma) {
-                return Type.BOOL;
+            public Types typecheck(TypeEnv delta, LabelEnv gamma) {
+                return new BasicType(Type.BOOL);
             }
 
             @Override
@@ -106,8 +106,8 @@
             }
 
             @Override
-            public Operators typecheck(TypeEnv delta, LabelEnv gamma) {
-                return Type.STRING;
+            public Types typecheck(TypeEnv delta, LabelEnv gamma) {
+                return new BasicType(Type.STRING);
             }
 
             @Override

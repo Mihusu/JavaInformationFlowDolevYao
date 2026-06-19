@@ -11,10 +11,10 @@ import CodeGeneration.CodeGenEnv;
 public class TypedVarFormat extends Format {
 
     public String name;
-    public Operators type;
+    public Types type;
     public SecLabel label;
 
-    public TypedVarFormat(String name, Operators type, SecLabel label) {
+    public TypedVarFormat(String name, Types type, SecLabel label) {
         this.name = name;
         this.type = type;
         this.label = label;
@@ -23,10 +23,10 @@ public class TypedVarFormat extends Format {
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel pc) {
 
-        Operators effectiveType = type;
+        Types effectiveType = type;
 
         if (effectiveType == null) {
-            effectiveType = delta.containsType(name) ? delta.getType(name) : Type.STRING;
+            effectiveType = delta.containsType(name) ? delta.getType(name) : new BasicType(Type.STRING);
         }
 
         // Bind variable with declared or inferred type and label

@@ -21,7 +21,7 @@ public class NewObjectExpr extends Expr {
     }
 
     @Override
-    public Operators typecheck(TypeEnv delta, LabelEnv gamma) {
+    public Types typecheck(TypeEnv delta, LabelEnv gamma) {
         delta.getClassDecl(className);
         return new ClassType(className);
     }

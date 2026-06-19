@@ -45,9 +45,9 @@ public class UnaryExpr extends Expr {
     }
 
     @Override
-    public Operators typecheck(TypeEnv delta, LabelEnv gamma) {
+    public Types typecheck(TypeEnv delta, LabelEnv gamma) {
 
-        Type t = Operators.runtimeType(expr.typecheck(delta, gamma));
+        Type t = Types.type(expr.typecheck(delta, gamma));
 
         return switch (op) {
 
@@ -55,14 +55,14 @@ public class UnaryExpr extends Expr {
                 if (t != Type.BOOL) {
                     throw new TypeCheckException("NOT requires BOOL");
                 }
-                yield Type.BOOL;
+                yield new BasicType(Type.BOOL);
             }
 
             case "-" -> {
                 if (t != Type.INT) {
                     throw new TypeCheckException("Unary - requires INT");
                 }
-                yield Type.INT;
+                yield new BasicType(Type.INT);
             }
 
             default -> throw new RuntimeException("Unknown unary operator");

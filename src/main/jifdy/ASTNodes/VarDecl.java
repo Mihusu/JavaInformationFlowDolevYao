@@ -10,7 +10,7 @@ public class VarDecl extends Declaration {
     /**
      * The type of the variable.
      */
-    public Operators type;
+    public Types type;
 
     /**
      * The security label of the variable.
@@ -39,7 +39,7 @@ public class VarDecl extends Declaration {
         if (init != null) {
             initVal = init.eval(env);
         } else if (type instanceof ClassType classType) {
-            initVal = env.instantiate(classType.name());
+            initVal = env.instantiate(classType.name);
         } else {
             initVal = JavaTypeSupport.defaultValue(type);
         }
@@ -65,7 +65,7 @@ public class VarDecl extends Declaration {
 
         if (init != null) {
 
-            Operators initType = init.typecheck(delta, gamma);
+            Types initType = init.typecheck(delta, gamma);
 
             if (!delta.isSubtype(initType, type)) {
                 throw new TypeCheckException(
@@ -109,7 +109,7 @@ public class VarDecl extends Declaration {
         }
 
         if (type instanceof ClassType classType) {
-            return " = new " + classType.name() + "()";
+            return " = new " + classType.name + "()";
         }
 
         return " = " + JavaTypeSupport.defaultValueExpression(type);

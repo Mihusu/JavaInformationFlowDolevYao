@@ -8,12 +8,12 @@ public final class JavaTypeSupport {
     private JavaTypeSupport() {
     }
 
-    public static String toJavaType(Operators type) {
+    public static String toJavaType(Types type) {
         if (type instanceof ClassType classType) {
-            return classType.name();
+            return classType.name;
         }
 
-        return switch (Operators.runtimeType(type)) {
+        return switch (Types.type(type)) {
             case INT -> "int";
             case BOOL -> "boolean";
             case STRING -> "String";
@@ -28,8 +28,8 @@ public final class JavaTypeSupport {
      * - defaultValue returns an interpreter Value object for eval() method across all relevant nodes.
      * - defaultValueExpression returns Java source code for compile() method across all relevant nodes.
      */
-    public static Value defaultValue(Operators type) {
-        return switch (Operators.runtimeType(type)) {
+    public static Value defaultValue(Types type) {
+        return switch (Types.type(type)) {
             case INT -> new IntValue(0);
             case BOOL -> new BoolValue(false);
             case STRING -> new StringValue("");
@@ -39,8 +39,8 @@ public final class JavaTypeSupport {
         };
     }
 
-    public static String defaultValueExpression(Operators type) {
-        return switch (Operators.runtimeType(type)) {
+    public static String defaultValueExpression(Types type) {
+        return switch (Types.type(type)) {
             case INT -> "0";
             case BOOL -> "false";
             case STRING -> "\"\"";

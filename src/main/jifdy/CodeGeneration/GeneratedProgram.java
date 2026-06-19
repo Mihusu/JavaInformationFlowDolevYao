@@ -132,11 +132,11 @@ public class GeneratedProgram {
         System.out.print("[INPUT] amount4 = ");
         String input_3 = INPUT.nextLine();
         amount4 = Integer.parseInt(input_3.trim());
-        ConstructorValue u = new ConstructorValue("Transfer1", Arrays.asList(user, amount1 + amount3, target));
+        ConstructorValue u = new ConstructorValue("Transfer1", Arrays.asList(user, amount1, target));
         EncryptedValue msg1 = Crypto.encrypt(u, "kClientBank");
         EncryptedValue msg2 = Crypto.encrypt(new ConstructorValue("Transfer2", Arrays.asList(user, amount2, target)), "kClientBank");
         EncryptedValue msg3 = Crypto.encrypt(new ConstructorValue("Transfer3", Arrays.asList(user, amount3 - amount4, target)), "kClientBank");
-        total = amount1 + amount3 + amount2 + amount3 - amount4;
+        total = amount1 + amount2 + amount3 - amount4;
         if (total < 0) {
             System.out.println("Transfer failed.");
         }

@@ -14,7 +14,7 @@ import java.util.List;
 public class ProcDecl extends Declaration {
     public Privacy privacy;
     public String name;
-    public Operators returnType;
+    public Types returnType;
     public SecLabel returnLabel;
     public List<Param> params;
     public List<Stmt> body;

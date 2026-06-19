@@ -13,10 +13,10 @@ import CodeGeneration.CodeGenEnv;
  */
 public class TypedVarExpr extends Expr {
     public final String name;
-    public final Operators assertedType;
+    public final Types assertedType;
     public final SecLabel assertedLabel;
 
-    public TypedVarExpr(String name, Operators assertedType, SecLabel assertedLabel) {
+    public TypedVarExpr(String name, Types assertedType, SecLabel assertedLabel) {
         this.name = name;
         this.assertedType = assertedType;
         this.assertedLabel = assertedLabel;
@@ -28,11 +28,11 @@ public class TypedVarExpr extends Expr {
     }
 
     @Override
-    public Operators typecheck(TypeEnv delta, LabelEnv gamma) {
+    public Types typecheck(TypeEnv delta, LabelEnv gamma) {
         // The syntax carries a type/label annotation, but this is still only a
         // read of an already-declared variable. Reject stale or misleading annotations.
-        Operators actualType = delta.getType(name);
-        if (!Operators.sameType(actualType, assertedType)) {
+        Types actualType = delta.getType(name);
+        if (!Types.sameType(actualType, assertedType)) {
             throw new TypeCheckException("Typed reference type mismatch for " + name, lineNumber, name);
         }
 

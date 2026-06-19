@@ -1,4 +1,6 @@
 package CodeGeneration;
+import ASTNodes.Types;
+
 import java.util.*;
 
 /**
@@ -8,7 +10,7 @@ public class CodeGenEnv {
 
     private int tempCounter = 0;
     private int indent = 0;
-    private final Deque<Map<String, ASTNodes.Operators>> variableScopes = new ArrayDeque<>();
+    private final Deque<Map<String, Types>> variableScopes = new ArrayDeque<>();
 
     public String freshVar(String prefix) {
         return prefix + "_" + (tempCounter++);
@@ -33,7 +35,7 @@ public class CodeGenEnv {
         declareVariable(name, null);
     }
 
-    public void declareVariable(String name, ASTNodes.Operators type) {
+    public void declareVariable(String name, Types type) {
         if (variableScopes.isEmpty()) {
             pushScope();
         }
@@ -44,7 +46,7 @@ public class CodeGenEnv {
     }
 
     public boolean isVariableDeclared(String name) {
-        for (Map<String, ASTNodes.Operators> scope : variableScopes) {
+        for (Map<String, Types> scope : variableScopes) {
             if (scope.containsKey(name)) {
                 return true;
             }
@@ -53,8 +55,8 @@ public class CodeGenEnv {
         return false;
     }
 
-    public ASTNodes.Operators getVariableType(String name) {
-        for (Map<String, ASTNodes.Operators> scope : variableScopes) {
+    public Types getVariableType(String name) {
+        for (Map<String, Types> scope : variableScopes) {
             if (scope.containsKey(name)) {
                 return scope.get(name);
             }

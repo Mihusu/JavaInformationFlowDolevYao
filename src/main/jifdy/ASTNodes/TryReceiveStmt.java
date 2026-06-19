@@ -50,7 +50,7 @@ public class TryReceiveStmt extends Stmt {
             if (format instanceof EncryptFormat encryptFormat) {
                 delta.putType(resultVar, encryptFormat.ciphertextType());
             } else {
-                delta.putType(resultVar, Type.CIPHERTEXT);
+                delta.putType(resultVar, new BasicType(Type.CIPHERTEXT));
             }
             gamma.putLabel(resultVar, SecLabel.LOW);
         }
