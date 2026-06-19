@@ -3,7 +3,7 @@ package ASTNodes;
 import java.util.List;
 
 /**
- * Captures the parameter and return types, along with their security labels, for a method.
+ * Captures the parameter and return Types, along with their security labels, for a method.
  */
 public class MethodType {
 

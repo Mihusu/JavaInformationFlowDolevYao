@@ -1,7 +1,7 @@
 package ASTNodes;
 
 /**
- * Shared helpers for converting language types to generated Java code and
+ * Shared helpers for converting language Types to generated Java code and
  * interpreter default values in case of none valid values were provided.
  */
 public final class JavaTypeSupport {

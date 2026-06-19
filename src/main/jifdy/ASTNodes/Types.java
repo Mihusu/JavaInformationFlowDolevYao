@@ -35,28 +35,28 @@ public class Types {
     /**
      * Check the runtime {@link Type} represented by a type descriptor.
      *
-     * @param typeDescriptor the type descriptor to resolve
-     * @return the runtime-visible type represented by {@code typeDescriptor}
-     * @throws RuntimeException if {@code typeDescriptor} is not recognized
+     * @param type the type descriptor to resolve
+     * @return the runtime-visible type represented by {@code Types}
+     * @throws RuntimeException if {@code Types} is not recognized
      */
-    public static Type type(Types typeDescriptor) {
-        if (typeDescriptor instanceof BasicType basicType) {
+    public static Type type(Types type) {
+        if (type instanceof BasicType basicType) {
             return basicType.type;
         }
 
-        if (typeDescriptor instanceof CiphertextType || typeDescriptor.runtimeType == Type.CIPHERTEXT) {
+        if (type instanceof CiphertextType || type.runtimeType == Type.CIPHERTEXT) {
             return Type.CIPHERTEXT;
         }
 
-        if (typeDescriptor instanceof FormatType || typeDescriptor.runtimeType == Type.FORMAT) {
+        if (type instanceof FormatType || type.runtimeType == Type.FORMAT) {
             return Type.FORMAT;
         }
 
-        if (typeDescriptor instanceof ClassType || typeDescriptor.runtimeType == Type.OBJECT) {
+        if (type instanceof ClassType || type.runtimeType == Type.OBJECT) {
             return Type.OBJECT;
         }
 
-        throw new RuntimeException("Unknown type descriptor: " + typeDescriptor);
+        throw new RuntimeException("Unknown type descriptor: " + type);
     }
 
     /**

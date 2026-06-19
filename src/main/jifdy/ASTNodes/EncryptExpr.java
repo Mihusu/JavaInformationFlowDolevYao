@@ -78,9 +78,10 @@ public class EncryptExpr extends Expr {
     }
 
     @Override
-    public Types typecheck(TypeEnv delta,LabelEnv gamma) {
+    public Types typecheck(TypeEnv delta, LabelEnv gamma) {
 
         Type keyType = Types.type(keyExpr.typecheck(delta, gamma));
+
         if (keyType != Type.STRING) {
             throw new TypeCheckException("Encryption key must have type STRING");
         }
