@@ -5,6 +5,9 @@ format Ack(String low msg);
 format AckMsg(String high uploaded);
 public class PhotoService {
 
+    public PhotoService() {
+    }
+
     public void low client() {
 
         String low user = "Alice";

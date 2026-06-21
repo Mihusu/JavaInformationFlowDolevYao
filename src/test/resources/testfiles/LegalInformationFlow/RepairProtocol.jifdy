@@ -3,6 +3,9 @@ format RepairRequest(String low customerName, String low device, int high serial
 format RepairStatus(String low repair, int high serial_in);
 public class RepairProtocol {
 
+    public RepairProtocol() {
+    }
+
     public void low customer() {
 
         String low customerName = "Alice";

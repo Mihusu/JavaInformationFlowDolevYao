@@ -20,6 +20,7 @@ public class SecLabel implements Serializable {
     }
 
     // Checks if two labels are equal to see if it's HIGH or LOW
+    // Checks the highest label of the two and if it's HIGH for both secLabels, return HIGH'
     public static SecLabel join(SecLabel a, SecLabel b) {
         if (a == HIGH || b == HIGH) {
             return HIGH;

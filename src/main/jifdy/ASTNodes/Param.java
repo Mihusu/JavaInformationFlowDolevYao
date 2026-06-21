@@ -1,7 +1,7 @@
 package ASTNodes;
 
 /**
- * Declares one parameter in a method or procedure signature.
+ * Declares one parameter in a method or constructor signature.
  */
 public class Param {
     public Types type;

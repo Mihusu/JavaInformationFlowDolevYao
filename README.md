@@ -55,6 +55,22 @@ JIFDY supports:
 
 - primitive types: `int`, `bool`, `String`
 - security labels: `low`, `high`
+- class constructors with typed and labeled arguments:
+
+```jifdy
+class PatientRecord {
+    String low patientName;
+    int high patientId;
+
+    public PatientRecord(String low name, int high id) {
+        this.patientName = name;
+        this.patientId = id;
+    }
+}
+
+PatientRecord low record = new PatientRecord("Alice", 42);
+```
+
 - global keys:
 
 ```jifdy

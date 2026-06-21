@@ -6,7 +6,7 @@ import java.util.*;
 
 /**
  * Represents the runtime environment for program execution.
- * Manages variables, security labels, procedures, methods, communication channels, and cryptographic state.
+ * Manages variables, security labels, methods, classes, communication channels, and cryptographic state.
  */
 public class Environment {
     private final Environment parent;
@@ -17,8 +17,6 @@ public class Environment {
     // Security labels (runtime)
     public Map<String, SecLabel> labels = new HashMap<>();
 
-    // Procedures (methods)
-    private final Map<String, ProcDecl> procedures = new HashMap<>();
     private final Map<String, MethodDecl> methods = new HashMap<>();
     private final Map<String, ClassDecl> classes = new HashMap<>();
 
@@ -42,7 +40,6 @@ public class Environment {
     public Environment(Environment parent) {
         this.parent = parent;
         this.labels.putAll(parent.labels);
-        this.procedures.putAll(parent.procedures);
         this.methods.putAll(parent.methods);
         this.classes.putAll(parent.classes);
         this.inbox = parent.inbox;
@@ -160,15 +157,6 @@ public class Environment {
     }
 
     // =========================
-    // PROCEDURES
-    // =========================
-
-    public void putProcedure(String name, ProcDecl proc) {
-        procedures.put(name, proc);
-    }
-
-
-    // =========================
     // METHODS
     // =========================
 
@@ -196,9 +184,13 @@ public class Environment {
     }
 
     public ObjectValue instantiate(String className) {
+        return instantiate(className, List.of());
+    }
+
+    public ObjectValue instantiate(String className, List<Value> args) {
         ClassDecl cls = getClassDecl(className);
         ObjectValue object = new ObjectValue(className);
-        cls.initializeObject(this, object);
+        cls.initializeInstance(this, object, args);
         return object;
     }
 

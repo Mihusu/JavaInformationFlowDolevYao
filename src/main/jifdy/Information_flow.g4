@@ -66,7 +66,7 @@ classBlock
 
 declaration
     : type SECLABEL IDENTIFIER ('=' expression )? ';'
-    | PPLABEL IDENTIFIER '(' decls* ')' '{' assignmentStatement* '}' // Constructor decleration
+    | PPLABEL IDENTIFIER '(' decls? ')' '{' assignmentStatement* '}' // Constructor declaration
     ;
 
 methodDeclaration
@@ -134,7 +134,7 @@ expression
     : INT
     | BOOL
     | STR
-    | 'new' IDENTIFIER '(' ')'
+    | 'new' IDENTIFIER '(' argumentList? ')'
     | IDENTIFIER
     | methodCallOrFormat
     | 'e' '(' KEY ',' expression ')'

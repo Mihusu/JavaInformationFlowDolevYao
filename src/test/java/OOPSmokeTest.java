@@ -20,6 +20,9 @@ public class OOPSmokeTest {
         String source = """
                 class Parent {
                     int low x = 1;
+                    public Parent() {
+                        x = 1;
+                    }
                     public int low getX() {
                         return x;
                     }
@@ -27,13 +30,18 @@ public class OOPSmokeTest {
 
                 class Child extends Parent {
                     int low y = 2;
+                    public Child(int low initialY) {
+                        this.y = initialY;
+                    }
                     public int low sum() {
                         return this.x + this.y;
                     }
                 }
 
                 class Main {
-                    Child low c = new Child();
+                    public Main() {
+                    }
+                    Child low c = new Child(2);
                     Parent low p = c;
                     int low z = c.sum();
                     int low a = p.getX();
@@ -50,6 +58,8 @@ public class OOPSmokeTest {
         program.eval(new Environment());
 
         assertTrue(generated.contains("class Child extends Parent"));
+        assertTrue(generated.contains("public Child(int initialY)"));
+        assertTrue(generated.contains("new Child(2)"));
         assertTrue(generated.contains("c.sum()"));
         assertTrue(generated.contains("c.x"));
     }

@@ -104,7 +104,7 @@ public class ClassDecl extends Node {
         if (!statements.isEmpty()) {
             sb.append("\n")
                     .append(env.indent())
-                    .append("public void entry() {\n");
+                    .append("public void start() {\n");
 
             env.increaseIndent();
             for (Stmt stmt : statements) {
@@ -128,12 +128,19 @@ public class ClassDecl extends Node {
      */
     public void typecheck(TypeEnv delta, LabelEnv gamma) {
         if (superName != null) {
-            delta.getClassDecl(superName);
+            ClassDecl parent = delta.getClassDecl(superName);
+            ConstructorDecl parentConstructor = parent.getConstructor();
+            if (parentConstructor != null && !parentConstructor.params.isEmpty()) {
+                throw new TypeCheckException(
+                        "Parameterized superclass constructors are not supported for " + name
+                );
+            }
         }
 
         registerInheritedFields(delta, gamma);
         delta.putType("this", new ClassType(name));
         gamma.putLabel("this", SecLabel.LOW);
+        validateConstructors();
 
         // First: register variables
         for (Declaration d : declarations) {
@@ -211,11 +218,7 @@ public class ClassDecl extends Node {
         }
     }
 
-    public void initializeObject(Environment env, ObjectValue object) {
-        if (superName != null) {
-            env.getClassDecl(superName).initializeObject(env, object);
-        }
-
+    private void initializeDeclaredFields(Environment env, ObjectValue object) {
         Environment objectEnv = new Environment(env);
         objectEnv.setThisObject(object);
 
@@ -230,6 +233,50 @@ public class ClassDecl extends Node {
                 object.fieldLabels.put(v.name, v.label);
             }
         }
+    }
+
+    public void initializeInstance(Environment env, ObjectValue object, List<Value> args) {
+        if (superName != null) {
+            ClassDecl parent = env.getClassDecl(superName);
+            parent.initializeInstance(env, object, List.of());
+        }
+
+        initializeDeclaredFields(env, object);
+
+        ConstructorDecl constructor = getConstructor();
+        if (constructor == null) {
+            if (!args.isEmpty()) {
+                throw new RuntimeException(
+                        "Class " + name + " has no declared constructor"
+                );
+            }
+            return;
+        }
+
+        if (constructor.params.size() != args.size()) {
+            throw new RuntimeException(
+                    "Wrong number of constructor arguments for " + name
+            );
+        }
+
+        constructor.invoke(env, object, args);
+    }
+
+    public ConstructorDecl getConstructor() {
+        ConstructorDecl result = null;
+
+        for (Declaration declaration : declarations) {
+            if (declaration instanceof ConstructorDecl constructor) {
+                if (result != null) {
+                    throw new TypeCheckException(
+                            "Multiple constructors are not supported for class " + name
+                    );
+                }
+                result = constructor;
+            }
+        }
+
+        return result;
     }
 
     private Value defaultObjectFieldValue(Environment env, Types type) {
@@ -294,6 +341,16 @@ public class ClassDecl extends Node {
                 delta.putType(field.name, field.type);
                 gamma.putLabel(field.name, field.label);
             }
+        }
+    }
+
+    private void validateConstructors() {
+        ConstructorDecl constructor = getConstructor();
+        if (constructor != null && !name.equals(constructor.className)) {
+            throw new TypeCheckException(
+                    "Constructor name " + constructor.className
+                            + " must match class " + name
+            );
         }
     }
 }

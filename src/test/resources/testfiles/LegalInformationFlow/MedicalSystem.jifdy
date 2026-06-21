@@ -5,6 +5,10 @@ format Result(String low received);
 class PersonRecord {
     String low patientName = "";
 
+    public PersonRecord() {
+        patientName = "";
+    }
+
     public String low getName() {
         return this.patientName;
     }
@@ -14,6 +18,14 @@ class PatientRecord extends PersonRecord {
     String high diagnosis = "";
     int high patientId = 0;
 
+    public PatientRecord(String low initialName,
+                         String high initialDiagnosis,
+                         int high initialPatientId) {
+        this.patientName = initialName;
+        this.diagnosis = initialDiagnosis;
+        this.patientId = initialPatientId;
+    }
+
     public int high getPatientId() {
         return this.patientId;
     }
@@ -21,9 +33,13 @@ class PatientRecord extends PersonRecord {
 
 public class MedicalSystem {
 
+    public MedicalSystem() {
+    }
+
     public void low patient() {
 
-        PatientRecord low patientRecord = new PatientRecord();
+        PatientRecord low patientRecord =
+            new PatientRecord("", "", 0);
         PersonRecord low publicRecord = patientRecord;
 
         input(publicRecord.patientName);

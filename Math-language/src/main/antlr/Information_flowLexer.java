@@ -1,4 +1,4 @@
-// Generated from C:/Users/ming2/GitHub/Java_information_flow_dolev_yao/src/main/jifdy/Information_flow.g4 by ANTLR 4.13.2
+// Generated from Information_flow.g4 by ANTLR 4.13.2
 package antlr;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;

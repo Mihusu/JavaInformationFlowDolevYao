@@ -1,5 +1,8 @@
 public class InputExample {
 
+    public InputExample() {
+    }
+
     public void low run() {
         String low name = "";
         int low age = 0;

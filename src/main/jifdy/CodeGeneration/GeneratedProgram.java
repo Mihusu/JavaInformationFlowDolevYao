@@ -1,5 +1,5 @@
-package CodeGeneration;
-
+package CodeGeneration;         
+ 
 import java.util.*;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -104,8 +104,12 @@ public class GeneratedProgram {
 
     final Channel channel = new Channel();
  public class BankTransfer {
-    public String user = "Alice";
-    public String target = "Bob";
+    public String user = "";
+    public String target = "";
+    public BankTransfer() {
+        user = "Alice";
+        target = "Bob";
+    }
 
     public void client() {
         int amount1 = 0;
@@ -228,7 +232,7 @@ public class GeneratedProgram {
         } catch (Exception e) {}
     }
 
-    public void entry() {
+    public void start() {
         client();
         bank();
         clientReceiver();
@@ -237,8 +241,8 @@ public class GeneratedProgram {
 
     public static void main(String[] args) {
         GeneratedProgram program = new GeneratedProgram();
-BankTransfer bankTransferInstance = program.new BankTransfer();
-bankTransferInstance.entry();
+BankTransfer bankTransfer = program.new BankTransfer();
+bankTransfer.start();
     }
 
 }

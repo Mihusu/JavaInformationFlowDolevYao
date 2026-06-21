@@ -9,6 +9,12 @@ public class PublishingSystem {
     String low title = "Secure Compilation";
     String high manuscript = "SECRET_BOOK_CONTENT";
 
+    public PublishingSystem() {
+        publications = 0;
+        title = "Secure Compilation";
+        manuscript = "SECRET_BOOK_CONTENT";
+    }
+
     // AUTHOR
     public void low author() {
 

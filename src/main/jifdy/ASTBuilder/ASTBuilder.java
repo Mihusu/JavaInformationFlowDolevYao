@@ -88,7 +88,16 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         cls.statements = new ArrayList<>();
 
         for (Information_flowParser.DeclarationContext d : ctx.declaration()) {
-            cls.declarations.add((Declaration) visit(d));
+            Declaration declaration = (Declaration) visit(d);
+            if (declaration instanceof ConstructorDecl constructor) {
+                constructor.className = cls.name;
+                if (!ctx.IDENTIFIER(0).getText().equals(d.IDENTIFIER().getText())) {
+                    throw new RuntimeException(
+                            "Constructor name must match class " + cls.name
+                    );
+                }
+            }
+            cls.declarations.add(declaration);
         }
 
         if (ctx.methodDeclaration() != null) {
@@ -166,22 +175,20 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
             return setLocation(decl, ctx);
         }
 
-        // Procedure declaration
-        ProcDecl proc = new ProcDecl();
-        proc.privacy = parsePrivacy(ctx.PPLABEL().getText());
-        proc.name = ctx.IDENTIFIER().getText();
+        ConstructorDecl constructor = new ConstructorDecl();
+        constructor.privacy = parsePrivacy(ctx.PPLABEL().getText());
+        constructor.className = ctx.IDENTIFIER().getText();
 
-        proc.params = new ArrayList<>();
-        for (Information_flowParser.DeclsContext dctx : ctx.decls()) {
-            proc.params.addAll(buildParams(dctx));
+        constructor.params = new ArrayList<>();
+        if (ctx.decls() != null) {
+            constructor.params.addAll(buildParams(ctx.decls()));
         }
-        proc.body = new ArrayList<>();
-
+        constructor.body = new ArrayList<>();
         for (Information_flowParser.AssignmentStatementContext stmt : ctx.assignmentStatement()) {
-            proc.body.add((Stmt) visit(stmt));
+            constructor.body.add((Stmt) visit(stmt));
         }
 
-        return setLocation(proc, ctx);
+        return setLocation(constructor, ctx);
     }
 
     // =========================
@@ -336,8 +343,14 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         if (ctx.STR() != null)
             return new StringLiteral(stripQuotes(ctx.STR().getText()));
 
-        if (ctx.getChildCount() == 4 && "new".equals(ctx.getChild(0).getText())) {
-            return setLocation(new NewObjectExpr(ctx.IDENTIFIER().getText()), ctx);
+        if ("new".equals(ctx.getChild(0).getText())) {
+            List<Expr> args = new ArrayList<>();
+            if (ctx.argumentList() != null) {
+                for (Information_flowParser.ExpressionContext arg : ctx.argumentList().expression()) {
+                    args.add((Expr) visit(arg));
+                }
+            }
+            return setLocation(new NewObjectExpr(ctx.IDENTIFIER().getText(), args), ctx);
         }
 
         if (ctx.KEY() != null && "e".equals(ctx.getChild(0).getText()) && ctx.expression().size() == 1) {

@@ -76,8 +76,8 @@ public class Program extends Node {
         StringBuilder sb = new StringBuilder();
 
         sb.append("""
-       package CodeGeneration;         
-        
+       package CodeGeneration;        \s
+       \s
        import java.util.*;
        import javax.crypto.Cipher;
        import javax.crypto.spec.SecretKeySpec;
@@ -210,16 +210,28 @@ public class Program extends Node {
     }
 
     private void appendMainEntry(StringBuilder sb, ClassDecl cls) {
-        String instance = cls.name.substring(0, 1).toLowerCase() + cls.name.substring(1) + "Instance";
+        String instance = cls.name.substring(0, 1).toLowerCase() + cls.name.substring(1);
         sb.append(cls.name)
                 .append(" ")
                 .append(instance)
                 .append(" = program.new ")
                 .append(cls.name)
-                .append("();\n");
+                .append("(");
+
+        ConstructorDecl constructor = cls.getConstructor();
+        if (constructor != null) {
+            for (int i = 0; i < constructor.params.size(); i++) {
+                sb.append(JavaTypeSupport.defaultValueExpression(constructor.params.get(i).type));
+                if (i < constructor.params.size() - 1) {
+                    sb.append(", ");
+                }
+            }
+        }
+
+        sb.append(");\n");
 
         if (!cls.statements.isEmpty()) {
-            sb.append(instance).append(".entry();\n");
+            sb.append(instance).append(".start();\n");
             return;
         }
 

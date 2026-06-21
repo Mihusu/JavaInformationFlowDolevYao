@@ -5,6 +5,13 @@ public class MyClass {
     bool low flag = true;
     String high text = "hello";
 
+    public MyClass() {
+        secret = 5;
+        counter = 0;
+        flag = true;
+        text = "hello";
+    }
+
     public int low compute(int low x, int high y, bool low z) {
 
         int low local = 0;

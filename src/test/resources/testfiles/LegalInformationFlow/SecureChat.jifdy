@@ -3,6 +3,9 @@ format Message(String low user, String low text);
 
 public class SecureChat {
 
+    public SecureChat() {
+    }
+
     public bool low isAllowed(String low x) {
 
         if (x == "Hello") {

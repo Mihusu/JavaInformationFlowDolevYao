@@ -13,9 +13,9 @@ public class WhileStmt extends Stmt {
     Expr condition;
     public CmdBlock body;
 
-    public WhileStmt(Expr visit, CmdBlock visit1) {
-        this.condition = visit;
-        this.body = visit1;
+    public WhileStmt(Expr visitCondition, CmdBlock visitBody) {
+        this.condition = visitCondition;
+        this.body = visitBody;
     }
 
     public void eval(Environment env) {
@@ -34,7 +34,7 @@ public class WhileStmt extends Stmt {
         }
 
         SecLabel condLabel = condition.label(gamma);
-        //
+
         SecLabel newSecLabel = SecLabel.join(label, condLabel);
 
         body.typecheck(delta, gamma, newSecLabel);

@@ -7,8 +7,13 @@ format Result(String low user, bool high done, int high total);
 
 public class BankTransfer {
 
-    String low user = "Alice";
-    String low target = "Bob";
+    String low user;
+    String low target;
+
+    public BankTransfer() {
+        user = "Alice";
+        target = "Bob";
+    }
 
     public void low client() {
         int high amount1;

@@ -7,6 +7,11 @@ public class FormatExpression {
     String low user = "Alice";
     String low target = "Bob";
 
+    public FormatExpression() {
+        user = "Alice";
+        target = "Bob";
+    }
+
     public void low client() {
         int high amount1 = 2000;
         int high amount2 = 3000;

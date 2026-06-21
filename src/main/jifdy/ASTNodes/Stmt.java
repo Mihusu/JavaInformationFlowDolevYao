@@ -18,7 +18,7 @@ abstract public class Stmt extends Node {
      * Performs type checking on the statement.
      * @param delta The type environment.
      * @param gamma The label environment.
-     * @param secLabel The security context (pc) of the statement.
+     * @param secLabel The security context (current secLabel in a statement) of the statement.
      */
     abstract public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel secLabel);
 }
