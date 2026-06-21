@@ -102,13 +102,13 @@ public class GeneratedProgram {
         }
     }
 
-    final Channel channel = new Channel();
- public class BankTransfer {
-    public String user = "";
-    public String target = "";
+    static final Channel channel = new Channel();
+ public static class BankTransfer {
+    public String user = "Alice";
+    public String target = "Bob";
     public BankTransfer() {
-        user = "Alice";
-        target = "Bob";
+        user = this.user;
+        target = this.target;
     }
 
     public void client() {
@@ -240,9 +240,8 @@ public class GeneratedProgram {
 }
 
     public static void main(String[] args) {
-        GeneratedProgram program = new GeneratedProgram();
-BankTransfer bankTransfer = program.new BankTransfer();
-bankTransfer.start();
+        BankTransfer bankTransfer = new BankTransfer();
+        bankTransfer.start();
     }
 
 }

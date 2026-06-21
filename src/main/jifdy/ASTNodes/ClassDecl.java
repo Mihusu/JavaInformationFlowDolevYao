@@ -78,7 +78,7 @@ public class ClassDecl extends Node {
         StringBuilder sb = new StringBuilder();
 
         sb.append(env.indent())
-                .append("public class ")
+                .append("public static class ")
                 .append(name);
 
         if (superName != null) {

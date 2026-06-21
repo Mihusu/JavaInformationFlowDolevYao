@@ -57,7 +57,7 @@ public class OOPSmokeTest {
         String generated = program.compile(new CodeGenEnv());
         program.eval(new Environment());
 
-        assertTrue(generated.contains("class Child extends Parent"));
+        assertTrue(generated.contains("public static class Child extends Parent"));
         assertTrue(generated.contains("public Child(int initialY)"));
         assertTrue(generated.contains("new Child(2)"));
         assertTrue(generated.contains("c.sum()"));
@@ -77,7 +77,7 @@ public class OOPSmokeTest {
         new TypeChecker().check(program);
         String generated = program.compile(new CodeGenEnv());
 
-        assertTrue(generated.contains("class PatientRecord extends PersonRecord"));
+        assertTrue(generated.contains("public static class PatientRecord extends PersonRecord"));
         assertTrue(generated.contains("input"));
         assertTrue(generated.contains("publicRecord.patientName"));
         assertTrue(generated.contains("patientRecord.diagnosis"));

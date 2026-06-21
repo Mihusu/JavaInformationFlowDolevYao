@@ -7,12 +7,12 @@ format Result(String low user, bool high done, int high total);
 
 public class BankTransfer {
 
-    String low user;
-    String low target;
+    String low user = "Alice";
+    String low target = "Bob";
 
     public BankTransfer() {
-        user = "Alice";
-        target = "Bob";
+        user = this.user;
+        target = this.target;
     }
 
     public void low client() {

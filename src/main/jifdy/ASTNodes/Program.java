@@ -183,7 +183,7 @@ public class Program extends Node {
                }
            }
 
-           final Channel channel = new Channel();
+           static final Channel channel = new Channel();
        \s""");
 
         for (ClassDecl c : classes) {
@@ -193,7 +193,6 @@ public class Program extends Node {
         sb.append("""
 
             public static void main(String[] args) {
-                GeneratedProgram program = new GeneratedProgram();
         """);
 
         for (ClassDecl c : classes) {
@@ -214,7 +213,7 @@ public class Program extends Node {
         sb.append(cls.name)
                 .append(" ")
                 .append(instance)
-                .append(" = program.new ")
+                .append(" = new ")
                 .append(cls.name)
                 .append("(");
 
