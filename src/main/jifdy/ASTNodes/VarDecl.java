@@ -2,6 +2,8 @@ package ASTNodes;
 
 import Analysis.*;
 import CodeGeneration.CodeGenEnv;
+import Utils.Security;
+import Utils.TypeCheckException;
 
 /**
  * Represents a variable declaration in the AST.

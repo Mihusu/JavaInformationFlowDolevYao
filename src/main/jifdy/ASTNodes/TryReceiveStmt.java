@@ -11,16 +11,13 @@ import CodeGeneration.CodeGenEnv;
  */
 public class TryReceiveStmt extends Stmt {
     public Format format;
-    public String resultVar;
     public CmdBlock body;
 
+    /**
+     * Creates a receive statement that stores the complete matched
+     */
     public TryReceiveStmt(Format format, CmdBlock body) {
-        this(format, null, body);
-    }
-
-    public TryReceiveStmt(Format format, String resultVar, CmdBlock body) {
         this.format = format;
-        this.resultVar = resultVar;
         this.body = body;
     }
 
@@ -32,9 +29,6 @@ public class TryReceiveStmt extends Stmt {
 
         if (format.match(msg, env)) {
             env.inbox.poll();
-            if (resultVar != null) {
-                env.setVariables(resultVar, msg);
-            }
             body.eval(env);
         }
     }
@@ -44,16 +38,6 @@ public class TryReceiveStmt extends Stmt {
 
         // Typecheck receive pattern using current procedure
         format.typecheck(delta, gamma, label);
-
-        // Optional ciphertext binding
-        if (resultVar != null) {
-            if (format instanceof EncryptFormat encryptFormat) {
-                delta.putType(resultVar, encryptFormat.ciphertextType());
-            } else {
-                delta.putType(resultVar, new BasicType(Type.CIPHERTEXT));
-            }
-            gamma.putLabel(resultVar, SecLabel.LOW);
-        }
 
         // New scope for body
         TypeEnv bodyDelta = new TypeEnv(delta);
@@ -88,17 +72,8 @@ public class TryReceiveStmt extends Stmt {
                 .append("Object ").append(msg)
                 .append(" = channel.peek();\n");
 
-        sb.append(format.compileMatch(env, msg));
+        sb.append(format.compile(env, msg));
         sb.append(env.indent()).append("channel.remove();\n");
-
-        if (resultVar != null) {
-            if (env.isVariableDeclared(resultVar)) {
-                sb.append(env.indent()).append(resultVar).append(" = ").append(msg).append(";\n");
-            } else {
-                env.declareVariable(resultVar);
-                sb.append(env.indent()).append("Object ").append(resultVar).append(" = ").append(msg).append(";\n");
-            }
-        }
 
         sb.append(body.compile(env));
 

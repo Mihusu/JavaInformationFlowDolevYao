@@ -1,4 +1,4 @@
-package Analysis;
+package Utils;
 
 /**
  * Exception thrown when a type or security label violation is detected during type checking.

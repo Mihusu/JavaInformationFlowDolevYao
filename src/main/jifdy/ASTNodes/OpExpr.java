@@ -2,7 +2,7 @@ package ASTNodes;
 
 import Analysis.Environment;
 import Analysis.LabelEnv;
-import Analysis.TypeCheckException;
+import Utils.TypeCheckException;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
@@ -137,6 +137,11 @@ public class OpExpr extends Expr {
         throw new TypeCheckException("Unknown operator: " + op);
     }
 
+    @Override
+    public String compile(CodeGenEnv env) {
+        return left.compile(env) + " " + op + " " + right.compile(env);
+    }
+
     private String valueToString(Value value) {
         if (value instanceof StringValue stringValue) {
             return stringValue.value;
@@ -148,11 +153,5 @@ public class OpExpr extends Expr {
             return Boolean.toString(boolValue.value);
         }
         return value.toString();
-    }
-
-
-    @Override
-    public String compile(CodeGenEnv env) {
-        return left.compile(env) + " " + op + " " + right.compile(env);
     }
 }

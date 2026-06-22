@@ -2,6 +2,8 @@ package ASTNodes;
 
 import Analysis.*;
 import CodeGeneration.CodeGenEnv;
+import Utils.Security;
+import Utils.TypeCheckException;
 
 /**
  * Assignment statement for receiver field writes, e.g. obj.field = value.

@@ -1,7 +1,7 @@
 package ASTBuilder;
 
 import ASTNodes.*;
-import Analysis.TypeCheckException;
+import Utils.TypeCheckException;
 import antlr.Information_flowBaseVisitor;
 import antlr.Information_flowParser;
 import ASTNodes.Expr.*;

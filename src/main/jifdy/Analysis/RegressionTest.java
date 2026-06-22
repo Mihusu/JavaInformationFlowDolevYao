@@ -2,6 +2,7 @@ package Analysis;
 
 import ASTNodes.Program;
 import ASTBuilder.ASTBuilder;
+import Utils.TypeCheckException;
 import antlr.Information_flowLexer;
 import antlr.Information_flowParser;
 import org.antlr.v4.runtime.CharStreams;

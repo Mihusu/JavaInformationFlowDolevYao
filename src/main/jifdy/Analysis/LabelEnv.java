@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ASTNodes.SecLabel;
+import Utils.TypeCheckException;
 
 /**
  * Manages security labels during type checking.

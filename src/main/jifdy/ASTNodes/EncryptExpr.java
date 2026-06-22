@@ -2,7 +2,7 @@ package ASTNodes;
 
 import Analysis.Environment;
 import Analysis.LabelEnv;
-import Analysis.TypeCheckException;
+import Utils.TypeCheckException;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
@@ -37,8 +37,8 @@ public class EncryptExpr extends Expr {
 
         this.payload = payload;
         this.keyExpr = keyExpr;
-        this.keyName = extractKeyName(keyExpr);
-        this.formatName = extractFormatName(payload);
+        this.keyName = EncryptionTypeSupport.extractKeyName(keyExpr);
+        this.formatName = EncryptionTypeSupport.extractFormatName(payload);
     }
 
     @Override
@@ -114,35 +114,4 @@ public class EncryptExpr extends Expr {
         return "Crypto.encrypt(" + payload.compile(env) + ", " + keyExpr.compile(env) + ")";
     }
 
-    private String extractKeyName(Expr keyExpr) {
-        if (keyExpr instanceof Expr.StringLiteral literal) {
-            return literal.value;
-        }
-
-        if (keyExpr instanceof VarExpr varExpr) {
-            return varExpr.name;
-        }
-
-        throw new RuntimeException("Unsupported encryption key expression");
-    }
-
-    private String extractFormatName(Expr expr) {
-        if (expr instanceof ConstructorExpr constructorExpr) {
-            return constructorExpr.name;
-        }
-
-        if (expr instanceof VarExpr varExpr) {
-            return varExpr.name;
-        }
-
-        if (expr instanceof EncryptExpr encryptExpr) {
-            return encryptExpr.formatName;
-        }
-
-        if (expr instanceof Expr.StringLiteral stringLiteral) {
-            return stringLiteral.value;
-        }
-
-        return expr.getClass().getSimpleName();
-    }
 }

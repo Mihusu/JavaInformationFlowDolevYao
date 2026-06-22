@@ -2,6 +2,8 @@ package ASTNodes;
 
 import Analysis.*;
 import CodeGeneration.CodeGenEnv;
+import Utils.Security;
+import Utils.TypeCheckException;
 
 import java.util.List;
 
@@ -23,45 +25,6 @@ public class MethodCallExpr extends Expr {
         }
 
         return value;
-    }
-
-    public void evalAsStatement(Environment env) {
-        invoke(env);
-    }
-
-    private Value invoke(Environment env) {
-
-        MethodDecl f;
-        Environment localEnv = new Environment(env);
-
-        if (receiver != null) {
-            Value target = receiver.eval(env);
-            if (!(target instanceof ObjectValue object)) {
-                throw new RuntimeException("Method call receiver is not an object: " + name);
-            }
-
-            f = env.resolveMethod(object.className, name);
-            localEnv.setThisObject(object);
-        } else {
-            f = env.getMethod(name);
-        }
-
-
-        // bind parameters
-        for (int i = 0; i < f.params.size(); i++) {
-            Param p = f.params.get(i);
-            Value v = args.get(i).eval(env);
-
-            localEnv.declare(p.name, v, p.label);
-        }
-
-        f.body.eval(localEnv);
-
-        if (f.returnType == null) {
-            return null;
-        }
-
-        return localEnv.getReturnValue();
     }
 
     @Override
@@ -139,7 +102,6 @@ public class MethodCallExpr extends Expr {
         return result;
     }
 
-
     @Override
     public String compile(CodeGenEnv env) {
 
@@ -159,5 +121,44 @@ public class MethodCallExpr extends Expr {
         sb.append(")");
 
         return sb.toString();
+    }
+
+    public void evalAsStatement(Environment env) {
+        invoke(env);
+    }
+
+    private Value invoke(Environment env) {
+
+        MethodDecl f;
+        Environment localEnv = new Environment(env);
+
+        if (receiver != null) {
+            Value target = receiver.eval(env);
+            if (!(target instanceof ObjectValue object)) {
+                throw new RuntimeException("Method call receiver is not an object: " + name);
+            }
+
+            f = env.resolveMethod(object.className, name);
+            localEnv.setThisObject(object);
+        } else {
+            f = env.getMethod(name);
+        }
+
+
+        // bind parameters
+        for (int i = 0; i < f.params.size(); i++) {
+            Param p = f.params.get(i);
+            Value v = args.get(i).eval(env);
+
+            localEnv.declare(p.name, v, p.label);
+        }
+
+        f.body.eval(localEnv);
+
+        if (f.returnType == null) {
+            return null;
+        }
+
+        return localEnv.getReturnValue();
     }
 }

@@ -2,7 +2,7 @@ package ASTNodes;
 
 import Analysis.Environment;
 import Analysis.LabelEnv;
-import Analysis.TypeCheckException;
+import Utils.TypeCheckException;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 

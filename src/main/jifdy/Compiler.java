@@ -1,10 +1,10 @@
 import ASTNodes.Program;
 import ASTBuilder.ASTBuilder;
 import Analysis.Environment;
+import Utils.ThrowingErrorListener;
 import Analysis.TypeChecker;
 
 import CodeGeneration.CodeGenEnv;
-import Analysis.SyntaxError;
 import antlr.Information_flowLexer;
 import antlr.Information_flowParser;
 
@@ -66,24 +66,5 @@ public class Compiler {
 
         // 10. Execute
         program.eval(env);
-    }
-
-    /**
-     * Parser error listener that converts ANTLR syntax errors into project exceptions.
-     */
-    private static class ThrowingErrorListener extends BaseErrorListener {
-        private static final ThrowingErrorListener INSTANCE = new ThrowingErrorListener();
-
-        @Override
-        public void syntaxError(
-                Recognizer<?, ?> recognizer,
-                Object offendingSymbol,
-                int line,
-                int charPositionInLine,
-                String msg,
-                RecognitionException e
-        ) {
-            throw new SyntaxError("Syntax error at line " + line + ":" + charPositionInLine + " - " + msg);
-        }
     }
 }

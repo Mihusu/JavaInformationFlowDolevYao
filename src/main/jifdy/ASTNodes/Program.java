@@ -26,10 +26,6 @@ public class Program extends Node {
      * Constructs a Program with the given class declarations.
      * @param classDecls The list of class declarations.
      */
-    public Program(List<ClassDecl> classDecls) {
-        this(classDecls, Set.of(), Set.of(), Map.of());
-    }
-
     public Program(List<ClassDecl> classDecls, Set<String> declaredKeys, Set<String> declaredFormats, Map<String, FormatType> formatTypes) {
         this.classes = classDecls;
         this.declaredKeys = declaredKeys;

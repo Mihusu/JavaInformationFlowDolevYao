@@ -2,6 +2,8 @@ package ASTNodes;
 
 import Analysis.*;
 import CodeGeneration.CodeGenEnv;
+import Utils.Security;
+import Utils.TypeCheckException;
 
 /**
  * Represents an assignment statement in the AST.

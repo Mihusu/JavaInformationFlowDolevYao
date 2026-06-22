@@ -2,7 +2,7 @@ package ASTNodes;
 
 import Analysis.Environment;
 import Analysis.LabelEnv;
-import Analysis.TypeCheckException;
+import Utils.TypeCheckException;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
@@ -72,16 +72,14 @@ public class EncryptFormat extends Format {
     }
 
     public CiphertextType ciphertextType() {
-        return new CiphertextType(extractKeyName(key), extractFormatName(inner));
+        return new CiphertextType(
+                EncryptionTypeSupport.extractKeyName(key),
+                EncryptionTypeSupport.extractFormatName(inner)
+        );
     }
 
     @Override
-    public String compile(CodeGenEnv env) {
-        return "";
-    }
-
-    @Override
-    public String compileMatch(CodeGenEnv env, String valueVar) {
+    public String compile(CodeGenEnv env, String valueVar) {
 
         String enc = env.freshVar("enc");
 
@@ -100,7 +98,7 @@ public class EncryptFormat extends Format {
                 .append("Object ").append(decrypted).append(" = Crypto.decrypt(").append(enc).append(", ")
                 .append(key.compile(env)).append(");\n");
 
-        sb.append(inner.compileMatch(env, decrypted));
+        sb.append(inner.compile(env, decrypted));
 
         return sb.toString();
     }
@@ -118,31 +116,4 @@ public class EncryptFormat extends Format {
         return inner.label(gamma);
     }
 
-    private String extractKeyName(Expr keyExpr) {
-        if (keyExpr instanceof Expr.StringLiteral literal) {
-            return literal.value;
-        }
-
-        if (keyExpr instanceof VarExpr varExpr) {
-            return varExpr.name;
-        }
-
-        throw new RuntimeException("Unsupported encryption key expression");
-    }
-
-    private String extractFormatName(Format format) {
-        if (format instanceof ConstructorFormat constructorFormat) {
-            return constructorFormat.name;
-        }
-
-        if (format instanceof TypedVarFormat typedVarFormat) {
-            return typedVarFormat.name;
-        }
-
-        if (format instanceof EncryptFormat encryptFormat) {
-            return encryptFormat.ciphertextType().formatName;
-        }
-
-        throw new RuntimeException("Unsupported encrypted format pattern");
-    }
 }

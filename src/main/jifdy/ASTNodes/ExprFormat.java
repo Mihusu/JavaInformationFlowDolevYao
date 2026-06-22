@@ -31,7 +31,7 @@ public class ExprFormat extends Format {
     }
 
     @Override
-    public String compileMatch(CodeGenEnv env, String valueVar) {
+    public String compile(CodeGenEnv env, String valueVar) {
         // Generated code stores constructor fields as boxed Java primitives/strings,
         // so Objects.equals is the right equality check on the compiled path as well.
         return env.indent()
@@ -46,10 +46,5 @@ public class ExprFormat extends Format {
     @Override
     public String describe() {
         return expr.compile(new CodeGenEnv());
-    }
-
-    @Override
-    public String compile(CodeGenEnv env) {
-        return "";
     }
 }

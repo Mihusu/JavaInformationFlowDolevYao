@@ -5,8 +5,6 @@ package ASTNodes;
  * interpreter default values in case of none valid values were provided.
  */
 public final class JavaTypeSupport {
-    private JavaTypeSupport() {
-    }
 
     public static String toJavaType(Types type) {
         if (type instanceof ClassType classType) {

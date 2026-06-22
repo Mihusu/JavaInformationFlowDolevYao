@@ -53,11 +53,6 @@ public class ConstructorFormat extends Format {
         }
     }
 
-    @Override
-    public String compile(CodeGenEnv env) {
-        return "";
-    }
-
     public boolean match(Value value, Environment env) {
 
         if (!(value instanceof ConstructorValue cv)) {
@@ -82,7 +77,7 @@ public class ConstructorFormat extends Format {
     }
 
     @Override
-    public String compileMatch(CodeGenEnv env, String valueVar) {
+    public String compile(CodeGenEnv env, String valueVar) {
 
         String cv = env.freshVar("cv");
 
@@ -101,7 +96,7 @@ public class ConstructorFormat extends Format {
                 .append(name).append("\")) throw new RuntimeException();\n");
 
         for (int i = 0; i < args.size(); i++) {
-            sb.append(args.get(i).compileMatch(env, cv + ".values.get(" + i + ")"));
+            sb.append(args.get(i).compile(env, cv + ".values.get(" + i + ")"));
         }
 
         return sb.toString();

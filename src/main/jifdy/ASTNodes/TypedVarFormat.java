@@ -41,7 +41,7 @@ public class TypedVarFormat extends Format {
     }
 
     @Override
-    public String compileMatch(CodeGenEnv env, String valueVar) {
+    public String compile(CodeGenEnv env, String valueVar) {
         String assignmentValue;
         if (type == null) {
             assignmentValue = valueVar;
@@ -60,11 +60,6 @@ public class TypedVarFormat extends Format {
 
         env.declareVariable(name, type);
         return env.indent() + JavaTypeSupport.toJavaType(type) + " " + name + " = " + assignmentValue + ";\n";
-    }
-
-    @Override
-    public String compile(CodeGenEnv env) {
-        return "";
     }
 
     @Override

@@ -3,6 +3,8 @@ package ASTNodes;
 import ASTBuilder.Privacy;
 import Analysis.*;
 import CodeGeneration.CodeGenEnv;
+import Utils.Security;
+import Utils.TypeCheckException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,55 +72,6 @@ public class ClassDecl extends Node {
         for (Stmt stmt : statements) {
             stmt.eval(env);
         }
-    }
-
-    @Override
-    public String compile(CodeGenEnv env) {
-
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(env.indent())
-                .append("public static class ")
-                .append(name);
-
-        if (superName != null) {
-            sb.append(" extends ").append(superName);
-        }
-
-        sb.append(" {\n");
-
-        env.increaseIndent();
-
-        for (Declaration d : declarations) {
-            if (d instanceof VarDecl v) {
-                sb.append(v.compileField(env));
-            } else {
-                sb.append(d.compile(env));
-            }
-        }
-
-        for (MethodDecl f : methods) {
-            sb.append("\n").append(f.compile(env));
-        }
-
-        if (!statements.isEmpty()) {
-            sb.append("\n")
-                    .append(env.indent())
-                    .append("public void start() {\n");
-
-            env.increaseIndent();
-            for (Stmt stmt : statements) {
-                sb.append(stmt.compile(env));
-            }
-            env.decreaseIndent();
-
-            sb.append(env.indent()).append("}\n");
-        }
-
-        env.decreaseIndent();
-        sb.append(env.indent()).append("}\n");
-
-        return sb.toString();
     }
 
     /**
@@ -217,6 +170,56 @@ public class ClassDecl extends Node {
             stmt.typecheck(delta, gamma, SecLabel.LOW);
         }
     }
+
+    @Override
+    public String compile(CodeGenEnv env) {
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(env.indent())
+                .append("public static class ")
+                .append(name);
+
+        if (superName != null) {
+            sb.append(" extends ").append(superName);
+        }
+
+        sb.append(" {\n");
+
+        env.increaseIndent();
+
+        for (Declaration d : declarations) {
+            if (d instanceof VarDecl v) {
+                sb.append(v.compileField(env));
+            } else {
+                sb.append(d.compile(env));
+            }
+        }
+
+        for (MethodDecl f : methods) {
+            sb.append("\n").append(f.compile(env));
+        }
+
+        if (!statements.isEmpty()) {
+            sb.append("\n")
+                    .append(env.indent())
+                    .append("public void start() {\n");
+
+            env.increaseIndent();
+            for (Stmt stmt : statements) {
+                sb.append(stmt.compile(env));
+            }
+            env.decreaseIndent();
+
+            sb.append(env.indent()).append("}\n");
+        }
+
+        env.decreaseIndent();
+        sb.append(env.indent()).append("}\n");
+
+        return sb.toString();
+    }
+
 
     private void initializeDeclaredFields(Environment env, ObjectValue object) {
         Environment objectEnv = new Environment(env);

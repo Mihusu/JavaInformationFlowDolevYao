@@ -3,6 +3,8 @@ package ASTNodes;
 import ASTBuilder.Privacy;
 import Analysis.*;
 import CodeGeneration.CodeGenEnv;
+import Utils.Security;
+import Utils.TypeCheckException;
 
 import java.util.ArrayList;
 import java.util.List;

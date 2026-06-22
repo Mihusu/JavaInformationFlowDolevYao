@@ -3,9 +3,10 @@ package ASTNodes;
 import ASTBuilder.Privacy;
 import Analysis.Environment;
 import Analysis.LabelEnv;
-import Analysis.TypeCheckException;
+import Utils.TypeCheckException;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
+import Utils.Security;
 
 import java.util.List;
 
@@ -35,47 +36,6 @@ public class ConstructorDecl extends Declaration {
 
         for (Stmt statement : body) {
             statement.typecheck(localDelta, localGamma, SecLabel.LOW);
-        }
-    }
-
-    public void checkArguments(List<Expr> args, TypeEnv delta, LabelEnv gamma) {
-        if (args.size() != params.size()) {
-            throw new TypeCheckException(
-                    "Wrong number of constructor arguments for " + className
-            );
-        }
-
-        for (int i = 0; i < args.size(); i++) {
-            Types actualType = args.get(i).typecheck(delta, gamma);
-            Param expected = params.get(i);
-
-            if (!delta.isSubtype(actualType, expected.type)) {
-                throw new TypeCheckException(
-                        "Constructor argument type mismatch for " + className
-                );
-            }
-
-            SecLabel actualLabel = args.get(i).label(gamma);
-            if (!Analysis.Security.canFlow(actualLabel, expected.label)) {
-                throw new TypeCheckException(
-                        "Illegal constructor argument flow for " + className + ": "
-                                + actualLabel + " -> " + expected.label
-                );
-            }
-        }
-    }
-
-    public void invoke(Environment env, ObjectValue object, List<Value> args) {
-        Environment constructorEnv = new Environment(env);
-        constructorEnv.setThisObject(object);
-
-        for (int i = 0; i < params.size(); i++) {
-            Param param = params.get(i);
-            constructorEnv.declare(param.name, args.get(i), param.label);
-        }
-
-        for (Stmt statement : body) {
-            statement.eval(constructorEnv);
         }
     }
 
@@ -115,5 +75,46 @@ public class ConstructorDecl extends Declaration {
 
         sb.append(env.indent()).append("}\n");
         return sb.toString();
+    }
+
+    public void checkArguments(List<Expr> args, TypeEnv delta, LabelEnv gamma) {
+        if (args.size() != params.size()) {
+            throw new TypeCheckException(
+                    "Wrong number of constructor arguments for " + className
+            );
+        }
+
+        for (int i = 0; i < args.size(); i++) {
+            Types actualType = args.get(i).typecheck(delta, gamma);
+            Param expected = params.get(i);
+
+            if (!delta.isSubtype(actualType, expected.type)) {
+                throw new TypeCheckException(
+                        "Constructor argument type mismatch for " + className
+                );
+            }
+
+            SecLabel actualLabel = args.get(i).label(gamma);
+            if (!Security.canFlow(actualLabel, expected.label)) {
+                throw new TypeCheckException(
+                        "Illegal constructor argument flow for " + className + ": "
+                                + actualLabel + " -> " + expected.label
+                );
+            }
+        }
+    }
+
+    public void invoke(Environment env, ObjectValue object, List<Value> args) {
+        Environment constructorEnv = new Environment(env);
+        constructorEnv.setThisObject(object);
+
+        for (int i = 0; i < params.size(); i++) {
+            Param param = params.get(i);
+            constructorEnv.declare(param.name, args.get(i), param.label);
+        }
+
+        for (Stmt statement : body) {
+            statement.eval(constructorEnv);
+        }
     }
 }

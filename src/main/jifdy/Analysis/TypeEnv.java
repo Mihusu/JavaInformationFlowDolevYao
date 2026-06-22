@@ -7,6 +7,7 @@ import ASTNodes.MethodType;
 import ASTNodes.FormatType;
 import ASTNodes.Types;
 import ASTNodes.*;
+import Utils.TypeCheckException;
 
 /**
  * Manages types during type checking.

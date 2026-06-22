@@ -1,4 +1,4 @@
-package Analysis;
+package Utils;
 
 import ASTNodes.SecLabel;
 

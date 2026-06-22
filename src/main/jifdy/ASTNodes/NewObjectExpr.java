@@ -4,6 +4,7 @@ import Analysis.Environment;
 import Analysis.LabelEnv;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
+import Utils.TypeCheckException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class NewObjectExpr extends Expr {
 
         if (constructor == null) {
             if (!args.isEmpty()) {
-                throw new Analysis.TypeCheckException(
+                throw new TypeCheckException(
                         "Class " + className + " has no declared constructor"
                 );
             }
