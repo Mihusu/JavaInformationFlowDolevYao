@@ -50,8 +50,8 @@ public class ClassDecl extends Node {
         for (Declaration d : declarations) {
             if (d instanceof VarDecl v) {
 
-                Value initVal = (v.init != null)
-                        ? v.init.eval(env)
+                Value initVal = (v.initExpression != null)
+                        ? v.initExpression.eval(env)
                         : JavaTypeSupport.defaultValue(v.type);
 
                 initVal.label = v.label;
@@ -105,9 +105,9 @@ public class ClassDecl extends Node {
                 gamma.putLabel(v.name, v.label);
 
                 // If initialized, check the initializer
-                if (v.init != null) {
+                if (v.initExpression != null) {
 
-                    Types initType = v.init.typecheck(delta, gamma);
+                    Types initType = v.initExpression.typecheck(delta, gamma);
 
                     if (!delta.isSubtype(initType, v.type)) {
                         throw new TypeCheckException(
@@ -117,7 +117,7 @@ public class ClassDecl extends Node {
                         );
                     }
 
-                    SecLabel initLabel = v.init.label(gamma);
+                    SecLabel initLabel = v.initExpression.label(gamma);
 
                     // SPECIAL CASE: Encryption (EncryptExpr) is a declassification mechanism.
                     // If the variable is initialized with an encryption expression and the label is LOW, allow the initialization.
@@ -227,8 +227,8 @@ public class ClassDecl extends Node {
 
         for (Declaration d : declarations) {
             if (d instanceof VarDecl v) {
-                Value initVal = (v.init != null)
-                        ? v.init.eval(objectEnv)
+                Value initVal = (v.initExpression != null)
+                        ? v.initExpression.eval(objectEnv)
                         : defaultObjectFieldValue(env, v.type);
 
                 initVal.label = v.label;

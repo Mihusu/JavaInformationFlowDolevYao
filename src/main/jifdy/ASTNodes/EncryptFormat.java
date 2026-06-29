@@ -12,6 +12,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Map;
 
 /**
  * Pattern node that decrypts an incoming ciphertext and matches its plaintext structure.
@@ -101,6 +102,16 @@ public class EncryptFormat extends Format {
         sb.append(inner.compile(env, decrypted));
 
         return sb.toString();
+    }
+
+    @Override
+    public void collectBindings(Map<String, Types> bindings) {
+        inner.collectBindings(bindings);
+    }
+
+    @Override
+    public void collectBindingLabels(Map<String, SecLabel> labels) {
+        inner.collectBindingLabels(labels);
     }
 
     @Override

@@ -10,15 +10,15 @@ import Utils.TypeCheckException;
  */
 public class AssignStmt extends Stmt {
     public String name;
-    public Expr expr;
+    public Expr assignmentExpr;
 
     public AssignStmt(String text, Expr visit) {
         this.name = text;
-        this.expr = visit;
+        this.assignmentExpr = visit;
     }
 
     public void eval(Environment env) {
-        Value v = expr.eval(env);
+        Value v = assignmentExpr.eval(env);
         env.setVariables(name, v);
     }
 
@@ -26,13 +26,13 @@ public class AssignStmt extends Stmt {
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedure) {
 
         Types lhsType = delta.getType(name);
-        Types rhsType = expr.typecheck(delta, gamma);
+        Types rhsType = assignmentExpr.typecheck(delta, gamma);
 
         if (!delta.isSubtype(rhsType, lhsType)) {
             throw new TypeCheckException("Type mismatch in assignment", lineNumber, name);
         }
 
-        SecLabel exprLabel = expr.label(gamma);
+        SecLabel exprLabel = assignmentExpr.label(gamma);
 
         // explicit flow + implicit flow. effectiveLabel is l2 from the paper
         SecLabel effectiveLabel = SecLabel.join(currentProcedure, exprLabel);
@@ -53,6 +53,6 @@ public class AssignStmt extends Stmt {
 
     @Override
     public String compile(CodeGenEnv env) {
-        return env.indent() + name + " = " + expr.compile(env) + ";\n";
+        return env.indent() + name + " = " + assignmentExpr.compile(env) + ";\n";
     }
 }

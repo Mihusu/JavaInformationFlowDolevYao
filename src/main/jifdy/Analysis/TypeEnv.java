@@ -89,14 +89,32 @@ public class TypeEnv {
         return methods.get(name);
     }
 
+    /**
+     * Registers a class declaration.
+     *
+     * @param cls Class declaration.
+     */
     public void putClass(ClassDecl cls) {
         classes.put(cls.name, cls);
     }
 
+    /**
+     * Determines whether a class is known.
+     *
+     * @param name Class name.
+     * @return True if the class exists.
+     */
     public boolean containsClass(String name) {
         return classes.containsKey(name);
     }
 
+    /**
+     * Retrieves a class declaration.
+     *
+     * @param name Class name.
+     * @return Corresponding class declaration.
+     * @throws TypeCheckException if the class is unknown.
+     */
     public ClassDecl getClassDecl(String name) {
         if (!classes.containsKey(name)) {
             throw new TypeCheckException("Unknown class: " + name);
@@ -105,6 +123,15 @@ public class TypeEnv {
         return classes.get(name);
     }
 
+
+    /**
+     * Resolves a method declaration using inheritance-aware lookup.
+     *
+     * @param className Declaring class.
+     * @param methodName Method name.
+     * @return Resolved method declaration.
+     * @throws TypeCheckException if the method cannot be found.
+     */
     public MethodDecl resolveMethod(String className, String methodName) {
         ClassDecl cls = getClassDecl(className);
         MethodDecl method = cls.findMethod(methodName, this);
@@ -114,6 +141,14 @@ public class TypeEnv {
         return method;
     }
 
+    /**
+     * Resolves a field declaration using inheritance-aware lookup.
+     *
+     * @param className Declaring class.
+     * @param fieldName Field name.
+     * @return Resolved field declaration.
+     * @throws TypeCheckException if the field cannot be found.
+     */
     public VarDecl resolveField(String className, String fieldName) {
         ClassDecl cls = getClassDecl(className);
         VarDecl field = cls.findField(fieldName, this);
@@ -123,6 +158,18 @@ public class TypeEnv {
         return field;
     }
 
+    /**
+     * Determines whether one type is a subtype of another.
+     *
+     * <p>
+     * Primitive types, format types, and ciphertext types must match
+     * exactly. Class types support inheritance-based subtyping.
+     * </p>
+     *
+     * @param actual Actual type.
+     * @param expected Expected type.
+     * @return True if actual can be used where expected is required.
+     */
     public boolean isSubtype(Types actual, Types expected) {
         if (Types.sameType(actual, expected)) {
             return true;

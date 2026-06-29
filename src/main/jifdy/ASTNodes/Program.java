@@ -192,6 +192,7 @@ public class Program extends Node {
         """);
 
         for (ClassDecl c : classes) {
+            sb.append("        ");
             appendMainEntry(sb, c);
         }
 
@@ -226,6 +227,7 @@ public class Program extends Node {
         sb.append(");\n");
 
         if (!cls.statements.isEmpty()) {
+            sb.append("        ");
             sb.append(instance).append(".start();\n");
             return;
         }

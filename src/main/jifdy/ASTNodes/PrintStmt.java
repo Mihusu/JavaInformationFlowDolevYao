@@ -18,8 +18,8 @@ public class PrintStmt extends Stmt {
     }
 
     public void eval(Environment env) {
-        for (Expr e : args) {
-            System.out.println(e.eval(env));
+        for (Expr expr : args) {
+            System.out.println(expr.eval(env));
         }
     }
 

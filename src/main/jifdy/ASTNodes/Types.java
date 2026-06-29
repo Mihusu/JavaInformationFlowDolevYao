@@ -16,6 +16,7 @@ public class Types {
     public String keyName;
     public String formatName;
 
+    // When a subclass creates a type descriptor, it must specify which runtime type it belongs to
     protected Types(Type runtimeType) {
         this.runtimeType = runtimeType;
     }
@@ -33,7 +34,7 @@ public class Types {
     }
 
     /**
-     * Check the runtime {@link Type} represented by a type descriptor.
+     * Check the runtime {@link Type} of the current expr or statement.
      *
      * @param type the type descriptor to resolve
      * @return the runtime-visible type represented by {@code Types}

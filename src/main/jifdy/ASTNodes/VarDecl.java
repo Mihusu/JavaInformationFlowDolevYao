@@ -27,7 +27,7 @@ public class VarDecl extends Declaration {
     /**
      * The optional initializer expression.
      */
-    public Expr init; // optional
+    public Expr initExpression; // optional
 
     /**
      * Evaluates the variable declaration, initializing it in the environment.
@@ -38,8 +38,8 @@ public class VarDecl extends Declaration {
 
         Value initVal;
 
-        if (init != null) {
-            initVal = init.eval(env);
+        if (initExpression != null) {
+            initVal = initExpression.eval(env);
         } else if (type instanceof ClassType classType) {
             initVal = env.instantiate(classType.name);
         } else {
@@ -65,9 +65,9 @@ public class VarDecl extends Declaration {
         delta.putType(name, type);
         gamma.putLabel(name, label);
 
-        if (init != null) {
+        if (initExpression != null) {
 
-            Types initType = init.typecheck(delta, gamma);
+            Types initType = initExpression.typecheck(delta, gamma);
 
             if (!delta.isSubtype(initType, type)) {
                 throw new TypeCheckException(
@@ -77,7 +77,7 @@ public class VarDecl extends Declaration {
                 );
             }
 
-            SecLabel initLabel = init.label(gamma);
+            SecLabel initLabel = initExpression.label(gamma);
             SecLabel effective = SecLabel.join(variableProcedure, initLabel);
 
             // SPECIAL CASE: Encryption (EncryptExpr) is a declassification mechanism.
@@ -106,8 +106,8 @@ public class VarDecl extends Declaration {
     }
 
     private String compileInitializer(CodeGenEnv env) {
-        if (init != null) {
-            return " = " + init.compile(env);
+        if (initExpression != null) {
+            return " = " + initExpression.compile(env);
         }
 
         if (type instanceof ClassType classType) {

@@ -75,18 +75,21 @@ public class BankTransfer {
         try_rcv(e(kClientBank,
           Transfer1(user, amount1, target)
         )) {
+            print("Transfer failed");
         }
 
         // Second transfer
         try_rcv(e(kClientBank,
           Transfer2(user, amount2, target)
         )) {
+            print("Transfer failed");
         }
 
         // Third transfer
         try_rcv(e(kClientBank,
           Transfer3(user, amount3, target)
         )) {
+            print("Transfer failed");
         }
 
         total = amount1 + amount2 + amount3;
@@ -110,11 +113,12 @@ public class BankTransfer {
         try_rcv(e(kReceiverBank,
           Result(user, done, total)
         )) {
-            if(done && total > 0) {
-                print("From bank:");
-                print("You received money from " + user + ". " + user + " has sent you " + total + ". Status: " + done);
+        }
 
-            }
+        if(done && total > 0) {
+            print("From bank:");
+            print("You received money from " + user + ". " + user + " has sent you " + total + ". Status: " + done);
+
         }
     }
 

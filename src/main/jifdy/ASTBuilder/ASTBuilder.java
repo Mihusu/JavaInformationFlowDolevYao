@@ -169,7 +169,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
             decl.label = parseSecLabel(ctx.SECLABEL().getText());
 
             if (ctx.expression() != null) {
-                decl.init = (Expr) visit(ctx.expression());
+                decl.initExpression = (Expr) visit(ctx.expression());
             }
 
             return setLocation(decl, ctx);

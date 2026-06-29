@@ -5,6 +5,8 @@ import Analysis.LabelEnv;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
+import java.util.Map;
+
 /**
  * Pattern node that binds a matched value to a variable, optionally with an explicit type.
  */
@@ -60,6 +62,16 @@ public class TypedVarFormat extends Format {
 
         env.declareVariable(name, type);
         return env.indent() + JavaTypeSupport.toJavaType(type) + " " + name + " = " + assignmentValue + ";\n";
+    }
+
+    @Override
+    public void collectBindings(Map<String, Types> bindings) {
+        bindings.putIfAbsent(name, type);
+    }
+
+    @Override
+    public void collectBindingLabels(Map<String, SecLabel> labels) {
+        labels.putIfAbsent(name, label);
     }
 
     @Override

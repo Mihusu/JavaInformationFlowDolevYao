@@ -36,8 +36,8 @@ public class CmdBlock extends Stmt {
                 delta.putType(v.name, v.type);
                 gamma.putLabel(v.name, v.label);
 
-                if (v.init != null) {
-                    Types t = v.init.typecheck(delta, gamma);
+                if (v.initExpression != null) {
+                    Types t = v.initExpression.typecheck(delta, gamma);
 
                     if (!delta.isSubtype(t, v.type)) {
                         throw new TypeCheckException(
@@ -45,11 +45,11 @@ public class CmdBlock extends Stmt {
                         );
                     }
 
-                    SecLabel lExpr = v.init.label(gamma);
+                    SecLabel lExpr = v.initExpression.label(gamma);
                     SecLabel currentLabel = SecLabel.join(secLabel, lExpr);
 
                     // SPECIAL CASE: Encryption (EncryptExpr) is a declassification mechanism.
-                    if (v.init instanceof EncryptExpr && v.label == SecLabel.LOW) {
+                    if (v.initExpression instanceof EncryptExpr && v.label == SecLabel.LOW) {
                         // Allow it.
                     } else if (!Security.canFlow(currentLabel, v.label)) {
                         throw new TypeCheckException(

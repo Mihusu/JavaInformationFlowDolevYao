@@ -5,6 +5,8 @@ import Analysis.LabelEnv;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
+import java.util.Map;
+
 /**
  * Base class for receive-side patterns used to destructure and bind incoming values.
  */
@@ -50,6 +52,25 @@ public abstract class Format {
      * @return Generated Java source code.
      */
     public abstract String compile(CodeGenEnv env, String valueVar);
+
+    /**
+     * Collects variables that this receive pattern binds when matching succeeds.
+     *
+     * <p>
+     * Code generation uses this before emitting the Java try/catch so variables
+     * bound by a receive pattern also exist after the receive statement. This
+     * mirrors the type environment, where receive-bound variables are known
+     * after type checking, while still assigning their real values only on a
+     * successful match.
+     * </p>
+     *
+     * @param bindings output map from variable name to source type.
+     */
+    public void collectBindings(Map<String, Types> bindings) {
+    }
+
+    public void collectBindingLabels(Map<String, SecLabel> labels) {
+    }
 
     /**
      * Produces a human-readable representation of this format.

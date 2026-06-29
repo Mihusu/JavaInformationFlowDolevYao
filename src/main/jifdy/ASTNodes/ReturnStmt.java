@@ -9,15 +9,15 @@ import Utils.TypeCheckException;
  * Represents a return statement in the AST.
  */
 public class ReturnStmt extends Stmt {
-    public Expr expr;
+    public Expr returnExpr;
 
     public ReturnStmt(Expr visit) {
-        this.expr = visit;
+        this.returnExpr = visit;
     }
 
     @Override
     public void eval(Environment env) {
-        Value v = expr.eval(env);
+        Value v = returnExpr.eval(env);
         env.setReturnValue(v);
     }
 
@@ -26,7 +26,7 @@ public class ReturnStmt extends Stmt {
 
         Types expectedType = delta.getReturnType();
 
-        Types actualType = expr.typecheck(delta, gamma);
+        Types actualType = returnExpr.typecheck(delta, gamma);
 
         if (!delta.isSubtype(actualType, expectedType)) {
             throw new TypeCheckException(
@@ -36,14 +36,14 @@ public class ReturnStmt extends Stmt {
             );
         }
 
-        SecLabel exprLabel = expr.label(gamma);
+        SecLabel exprLabel = returnExpr.label(gamma);
         SecLabel actualLabel = SecLabel.join(secLabel, exprLabel);
 
         // Checks the expected secLabel
         SecLabel expectedLabel = gamma.getReturnLabel();
 
         // SPECIAL CASE: Encryption (EncryptExpr) is a declassification mechanism.
-        if (expr instanceof EncryptExpr && expectedLabel == SecLabel.LOW) {
+        if (returnExpr instanceof EncryptExpr && expectedLabel == SecLabel.LOW) {
             // Allow it.
         } else if (!Security.canFlow(actualLabel, expectedLabel)) {
             throw new TypeCheckException(
@@ -59,7 +59,7 @@ public class ReturnStmt extends Stmt {
     @Override
     public String compile(CodeGenEnv env) {
         return env.indent() +
-                "return " + expr.compile(env) + ";\n";
+                "return " + returnExpr.compile(env) + ";\n";
     }
 
 }

@@ -5,6 +5,9 @@ import Analysis.LabelEnv;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Represents a statement that attempts to receive a message from a channel.
  * Uses pattern matching to validate the received message.
@@ -23,6 +26,7 @@ public class TryReceiveStmt extends Stmt {
 
     public void eval(Environment env) {
         System.out.println("[JIFDY] network -> TRY_RCV: " + format.describe());
+        declareDefaultBindings(env);
         if (env.inbox.isEmpty()) return;
 
         Value msg = env.inbox.peek();
@@ -30,6 +34,22 @@ public class TryReceiveStmt extends Stmt {
         if (format.match(msg, env)) {
             env.inbox.poll();
             body.eval(env);
+        }
+    }
+
+    private void declareDefaultBindings(Environment env) {
+        Map<String, Types> bindings = new LinkedHashMap<>();
+        Map<String, SecLabel> labels = new LinkedHashMap<>();
+        format.collectBindings(bindings);
+        format.collectBindingLabels(labels);
+
+        for (Map.Entry<String, Types> binding : bindings.entrySet()) {
+            String name = binding.getKey();
+            Types type = binding.getValue();
+            SecLabel bindingLabel = labels.getOrDefault(name, SecLabel.LOW);
+            Value value = defaultRuntimeValue(type);
+            value.label = bindingLabel;
+            env.declare(name, value, bindingLabel);
         }
     }
 
@@ -61,6 +81,20 @@ public class TryReceiveStmt extends Stmt {
 
         StringBuilder sb = new StringBuilder();
 
+        Map<String, Types> bindings = new LinkedHashMap<>();
+        format.collectBindings(bindings);
+        for (Map.Entry<String, Types> binding : bindings.entrySet()) {
+            String name = binding.getKey();
+            Types type = binding.getValue();
+            if (!env.isVariableDeclaredInCurrentScope(name)) {
+                env.declareVariable(name, type);
+                sb.append(env.indent())
+                        .append(javaType(type)).append(" ")
+                        .append(name).append(" = ")
+                        .append(defaultValue(type)).append(";\n");
+            }
+        }
+
         sb.append(env.indent())
                 .append("System.out.println(\"[JIFDY] network -> TRY_RCV: ")
                 .append(escapeJava(format.describe()))
@@ -74,13 +108,24 @@ public class TryReceiveStmt extends Stmt {
 
         sb.append(format.compile(env, msg));
         sb.append(env.indent()).append("channel.remove();\n");
-
-        sb.append(body.compile(env));
-
         env.decreaseIndent();
-        sb.append(env.indent()).append("} catch (Exception e) {}\n");
+        sb.append(env.indent()).append("} catch (Exception e) {\n");
+        sb.append("    ").append(body.compile(env));
+        sb.append(env.indent()).append("}\n");
 
         return sb.toString();
+    }
+
+    private String javaType(Types type) {
+        return type == null ? "Object" : JavaTypeSupport.toJavaType(type);
+    }
+
+    private String defaultValue(Types type) {
+        return type == null ? "null" : JavaTypeSupport.defaultValueExpression(type);
+    }
+
+    private Value defaultRuntimeValue(Types type) {
+        return type == null ? new StringValue("") : JavaTypeSupport.defaultValue(type);
     }
 
     private String escapeJava(String text) {

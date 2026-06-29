@@ -65,9 +65,7 @@ public class MethodCallExpr extends Expr {
                 SecLabel paramLabel = f.paramLabels.get(i);
 
                 // SPECIAL CASE: Encryption (EncryptExpr) is a declassification mechanism.
-                if (args.get(i) instanceof EncryptExpr && paramLabel == SecLabel.LOW) {
-                    // Allow it.
-                } else if (!Security.canFlow(argLabel, paramLabel)) {
+                if (!Security.canFlow(argLabel, paramLabel)) {
                     throw new TypeCheckException(
                             "Illegal argument flow in call to " + name + ": "
                                     + argLabel + " -> " + paramLabel

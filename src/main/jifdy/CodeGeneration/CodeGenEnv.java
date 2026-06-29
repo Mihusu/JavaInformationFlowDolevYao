@@ -55,6 +55,10 @@ public class CodeGenEnv {
         return false;
     }
 
+    public boolean isVariableDeclaredInCurrentScope(String name) {
+        return !variableScopes.isEmpty() && variableScopes.peek().containsKey(name);
+    }
+
     public Types getVariableType(String name) {
         for (Map<String, Types> scope : variableScopes) {
             if (scope.containsKey(name)) {

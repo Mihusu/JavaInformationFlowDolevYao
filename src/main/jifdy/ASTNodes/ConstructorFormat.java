@@ -6,6 +6,7 @@ import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Pattern node that matches constructor-shaped messages and recursively checks each field.
@@ -100,6 +101,20 @@ public class ConstructorFormat extends Format {
         }
 
         return sb.toString();
+    }
+
+    @Override
+    public void collectBindings(Map<String, Types> bindings) {
+        for (Format arg : args) {
+            arg.collectBindings(bindings);
+        }
+    }
+
+    @Override
+    public void collectBindingLabels(Map<String, SecLabel> labels) {
+        for (Format arg : args) {
+            arg.collectBindingLabels(labels);
+        }
     }
 
     @Override
