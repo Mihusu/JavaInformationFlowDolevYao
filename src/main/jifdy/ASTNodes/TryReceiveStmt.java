@@ -17,13 +17,27 @@ public class TryReceiveStmt extends Stmt {
     public CmdBlock body;
 
     /**
-     * Creates a receive statement that stores the complete matched
+     * Creates a receive statement with a pattern and a body executed on match.
+     *
+     * @param format Pattern that the next channel message must match.
+     * @param body Statements executed only when matching succeeds.
      */
     public TryReceiveStmt(Format format, CmdBlock body) {
         this.format = format;
         this.body = body;
     }
 
+    /**
+     * Interprets the receive statement against the runtime inbox.
+     *
+     * <p>
+     * Pattern-bound variables are declared with defaults before matching so
+     * later statements can refer to them. The body is executed only when the
+     * next message matches the expected encryption and format structure.
+     * </p>
+     *
+     * @param env Runtime environment containing variables and the inbox.
+     */
     public void eval(Environment env) {
         System.out.println("[JIFDY] network -> TRY_RCV: " + format.describe());
         declareDefaultBindings(env);
@@ -37,6 +51,16 @@ public class TryReceiveStmt extends Stmt {
         }
     }
 
+    /**
+     * Declares default runtime values for variables introduced by the pattern.
+     *
+     * <p>
+     * This mirrors the Java code generator, where receive-bound variables must
+     * be definitely assigned even if the receive attempt fails.
+     * </p>
+     *
+     * @param env Runtime environment to receive the default bindings.
+     */
     private void declareDefaultBindings(Environment env) {
         Map<String, Types> bindings = new LinkedHashMap<>();
         Map<String, SecLabel> labels = new LinkedHashMap<>();
@@ -53,6 +77,19 @@ public class TryReceiveStmt extends Stmt {
         }
     }
 
+    /**
+     * Type and label checks the receive pattern and its continuation.
+     *
+     * <p>
+     * The receive body is checked in copied environments where pattern-bound
+     * variables are available. Its program-counter label is the join of the
+     * incoming program counter and the pattern label.
+     * </p>
+     *
+     * @param delta Type environment.
+     * @param gamma Label environment.
+     * @param label Current program-counter label.
+     */
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel label) {
 
@@ -67,13 +104,27 @@ public class TryReceiveStmt extends Stmt {
         SecLabel patternLabel = format.label(bodyGamma);
 
         // Takes the current with message label
-        SecLabel newProcedureLabel = SecLabel.join(label, patternLabel);
+        SecLabel newProcedureLabel = SecLabel.supremum(label, patternLabel);
 
         // IMPORTANT:
         // preserve current procedure
         body.typecheck(bodyDelta, bodyGamma, newProcedureLabel);
     }
 
+    /**
+     * Generates Java code for runtime receive-pattern matching.
+     *
+     * <p>
+     * Variables bound by the pattern are declared before the generated
+     * {@code try} block with Java defaults. If matching succeeds, those
+     * variables are overwritten with received fields, the channel message is
+     * removed, and the body is executed. If matching fails, the catch block is
+     * empty and control continues with the defaults.
+     * </p>
+     *
+     * @param env Code-generation environment.
+     * @return Java source fragment for the receive statement.
+     */
     @Override
     public String compile(CodeGenEnv env) {
 
@@ -108,9 +159,9 @@ public class TryReceiveStmt extends Stmt {
 
         sb.append(format.compile(env, msg));
         sb.append(env.indent()).append("channel.remove();\n");
+        sb.append(body.compile(env));
         env.decreaseIndent();
         sb.append(env.indent()).append("} catch (Exception e) {\n");
-        sb.append("    ").append(body.compile(env));
         sb.append(env.indent()).append("}\n");
 
         return sb.toString();
@@ -133,3 +184,4 @@ public class TryReceiveStmt extends Stmt {
                 .replace("\"", "\\\"");
     }
 }
+

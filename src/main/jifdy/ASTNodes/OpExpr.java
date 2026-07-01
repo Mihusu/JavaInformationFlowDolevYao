@@ -68,7 +68,7 @@ public class OpExpr extends Expr {
         SecLabel l1 = left.label(gamma);
         SecLabel l2 = right.label(gamma);
 
-        return SecLabel.join(l1, l2);
+        return SecLabel.supremum(l1, l2);
     }
 
     public Value eval(Environment env) {
@@ -155,3 +155,4 @@ public class OpExpr extends Expr {
         return value.toString();
     }
 }
+

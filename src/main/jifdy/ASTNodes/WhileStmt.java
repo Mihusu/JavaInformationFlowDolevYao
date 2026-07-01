@@ -35,7 +35,7 @@ public class WhileStmt extends Stmt {
 
         SecLabel condLabel = condition.label(gamma);
 
-        SecLabel newSecLabel = SecLabel.join(label, condLabel);
+        SecLabel newSecLabel = SecLabel.supremum(label, condLabel);
 
         body.typecheck(delta, gamma, newSecLabel);
     }
@@ -60,3 +60,4 @@ public class WhileStmt extends Stmt {
         return sb.toString();
     }
 }
+

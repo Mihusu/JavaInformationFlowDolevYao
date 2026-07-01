@@ -16,6 +16,13 @@ public class TypedVarFormat extends Format {
     public Types type;
     public SecLabel label;
 
+    /**
+     * Creates a pattern field that binds a matched value to a source variable.
+     *
+     * @param name Variable name introduced or updated by the pattern.
+     * @param type Optional declared source type; inferred when null.
+     * @param label Security label assigned to the bound variable.
+     */
     public TypedVarFormat(String name, Types type, SecLabel label) {
         this.name = name;
         this.type = type;
@@ -42,6 +49,13 @@ public class TypedVarFormat extends Format {
         return true;
     }
 
+    /**
+     * Emits Java code that assigns the matched field value to the variable.
+     *
+     * @param env Code-generation environment.
+     * @param valueVar Java expression containing the matched field value.
+     * @return Java source fragment for the binding.
+     */
     @Override
     public String compile(CodeGenEnv env, String valueVar) {
         String assignmentValue;
@@ -64,11 +78,21 @@ public class TypedVarFormat extends Format {
         return env.indent() + JavaTypeSupport.toJavaType(type) + " " + name + " = " + assignmentValue + ";\n";
     }
 
+    /**
+     * Records this variable as a binding introduced by the receive pattern.
+     *
+     * @param bindings output map from variable name to source type.
+     */
     @Override
     public void collectBindings(Map<String, Types> bindings) {
         bindings.putIfAbsent(name, type);
     }
 
+    /**
+     * Records the security label of this receive-bound variable.
+     *
+     * @param labels output map from variable name to security label.
+     */
     @Override
     public void collectBindingLabels(Map<String, SecLabel> labels) {
         labels.putIfAbsent(name, label);

@@ -19,13 +19,37 @@ public class SecLabel implements Serializable {
         this.name = name;
     }
 
-    // Checks if two labels are equal to see if it's HIGH or LOW
-    // Checks the highest label of the two and if it's HIGH for both secLabels, return HIGH'
-    public static SecLabel join(SecLabel a, SecLabel b) {
+    /**
+     * Computes the least upper bound of two labels.
+     *
+     * @param a First label.
+     * @param b Second label.
+     * @return {@link #HIGH} if either label is high; otherwise {@link #LOW}.
+     */
+    public static SecLabel supremum(SecLabel a, SecLabel b) {
         if (a == HIGH || b == HIGH) {
             return HIGH;
         }
         return LOW;
+    }
+
+    /**
+     * Computes the greatest lower bound of two labels which is the infimum of.
+     *
+     * <p>
+     * This is used for the DYIF assignment side condition
+     * {@code pc <= infimum(Gamma(x), underline(Delta(x)))}.
+     * </p>
+     *
+     * @param a First label.
+     * @param b Second label.
+     * @return {@link #LOW} if either label is low; otherwise {@link #HIGH}.
+     */
+    public static SecLabel infimum(SecLabel a, SecLabel b) {
+        if (a == LOW || b == LOW) {
+            return LOW;
+        }
+        return HIGH;
     }
 
     @Override

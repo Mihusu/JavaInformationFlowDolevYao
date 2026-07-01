@@ -81,7 +81,7 @@ public class LabelEnv {
         if (this.observedReturnLabel == null) {
             this.observedReturnLabel = l;
         } else {
-            this.observedReturnLabel = SecLabel.join(this.observedReturnLabel, l);
+            this.observedReturnLabel = SecLabel.supremum(this.observedReturnLabel, l);
         }
     }
 
@@ -89,3 +89,4 @@ public class LabelEnv {
         return observedReturnLabel != null ? observedReturnLabel : SecLabel.LOW;
     }
 }
+

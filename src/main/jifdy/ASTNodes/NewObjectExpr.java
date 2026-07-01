@@ -52,7 +52,7 @@ public class NewObjectExpr extends Expr {
     public SecLabel label(LabelEnv gamma) {
         SecLabel result = SecLabel.LOW;
         for (Expr arg : args) {
-            result = SecLabel.join(result, arg.label(gamma));
+            result = SecLabel.supremum(result, arg.label(gamma));
         }
         return result;
     }
@@ -73,3 +73,4 @@ public class NewObjectExpr extends Expr {
         return sb.append(")").toString();
     }
 }
+

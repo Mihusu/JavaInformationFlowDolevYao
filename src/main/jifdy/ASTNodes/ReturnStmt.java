@@ -37,7 +37,7 @@ public class ReturnStmt extends Stmt {
         }
 
         SecLabel exprLabel = returnExpr.label(gamma);
-        SecLabel actualLabel = SecLabel.join(secLabel, exprLabel);
+        SecLabel actualLabel = SecLabel.supremum(secLabel, exprLabel);
 
         // Checks the expected secLabel
         SecLabel expectedLabel = gamma.getReturnLabel();
@@ -63,3 +63,4 @@ public class ReturnStmt extends Stmt {
     }
 
 }
+

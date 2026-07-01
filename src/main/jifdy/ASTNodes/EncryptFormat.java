@@ -104,11 +104,21 @@ public class EncryptFormat extends Format {
         return sb.toString();
     }
 
+    /**
+     * Delegates binding collection through the encryption layer.
+     *
+     * @param bindings output map from variable name to source type.
+     */
     @Override
     public void collectBindings(Map<String, Types> bindings) {
         inner.collectBindings(bindings);
     }
 
+    /**
+     * Delegates binding-label collection through the encryption layer.
+     *
+     * @param labels output map from variable name to security label.
+     */
     @Override
     public void collectBindingLabels(Map<String, SecLabel> labels) {
         inner.collectBindingLabels(labels);

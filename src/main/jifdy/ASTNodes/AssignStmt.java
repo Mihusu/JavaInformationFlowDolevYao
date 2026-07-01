@@ -22,6 +22,21 @@ public class AssignStmt extends Stmt {
         env.setVariables(name, v);
     }
 
+    /**
+     * Checks the DYIF-inspired assignment rule for a local variable.
+     *
+     * <p>
+     * The explicit flow check requires the expression label to flow to the
+     * variable label. The implicit/control-flow check follows the paper's
+     * additional side condition by requiring the current program-counter label
+     * to flow to the meet of the variable label and the label derived from the
+     * variable type.
+     * </p>
+     *
+     * @param delta Type environment.
+     * @param gamma Label environment.
+     * @param currentProcedure Current program-counter label.
+     */
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedure) {
 
@@ -33,17 +48,22 @@ public class AssignStmt extends Stmt {
         }
 
         SecLabel exprLabel = assignmentExpr.label(gamma);
-
-        // explicit flow + implicit flow. effectiveLabel is l2 from the paper
-        SecLabel effectiveLabel = SecLabel.join(currentProcedure, exprLabel);
         SecLabel varLabel = gamma.getLabel(name);
+        SecLabel typeLabel = delta.infimumLabel(lhsType);
+        SecLabel pcBound = SecLabel.infimum(varLabel, typeLabel);
 
-        // SPECIAL CASE: Encryption (EncryptExpr) is a declassification mechanism.
-        // expr instanceof EncryptExpr && varLabel == SecLabel.LOW "continue" and if the following:
-        if(!Security.canFlow(effectiveLabel, varLabel)) {
+        if (!Security.canFlow(exprLabel, varLabel)) {
             throw new TypeCheckException(
-                    "Illegal information flow: " +
-                            effectiveLabel + " -> " + varLabel,
+                    "Illegal information flow: " + exprLabel + " -> " + varLabel,
+                    lineNumber,
+                    name
+            );
+        }
+
+        if (!Security.canFlow(currentProcedure, pcBound)) {
+            throw new TypeCheckException(
+                    "Illegal control-flow label in assignment: " +
+                            currentProcedure + " -> " + pcBound,
                     lineNumber,
                     name
             );
@@ -56,3 +76,4 @@ public class AssignStmt extends Stmt {
         return env.indent() + name + " = " + assignmentExpr.compile(env) + ";\n";
     }
 }
+

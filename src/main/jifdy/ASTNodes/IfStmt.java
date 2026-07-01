@@ -43,7 +43,7 @@ public class IfStmt extends Stmt {
         }
 
         SecLabel condLabel = condition.label(gamma);
-        SecLabel newLabel = SecLabel.join(label, condLabel);
+        SecLabel newLabel = SecLabel.supremum(label, condLabel);
 
         thenCmdBlock.typecheck(delta, gamma, newLabel);
 
@@ -99,3 +99,4 @@ public class IfStmt extends Stmt {
         return sb.toString();
     }
 }
+

@@ -83,19 +83,19 @@ public class MethodCallExpr extends Expr {
         SecLabel result = SecLabel.LOW;
 
         if (receiver != null) {
-            result = SecLabel.join(result, receiver.label(gamma));
+            result = SecLabel.supremum(result, receiver.label(gamma));
         }
 
         // join argument labels
         for (Expr arg : args) {
-            result = SecLabel.join(result, arg.label(gamma));
+            result = SecLabel.supremum(result, arg.label(gamma));
         }
 
         // get method label
         MethodLabel fLabel = cachedLabel != null ? cachedLabel : gamma.getMethod(name);
 
         // include method return label
-        result = SecLabel.join(result, fLabel.returnLabel);
+        result = SecLabel.supremum(result, fLabel.returnLabel);
 
         return result;
     }
@@ -160,3 +160,4 @@ public class MethodCallExpr extends Expr {
         return localEnv.getReturnValue();
     }
 }
+

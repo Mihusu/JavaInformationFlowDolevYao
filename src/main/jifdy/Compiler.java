@@ -2,7 +2,7 @@ import ASTNodes.Program;
 import ASTBuilder.ASTBuilder;
 import Analysis.Environment;
 import Utils.ThrowingErrorListener;
-import Analysis.TypeChecker;
+import Analysis.TypeLabelChecker;
 
 import CodeGeneration.CodeGenEnv;
 import antlr.Information_flowLexer;
@@ -47,7 +47,7 @@ public class Compiler {
         Program program = (Program) builder.visit(tree);
 
         // 6. Type Checking
-        TypeChecker checker = new TypeChecker();
+        TypeLabelChecker checker = new TypeLabelChecker();
         checker.check(program);
 
         // 7. Code Generation

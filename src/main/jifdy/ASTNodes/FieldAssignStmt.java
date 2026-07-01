@@ -29,6 +29,20 @@ public class FieldAssignStmt extends Stmt {
         env.setField(object, fieldName, expr.eval(env));
     }
 
+    /**
+     * Checks assignment to an object field.
+     *
+     * <p>
+     * Field assignment uses the same two labeling obligations as ordinary
+     * assignment: the expression label must flow to the field label, and the
+     * current program-counter label must flow to the meet of the field label
+     * and the label derived from the field type.
+     * </p>
+     *
+     * @param delta Type environment, including class and inherited field data.
+     * @param gamma Label environment.
+     * @param currentProcedure Current program-counter label.
+     */
     @Override
     public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedure) {
         Types receiverType = receiver.typecheck(delta, gamma);
@@ -43,10 +57,21 @@ public class FieldAssignStmt extends Stmt {
             throw new TypeCheckException("Type mismatch in field assignment", lineNumber, fieldName);
         }
 
-        SecLabel effectiveLabel = SecLabel.join(currentProcedure, expr.label(gamma));
-        if (!Security.canFlow(effectiveLabel, field.label)) {
+        SecLabel exprLabel = expr.label(gamma);
+        if (!Security.canFlow(exprLabel, field.label)) {
             throw new TypeCheckException(
-                    "Illegal information flow: " + effectiveLabel + " -> " + field.label,
+                    "Illegal information flow: " + exprLabel + " -> " + field.label,
+                    lineNumber,
+                    fieldName
+            );
+        }
+
+        SecLabel typeLabel = delta.infimumLabel(field.type);
+        SecLabel pcBound = SecLabel.infimum(field.label, typeLabel);
+        if (!Security.canFlow(currentProcedure, pcBound)) {
+            throw new TypeCheckException(
+                    "Illegal control-flow label in field assignment: " +
+                            currentProcedure + " -> " + pcBound,
                     lineNumber,
                     fieldName
             );
@@ -58,3 +83,4 @@ public class FieldAssignStmt extends Stmt {
         return env.indent() + receiver.compile(env) + "." + fieldName + " = " + expr.compile(env) + ";\n";
     }
 }
+

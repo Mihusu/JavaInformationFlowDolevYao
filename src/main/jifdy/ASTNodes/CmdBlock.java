@@ -46,7 +46,7 @@ public class CmdBlock extends Stmt {
                     }
 
                     SecLabel lExpr = v.initExpression.label(gamma);
-                    SecLabel currentLabel = SecLabel.join(secLabel, lExpr);
+                    SecLabel currentLabel = SecLabel.supremum(secLabel, lExpr);
 
                     // SPECIAL CASE: Encryption (EncryptExpr) is a declassification mechanism.
                     if (v.initExpression instanceof EncryptExpr && v.label == SecLabel.LOW) {

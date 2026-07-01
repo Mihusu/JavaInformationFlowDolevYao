@@ -193,4 +193,32 @@ public class TypeEnv {
 
         return false;
     }
+
+    /**
+     * Computes the label derived from a type, corresponding to the
+     * underlined delta/type label used in the DYIF assignment-labeling rule.
+     *
+     * <p>
+     * Most JIFDY types do not carry labels themselves, so they impose no
+     * additional restriction beyond the declared variable label. Format types
+     * are the exception: their field labels describe the information level of
+     * the term, so the derived label is the infimum of the field labels.
+     * </p>
+     *
+     * @param type Source-language type.
+     * @return The label derived from the type.
+     */
+    public SecLabel infimumLabel(Types type) {
+        if (!(type instanceof FormatType formatType)) {
+            return SecLabel.HIGH;
+        }
+
+        SecLabel result = SecLabel.HIGH;
+        for (Param field : formatType.fields) {
+            result = SecLabel.infimum(result, field.label);
+        }
+
+        return result;
+    }
 }
+

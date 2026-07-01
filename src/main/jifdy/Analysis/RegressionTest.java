@@ -147,7 +147,7 @@ public class RegressionTest {
             Program program =
                     (Program) builder.visit(tree);
 
-            TypeChecker checker = new TypeChecker();
+            TypeLabelChecker checker = new TypeLabelChecker();
 
             checker.check(program);
 

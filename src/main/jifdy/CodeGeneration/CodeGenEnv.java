@@ -55,6 +55,18 @@ public class CodeGenEnv {
         return false;
     }
 
+    /**
+     * Checks whether a variable is already declared in the innermost scope.
+     *
+     * <p>
+     * Receive code generation uses this to avoid emitting duplicate Java
+     * declarations for pattern variables while still allowing names in outer
+     * scopes to be shadowed by a receive pattern.
+     * </p>
+     *
+     * @param name Source variable name.
+     * @return True when the current scope already contains the name.
+     */
     public boolean isVariableDeclaredInCurrentScope(String name) {
         return !variableScopes.isEmpty() && variableScopes.peek().containsKey(name);
     }

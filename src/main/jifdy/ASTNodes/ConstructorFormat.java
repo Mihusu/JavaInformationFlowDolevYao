@@ -103,6 +103,11 @@ public class ConstructorFormat extends Format {
         return sb.toString();
     }
 
+    /**
+     * Collects bindings introduced by nested fields in this constructor pattern.
+     *
+     * @param bindings output map from variable name to source type.
+     */
     @Override
     public void collectBindings(Map<String, Types> bindings) {
         for (Format arg : args) {
@@ -110,6 +115,11 @@ public class ConstructorFormat extends Format {
         }
     }
 
+    /**
+     * Collects labels for bindings introduced by nested fields in this pattern.
+     *
+     * @param labels output map from variable name to security label.
+     */
     @Override
     public void collectBindingLabels(Map<String, SecLabel> labels) {
         for (Format arg : args) {
@@ -131,10 +141,11 @@ public class ConstructorFormat extends Format {
         SecLabel result = SecLabel.LOW;
 
         for (Format arg : args) {
-            result = SecLabel.join(result,
+            result = SecLabel.supremum(result,
                     arg.label(gamma));
         }
 
         return result;
     }
 }
+

@@ -69,6 +69,17 @@ public abstract class Format {
     public void collectBindings(Map<String, Types> bindings) {
     }
 
+    /**
+     * Collects security labels for variables bound by this receive pattern.
+     *
+     * <p>
+     * The resulting labels are used when default receive variables are
+     * declared by the interpreter before matching. They must agree with the
+     * labels that pattern type checking adds to the label environment.
+     * </p>
+     *
+     * @param labels output map from variable name to security label.
+     */
     public void collectBindingLabels(Map<String, SecLabel> labels) {
     }
 

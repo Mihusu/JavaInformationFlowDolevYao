@@ -45,7 +45,7 @@ public class FieldAccessExpr extends Expr {
 
     @Override
     public SecLabel label(LabelEnv gamma) {
-        return SecLabel.join(receiver.label(gamma), cachedLabel == null ? SecLabel.LOW : cachedLabel);
+        return SecLabel.supremum(receiver.label(gamma), cachedLabel == null ? SecLabel.LOW : cachedLabel);
     }
 
     @Override
@@ -53,3 +53,4 @@ public class FieldAccessExpr extends Expr {
         return receiver.compile(env) + "." + fieldName;
     }
 }
+

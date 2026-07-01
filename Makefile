@@ -2,13 +2,13 @@
 
 # What does the makefile do? It will do the following processes:
 # 1. To build the project: 'make' or 'make compile'
-# 2. To run the regression tests: 'make test'
+# 2. To run the OOP smoke test and regression tests: 'make test'
 # 3. To run the compiler: 'make run'
 # 4. To clean the generated program from the compiler: 'make runGen'
 # 5. To clean the project: 'make clean'
 
 # Variables
-MVN = mvn
+MVN = mvn.cmd
 # Default Java path. Set JAVA_HOME if you want to use a specific JDK.
 JAVA = java
 
@@ -23,9 +23,15 @@ compile:
 	$(MVN) compile
 
 # Phase 2: Testing
-# This phase runs the RegressionTest suite which checks all information flow examples.
-# It verifies that information flow violations are caught and reported.
-test: compile
+# This phase runs the JUnit OOP smoke test and the RegressionTest suite.
+# It verifies that OOP examples work and that information flow violations are caught.
+test: compile oopSmokeTest regression
+
+oopSmokeTest: compile
+	@echo "Running OOP smoke test..."
+	$(MVN) -Dtest=OOPSmokeTest test
+
+regression: compile
 	@echo "Running regression tests..."
 	$(MVN) exec:java -Dexec.mainClass="Analysis.RegressionTest"
 

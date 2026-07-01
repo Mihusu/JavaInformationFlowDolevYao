@@ -55,6 +55,14 @@ public class VarDecl extends Declaration {
 
     /**
      * Performs type checking on the variable declaration.
+     *
+     * <p>
+     * If an initializer is present, declaration checking is treated like an
+     * assignment into a newly declared variable. The initializer label must
+     * flow to the declared variable label, and the current program-counter
+     * label must satisfy the type-derived assignment side condition.
+     * </p>
+     *
      * @param delta The type environment.
      * @param gamma The label environment.
      * @param variableProcedure The security context (pc).
@@ -78,14 +86,20 @@ public class VarDecl extends Declaration {
             }
 
             SecLabel initLabel = initExpression.label(gamma);
-            SecLabel effective = SecLabel.join(variableProcedure, initLabel);
 
-            // SPECIAL CASE: Encryption (EncryptExpr) is a declassification mechanism.
-            // It results in a LOW ciphertext even if the payload or context is HIGH.
-            // The user explicitly requested that encryption doesn't cause illegal flow.
-            if (!Security.canFlow(effective, label)) {
+            if (!Security.canFlow(initLabel, label)) {
                 throw new TypeCheckException(
                         "Illegal flow in initialization of " + name,
+                        lineNumber,
+                        name
+                );
+            }
+
+            SecLabel typeLabel = delta.infimumLabel(type);
+            SecLabel pcBound = SecLabel.infimum(label, typeLabel);
+            if (!Security.canFlow(variableProcedure, pcBound)) {
+                throw new TypeCheckException(
+                        "Illegal control-flow label in initialization of " + name,
                         lineNumber,
                         name
                 );
@@ -117,3 +131,4 @@ public class VarDecl extends Declaration {
         return " = " + JavaTypeSupport.defaultValueExpression(type);
     }
 }
+
