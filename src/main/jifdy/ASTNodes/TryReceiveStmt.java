@@ -159,9 +159,9 @@ public class TryReceiveStmt extends Stmt {
 
         sb.append(format.compile(env, msg));
         sb.append(env.indent()).append("channel.remove();\n");
-        sb.append(body.compile(env));
         env.decreaseIndent();
         sb.append(env.indent()).append("} catch (Exception e) {\n");
+        sb.append("    ").append(body.compile(env));
         sb.append(env.indent()).append("}\n");
 
         return sb.toString();

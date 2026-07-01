@@ -174,6 +174,7 @@ public class GeneratedProgram {
             target = (String) cv_7.values.get(2);
             channel.remove();
         } catch (Exception e) {
+            System.out.println("Transfer failed");
         }
         System.out.println("[JIFDY] network -> TRY_RCV: e(kClientBank, Transfer2(user, amount2, target))");
         try {
@@ -189,6 +190,7 @@ public class GeneratedProgram {
             target = (String) cv_11.values.get(2);
             channel.remove();
         } catch (Exception e) {
+            System.out.println("Transfer failed");
         }
         System.out.println("[JIFDY] network -> TRY_RCV: e(kClientBank, Transfer3(user, amount3, target))");
         try {
@@ -204,6 +206,7 @@ public class GeneratedProgram {
             target = (String) cv_15.values.get(2);
             channel.remove();
         } catch (Exception e) {
+            System.out.println("Transfer failed");
         }
         total = amount1 + amount2 + amount3;
         if (total < 0) {
@@ -234,7 +237,7 @@ public class GeneratedProgram {
             total = (int) cv_19.values.get(2);
             channel.remove();
         } catch (Exception e) {
-        }
+            }
         if (done && total > 0) {
             System.out.println("From bank:");
             System.out.println("You received money from " + user + ". " + user + " has sent you " + total + ". Status: " + done);
