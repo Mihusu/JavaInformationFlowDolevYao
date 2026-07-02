@@ -27,6 +27,25 @@ public abstract class Format {
     public abstract void labelTypeCheck(TypeEnv delta, LabelEnv gamma);
 
     /**
+     * Type and label checks this format pattern under a current control-flow
+     * label.
+     *
+     * <p>
+     * Most format nodes only validate structure and can reuse the ordinary
+     * two-argument check. Binding formats may override this method when the
+     * current procedure label must be compared with the label derived from the
+     * bound variable type.
+     * </p>
+     *
+     * @param delta Current type environment.
+     * @param gamma Current security label environment.
+     * @param currentProcedureLabel Current control-flow label.
+     */
+    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
+        labelTypeCheck(delta, gamma);
+    }
+
+    /**
      * Attempts to match a runtime value against this format pattern.
      *
      * <p>

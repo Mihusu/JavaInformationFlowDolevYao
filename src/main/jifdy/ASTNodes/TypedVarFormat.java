@@ -4,6 +4,8 @@ import Analysis.Environment;
 import Analysis.LabelEnv;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
+import Utils.Security;
+import Utils.TypeCheckException;
 
 import java.util.Map;
 
@@ -31,11 +33,48 @@ public class TypedVarFormat extends Format {
 
     @Override
     public void labelTypeCheck(TypeEnv delta, LabelEnv gamma) {
+        labelTypeCheck(delta, gamma, SecLabel.LOW);
+    }
+
+    /**
+     * Checks and registers a variable bound by a receive pattern.
+     *
+     * <p>
+     * A receive binding acts like an assignment into the pattern variable. The
+     * variable label is therefore checked against the label derived from its
+     * type, corresponding to the underlined {@code Delta(x)} side condition in
+     * the DYIF assignment-labeling rule.
+     * </p>
+     *
+     * @param delta Type environment updated with the bound variable.
+     * @param gamma Label environment updated with the bound variable.
+     * @param currentProcedureLabel Current control-flow label.
+     */
+    @Override
+    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
 
         Types effectiveType = type;
+        boolean alreadyDeclared = delta.containsType(name);
 
         if (effectiveType == null) {
-            effectiveType = delta.containsType(name) ? delta.getType(name) : new BasicType(Type.STRING);
+            effectiveType = alreadyDeclared ? delta.getType(name) : new BasicType(Type.STRING);
+        }
+
+        if (alreadyDeclared && !delta.isSubtype(effectiveType, delta.getType(name))) {
+            throw new TypeCheckException("Receive pattern type mismatch for " + name);
+        }
+
+        SecLabel typeLabel = delta.infimumLabel(effectiveType);
+        SecLabel allowedProcedureLabel = SecLabel.infimum(label, typeLabel);
+
+        if (!Security.canFlow(currentProcedureLabel, allowedProcedureLabel)) {
+            throw new TypeCheckException(
+                    "Receive binding for " + name
+                            + " is not allowed under control-flow label "
+                            + currentProcedureLabel
+                            + "; expected flow to "
+                            + allowedProcedureLabel
+            );
         }
 
         // Bind variable with declared or inferred type and label

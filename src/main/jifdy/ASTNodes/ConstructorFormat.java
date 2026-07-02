@@ -22,6 +22,11 @@ public class ConstructorFormat extends Format {
 
     @Override
     public void labelTypeCheck(TypeEnv delta, LabelEnv gamma) {
+        labelTypeCheck(delta, gamma, SecLabel.LOW);
+    }
+
+    @Override
+    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
         FormatType formatType = delta.getFormat(name);
 
         if (args.size() != formatType.fields.size()) {
@@ -50,7 +55,7 @@ public class ConstructorFormat extends Format {
                 }
             }
 
-            actual.labelTypeCheck(delta, gamma);
+            actual.labelTypeCheck(delta, gamma, currentProcedureLabel);
         }
     }
 
