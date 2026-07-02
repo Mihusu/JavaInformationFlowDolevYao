@@ -26,8 +26,8 @@ public class MethodCallStmt extends Stmt {
     }
 
     @Override
-    public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel secLabel) {
-        expr.typecheck(delta, gamma);
+    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel secLabel) {
+        expr.labelTypeCheck(delta, gamma);
     }
 
     @Override

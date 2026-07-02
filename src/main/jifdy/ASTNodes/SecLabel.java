@@ -38,7 +38,7 @@ public class SecLabel implements Serializable {
      *
      * <p>
      * This is used for the DYIF assignment side condition
-     * {@code pc <= infimum(Gamma(x), underline(Delta(x)))}.
+     * {@code currentProdcedure <= infimum(Gamma(x), underline(Delta(x)))}.
      * </p>
      *
      * @param a First label.

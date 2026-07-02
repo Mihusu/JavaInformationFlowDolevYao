@@ -59,7 +59,7 @@ public class VarDecl extends Declaration {
      * <p>
      * If an initializer is present, declaration checking is treated like an
      * assignment into a newly declared variable. The initializer label must
-     * flow to the declared variable label, and the current program-counter
+     * flow to the declared variable label, and the current procedure
      * label must satisfy the type-derived assignment side condition.
      * </p>
      *
@@ -68,14 +68,14 @@ public class VarDecl extends Declaration {
      * @param variableProcedure The security context (pc).
      */
     @Override
-    public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel variableProcedure) {
+    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel variableProcedure) {
 
         delta.putType(name, type);
         gamma.putLabel(name, label);
 
         if (initExpression != null) {
 
-            Types initType = initExpression.typecheck(delta, gamma);
+            Types initType = initExpression.labelTypeCheck(delta, gamma);
 
             if (!delta.isSubtype(initType, type)) {
                 throw new TypeCheckException(
@@ -96,8 +96,8 @@ public class VarDecl extends Declaration {
             }
 
             SecLabel typeLabel = delta.infimumLabel(type);
-            SecLabel pcBound = SecLabel.infimum(label, typeLabel);
-            if (!Security.canFlow(variableProcedure, pcBound)) {
+            SecLabel infimumBound = SecLabel.infimum(label, typeLabel);
+            if (!Security.canFlow(variableProcedure, infimumBound)) {
                 throw new TypeCheckException(
                         "Illegal control-flow label in initialization of " + name,
                         lineNumber,

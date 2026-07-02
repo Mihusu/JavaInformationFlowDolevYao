@@ -58,10 +58,10 @@ public class EncryptFormat extends Format {
     }
 
     @Override
-    public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel label) {
+    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel label) {
 
         // Verify the key expression is well-typed
-        Type keyType = Types.type(key.typecheck(delta, gamma));
+        Type keyType = Types.type(key.labelTypeCheck(delta, gamma));
 
         if (keyType != Type.STRING) {
             throw new TypeCheckException(
@@ -69,7 +69,7 @@ public class EncryptFormat extends Format {
             );
         }
 
-        inner.typecheck(delta, gamma, label);
+        inner.labelTypeCheck(delta, gamma, label);
     }
 
     public CiphertextType ciphertextType() {

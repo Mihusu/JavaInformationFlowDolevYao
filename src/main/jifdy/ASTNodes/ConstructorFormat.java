@@ -21,7 +21,7 @@ public class ConstructorFormat extends Format {
     }
 
     @Override
-    public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel label) {
+    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel label) {
         FormatType formatType = delta.getFormat(name);
 
         if (args.size() != formatType.fields.size()) {
@@ -44,13 +44,13 @@ public class ConstructorFormat extends Format {
                     throw new RuntimeException("Nested format mismatch in " + name);
                 }
             } else if (actual instanceof ExprFormat exprFormat) {
-                Types actualType = exprFormat.expr.typecheck(delta, gamma);
+                Types actualType = exprFormat.expr.labelTypeCheck(delta, gamma);
                 if (!Types.sameType(actualType, expected.type)) {
                     throw new RuntimeException("Format expression type mismatch in " + name);
                 }
             }
 
-            actual.typecheck(delta, gamma, label);
+            actual.labelTypeCheck(delta, gamma, label);
         }
     }
 

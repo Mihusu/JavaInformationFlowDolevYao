@@ -3,6 +3,6 @@ package ASTBuilder;
 /**
  * Visibility modifier used for classes, methods, and constructors.
  */
-public enum Privacy {
+public enum PublicPrivateLabel {
     PUBLIC, PRIVATE
 }

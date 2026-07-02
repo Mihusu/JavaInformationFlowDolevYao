@@ -28,7 +28,7 @@ public class CmdBlock extends Stmt {
     }
 
     @Override
-    public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel secLabel) {
+    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel secLabel) {
         for (Node s : statements) {
 
             if (s instanceof VarDecl v) {
@@ -37,7 +37,7 @@ public class CmdBlock extends Stmt {
                 gamma.putLabel(v.name, v.label);
 
                 if (v.initExpression != null) {
-                    Types t = v.initExpression.typecheck(delta, gamma);
+                    Types t = v.initExpression.labelTypeCheck(delta, gamma);
 
                     if (!delta.isSubtype(t, v.type)) {
                         throw new TypeCheckException(
@@ -60,7 +60,7 @@ public class CmdBlock extends Stmt {
             }
 
             else if (s instanceof Stmt stmt) {
-                stmt.typecheck(delta, gamma, secLabel);
+                stmt.labelTypeChecker(delta, gamma, secLabel);
             }
         }
     }

@@ -60,13 +60,13 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
     @Override
     public Node visitClass(Information_flowParser.ClassContext ctx) {
 
-        Privacy privacy = null;
+        PublicPrivateLabel publicPrivateLabel = null;
         if (ctx.PPLABEL() != null) {
-            privacy = parsePrivacy(ctx.PPLABEL().getText());
+            publicPrivateLabel = parsePrivacy(ctx.PPLABEL().getText());
         }
 
         ClassDecl cls = (ClassDecl) visit(ctx.classBlock());
-        cls.privacy = privacy;
+        cls.publicPrivateLabel = publicPrivateLabel;
 
         return setLocation(cls, ctx);
     }
@@ -125,7 +125,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         MethodDecl f = new MethodDecl();
 
         // privacy
-        f.privacy = parsePrivacy(ctx.PPLABEL().getText());
+        f.publicPrivateLabel = parsePrivacy(ctx.PPLABEL().getText());
 
         // return type
         if (ctx.type() != null) {
@@ -176,7 +176,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         }
 
         ConstructorDecl constructor = new ConstructorDecl();
-        constructor.privacy = parsePrivacy(ctx.PPLABEL().getText());
+        constructor.publicPrivateLabel = parsePrivacy(ctx.PPLABEL().getText());
         constructor.className = ctx.IDENTIFIER().getText();
 
         constructor.params = new ArrayList<>();
@@ -477,8 +477,8 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         };
     }
 
-    private Privacy parsePrivacy(String p) {
-        return p.equals("public") ? Privacy.PUBLIC : Privacy.PRIVATE;
+    private PublicPrivateLabel parsePrivacy(String p) {
+        return p.equals("public") ? PublicPrivateLabel.PUBLIC : PublicPrivateLabel.PRIVATE;
     }
 
     private String stripQuotes(String s) {

@@ -32,7 +32,7 @@ public class ConstructorExpr extends Expr {
     }
 
     @Override
-    public Types typecheck(TypeEnv delta, LabelEnv gamma) {
+    public Types labelTypeCheck(TypeEnv delta, LabelEnv gamma) {
         FormatType formatType = delta.getFormat(name);
 
         if (args.size() != formatType.fields.size()) {
@@ -40,7 +40,7 @@ public class ConstructorExpr extends Expr {
         }
 
         for (int i = 0; i < args.size(); i++) {
-            Types actualType = args.get(i).typecheck(delta, gamma);
+            Types actualType = args.get(i).labelTypeCheck(delta, gamma);
             Types expectedType = formatType.fields.get(i).type;
 
             if (!Types.sameType(actualType, expectedType)) {

@@ -20,5 +20,5 @@ abstract public class Stmt extends Node {
      * @param gamma The label environment.
      * @param secLabel The security context (current secLabel in a statement) of the statement.
      */
-    abstract public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel secLabel);
+    abstract public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel secLabel);
 }

@@ -30,7 +30,7 @@ public class TypedVarFormat extends Format {
     }
 
     @Override
-    public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel pc) {
+    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel pc) {
 
         Types effectiveType = type;
 

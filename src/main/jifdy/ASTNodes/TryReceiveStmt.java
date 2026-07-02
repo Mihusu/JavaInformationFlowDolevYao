@@ -82,19 +82,19 @@ public class TryReceiveStmt extends Stmt {
      *
      * <p>
      * The receive body is checked in copied environments where pattern-bound
-     * variables are available. Its program-counter label is the join of the
-     * incoming program counter and the pattern label.
+     * variables are available. Its procedure label is the join of the
+     * incoming procedure and the pattern label.
      * </p>
      *
      * @param delta Type environment.
      * @param gamma Label environment.
-     * @param label Current program-counter label.
+     * @param label Current procedure label in a body.
      */
     @Override
-    public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel label) {
+    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel label) {
 
         // Typecheck receive pattern using current procedure
-        format.typecheck(delta, gamma, label);
+        format.labelTypeCheck(delta, gamma, label);
 
         // New scope for body
         TypeEnv bodyDelta = new TypeEnv(delta);
@@ -108,7 +108,7 @@ public class TryReceiveStmt extends Stmt {
 
         // IMPORTANT:
         // preserve current procedure
-        body.typecheck(bodyDelta, bodyGamma, newProcedureLabel);
+        body.labelTypeChecker(bodyDelta, bodyGamma, newProcedureLabel);
     }
 
     /**

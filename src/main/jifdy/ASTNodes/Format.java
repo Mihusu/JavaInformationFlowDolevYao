@@ -23,9 +23,9 @@ public abstract class Format {
      *
      * @param delta Current type environment.
      * @param gamma Current security label environment.
-     * @param currentProcedure Current program counter (pc) label.
+     * @param currentProcedure Current procedure label.
      */
-    public abstract void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedure);
+    public abstract void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedure);
 
     /**
      * Attempts to match a runtime value against this format pattern.

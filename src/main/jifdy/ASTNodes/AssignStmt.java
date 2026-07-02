@@ -28,20 +28,20 @@ public class AssignStmt extends Stmt {
      * <p>
      * The explicit flow check requires the expression label to flow to the
      * variable label. The implicit/control-flow check follows the paper's
-     * additional side condition by requiring the current program-counter label
+     * additional side condition by requiring the current procedure label
      * to flow to the meet of the variable label and the label derived from the
      * variable type.
      * </p>
      *
      * @param delta Type environment.
      * @param gamma Label environment.
-     * @param currentProcedure Current program-counter label.
+     * @param currentProcedure Current procedure label.
      */
     @Override
-    public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedure) {
+    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedure) {
 
         Types lhsType = delta.getType(name);
-        Types rhsType = assignmentExpr.typecheck(delta, gamma);
+        Types rhsType = assignmentExpr.labelTypeCheck(delta, gamma);
 
         if (!delta.isSubtype(rhsType, lhsType)) {
             throw new TypeCheckException("Type mismatch in assignment", lineNumber, name);
@@ -50,7 +50,7 @@ public class AssignStmt extends Stmt {
         SecLabel exprLabel = assignmentExpr.label(gamma);
         SecLabel varLabel = gamma.getLabel(name);
         SecLabel typeLabel = delta.infimumLabel(lhsType);
-        SecLabel pcBound = SecLabel.infimum(varLabel, typeLabel);
+        SecLabel infinumBound = SecLabel.infimum(varLabel, typeLabel);
 
         if (!Security.canFlow(exprLabel, varLabel)) {
             throw new TypeCheckException(
@@ -60,10 +60,10 @@ public class AssignStmt extends Stmt {
             );
         }
 
-        if (!Security.canFlow(currentProcedure, pcBound)) {
+        if (!Security.canFlow(currentProcedure, infinumBound)) {
             throw new TypeCheckException(
                     "Illegal control-flow label in assignment: " +
-                            currentProcedure + " -> " + pcBound,
+                            currentProcedure + " -> " + infinumBound,
                     lineNumber,
                     name
             );

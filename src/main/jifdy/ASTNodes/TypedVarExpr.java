@@ -28,7 +28,7 @@ public class TypedVarExpr extends Expr {
     }
 
     @Override
-    public Types typecheck(TypeEnv delta, LabelEnv gamma) {
+    public Types labelTypeCheck(TypeEnv delta, LabelEnv gamma) {
         // The syntax carries a type/label annotation, but this is still only a
         // read of an already-declared variable. Reject stale or misleading annotations.
         Types actualType = delta.getType(name);

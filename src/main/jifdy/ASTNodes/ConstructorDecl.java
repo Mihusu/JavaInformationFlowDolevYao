@@ -1,6 +1,6 @@
 package ASTNodes;
 
-import ASTBuilder.Privacy;
+import ASTBuilder.PublicPrivateLabel;
 import Analysis.Environment;
 import Analysis.LabelEnv;
 import Utils.TypeCheckException;
@@ -14,7 +14,7 @@ import java.util.List;
  * Constructor declaration used to initialize a newly created class instance.
  */
 public class ConstructorDecl extends Declaration {
-    public Privacy privacy;
+    public PublicPrivateLabel publicPrivateLabel;
     public String className;
     public List<Param> params;
     public List<Stmt> body;
@@ -25,7 +25,7 @@ public class ConstructorDecl extends Declaration {
     }
 
     @Override
-    public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel pc) {
+    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel pc) {
         TypeEnv localDelta = new TypeEnv(delta);
         LabelEnv localGamma = new LabelEnv(gamma);
 
@@ -35,7 +35,7 @@ public class ConstructorDecl extends Declaration {
         }
 
         for (Stmt statement : body) {
-            statement.typecheck(localDelta, localGamma, SecLabel.LOW);
+            statement.labelTypeChecker(localDelta, localGamma, SecLabel.LOW);
         }
     }
 
@@ -85,7 +85,7 @@ public class ConstructorDecl extends Declaration {
         }
 
         for (int i = 0; i < args.size(); i++) {
-            Types actualType = args.get(i).typecheck(delta, gamma);
+            Types actualType = args.get(i).labelTypeCheck(delta, gamma);
             Param expected = params.get(i);
 
             if (!delta.isSubtype(actualType, expected.type)) {

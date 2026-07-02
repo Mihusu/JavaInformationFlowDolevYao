@@ -6,7 +6,7 @@ import ASTNodes.*;
  * Orchestrates the type checking process for the entire program.
  * It uses type and label environments to verify semantic correctness and security properties.
  */
-public class TypeLabelChecker {
+public class LabelTypeChecker {
 
     private final TypeEnv delta = new TypeEnv();
     private final LabelEnv gamma = new LabelEnv();
@@ -16,6 +16,6 @@ public class TypeLabelChecker {
      * @param program The program AST to check.
      */
     public void check(Program program) {
-        program.typecheck(delta, gamma);
+        program.labelTypeCheck(delta, gamma);
     }
 }

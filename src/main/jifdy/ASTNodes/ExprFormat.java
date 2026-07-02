@@ -19,8 +19,8 @@ public class ExprFormat extends Format {
     }
 
     @Override
-    public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedure) {
-        expr.typecheck(delta, gamma);
+    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedure) {
+        expr.labelTypeCheck(delta, gamma);
     }
 
     @Override

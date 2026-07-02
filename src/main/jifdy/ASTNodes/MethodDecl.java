@@ -1,6 +1,6 @@
 package ASTNodes;
 
-import ASTBuilder.Privacy;
+import ASTBuilder.PublicPrivateLabel;
 import Analysis.*;
 import CodeGeneration.CodeGenEnv;
 import Utils.Security;
@@ -13,34 +13,11 @@ import java.util.List;
  * Represents a method declaration in the AST.
  */
 public class MethodDecl extends Declaration {
-    /**
-     * Privacy setting for the method.
-     */
-    public Privacy privacy;
-
-    /**
-     * The return type of the method (null if void).
-     */
+    public PublicPrivateLabel publicPrivateLabel;
     public Types returnType; // null = void
-
-    /**
-     * The name of the method.
-     */
     public String name;
-
-    /**
-     * The list of parameters for the method.
-     */
     public List<Param> params;
-
-    /**
-     * The body of the method.
-     */
     public CmdBlock body;
-
-    /**
-     * The declared security label for the method's return value.
-     */
     public SecLabel returnLabel;
 
 
@@ -58,10 +35,10 @@ public class MethodDecl extends Declaration {
      * Verifies that the information flow to the return value respects the declared return label.
      * @param delta The type environment.
      * @param gamma The label environment.
-     * @param secLabel The security context (pc).
+     * @param secLabel The security context of the current procedure.
      */
     @Override
-    public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel secLabel) {
+    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel secLabel) {
 
         List<Types> paramTypes = new ArrayList<>();
         List<SecLabel> paramLabels = new ArrayList<>();
@@ -90,7 +67,7 @@ public class MethodDecl extends Declaration {
         }
 
         // body (procedure(method) ALWAYS LOW at entry)
-        body.typecheck(localDelta, localGamma, SecLabel.LOW);
+        body.labelTypeChecker(localDelta, localGamma, SecLabel.LOW);
 
         // inferred return label
         SecLabel inferred = localGamma.getObservedReturnLabel();

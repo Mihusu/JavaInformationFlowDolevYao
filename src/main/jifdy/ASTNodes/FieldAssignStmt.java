@@ -35,23 +35,23 @@ public class FieldAssignStmt extends Stmt {
      * <p>
      * Field assignment uses the same two labeling obligations as ordinary
      * assignment: the expression label must flow to the field label, and the
-     * current program-counter label must flow to the meet of the field label
+     * current procedure label in a body must flow to the meet of the field label
      * and the label derived from the field type.
      * </p>
      *
      * @param delta Type environment, including class and inherited field data.
      * @param gamma Label environment.
-     * @param currentProcedure Current program-counter label.
+     * @param currentProcedure Current procedure label.
      */
     @Override
-    public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedure) {
-        Types receiverType = receiver.typecheck(delta, gamma);
+    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedure) {
+        Types receiverType = receiver.labelTypeCheck(delta, gamma);
         if (!(receiverType instanceof ClassType classType)) {
             throw new TypeCheckException("Field assignment receiver is not an object: " + fieldName);
         }
 
         VarDecl field = delta.resolveField(classType.name, fieldName);
-        Types rhsType = expr.typecheck(delta, gamma);
+        Types rhsType = expr.labelTypeCheck(delta, gamma);
 
         if (!delta.isSubtype(rhsType, field.type)) {
             throw new TypeCheckException("Type mismatch in field assignment", lineNumber, fieldName);
@@ -67,11 +67,11 @@ public class FieldAssignStmt extends Stmt {
         }
 
         SecLabel typeLabel = delta.infimumLabel(field.type);
-        SecLabel pcBound = SecLabel.infimum(field.label, typeLabel);
-        if (!Security.canFlow(currentProcedure, pcBound)) {
+        SecLabel infinumBound = SecLabel.infimum(field.label, typeLabel);
+        if (!Security.canFlow(currentProcedure, infinumBound)) {
             throw new TypeCheckException(
                     "Illegal control-flow label in field assignment: " +
-                            currentProcedure + " -> " + pcBound,
+                            currentProcedure + " -> " + infinumBound,
                     lineNumber,
                     fieldName
             );

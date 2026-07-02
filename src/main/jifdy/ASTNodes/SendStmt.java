@@ -23,7 +23,7 @@ public class SendStmt extends Stmt {
     }
 
     @Override
-    public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel pc) {
+    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel pc) {
 
         delta.getType(name);
 

@@ -1,7 +1,7 @@
 import ASTBuilder.ASTBuilder;
 import ASTNodes.Program;
 import Analysis.Environment;
-import Analysis.TypeLabelChecker;
+import Analysis.LabelTypeChecker;
 import CodeGeneration.CodeGenEnv;
 import antlr.Information_flowLexer;
 import antlr.Information_flowParser;
@@ -54,7 +54,7 @@ public class OOPSmokeTest {
         Information_flowParser parser = new Information_flowParser(new CommonTokenStream(lexer));
         Program program = (Program) new ASTBuilder().visit(parser.program());
 
-        new TypeLabelChecker().check(program);
+        new LabelTypeChecker().check(program);
         String generated = program.compile(new CodeGenEnv());
         program.eval(new Environment());
 
@@ -75,7 +75,7 @@ public class OOPSmokeTest {
         Information_flowParser parser = new Information_flowParser(new CommonTokenStream(lexer));
         Program program = (Program) new ASTBuilder().visit(parser.program());
 
-        new TypeLabelChecker().check(program);
+        new LabelTypeChecker().check(program);
         String generated = program.compile(new CodeGenEnv());
 
         assertTrue(generated.contains("public static class PatientRecord extends PersonRecord"));

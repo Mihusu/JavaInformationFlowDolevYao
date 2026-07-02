@@ -34,9 +34,9 @@ public class IfStmt extends Stmt {
     }
 
     @Override
-    public void typecheck(TypeEnv delta, LabelEnv gamma, SecLabel label) {
+    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel label) {
 
-        Type condType = Types.type(condition.typecheck(delta, gamma));
+        Type condType = Types.type(condition.labelTypeCheck(delta, gamma));
 
         if (condType != Type.BOOL) {
             throw new TypeCheckException("If condition must be boolean");
@@ -45,14 +45,14 @@ public class IfStmt extends Stmt {
         SecLabel condLabel = condition.label(gamma);
         SecLabel newLabel = SecLabel.supremum(label, condLabel);
 
-        thenCmdBlock.typecheck(delta, gamma, newLabel);
+        thenCmdBlock.labelTypeChecker(delta, gamma, newLabel);
 
         for (ElseIf e : elseIfs) {
-            e.cmdBlock.typecheck(delta, gamma, newLabel);
+            e.cmdBlock.labelTypeChecker(delta, gamma, newLabel);
         }
 
         if (elseCmdBlock != null) {
-            elseCmdBlock.typecheck(delta, gamma, newLabel);
+            elseCmdBlock.labelTypeChecker(delta, gamma, newLabel);
         }
     }
 

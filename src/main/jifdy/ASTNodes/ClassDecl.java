@@ -1,6 +1,6 @@
 package ASTNodes;
 
-import ASTBuilder.Privacy;
+import ASTBuilder.PublicPrivateLabel;
 import Analysis.*;
 import CodeGeneration.CodeGenEnv;
 import Utils.Security;
@@ -13,30 +13,13 @@ import java.util.List;
  * Represents a class declaration in the AST.
  */
 public class ClassDecl extends Node {
-    /**
-     * Optional privacy setting for the class.
-     */
-    public Privacy privacy; // optional
 
-    /**
-     * The name of the class.
-     */
+    public PublicPrivateLabel publicPrivateLabel; // optional
     public String name;
     public String superName;
 
-    /**
-     * List of field declarations in the class.
-     */
     public List<Declaration> declarations;
-
-    /**
-     * List of method (method) declarations in the class.
-     */
     public List<MethodDecl> methods;
-
-    /**
-     * Statements executed at class scope after declarations and method registration.
-     */
     public List<Stmt> statements;
 
     /**
@@ -107,7 +90,7 @@ public class ClassDecl extends Node {
                 // If initialized, check the initializer
                 if (v.initExpression != null) {
 
-                    Types initType = v.initExpression.typecheck(delta, gamma);
+                    Types initType = v.initExpression.labelTypeCheck(delta, gamma);
 
                     if (!delta.isSubtype(initType, v.type)) {
                         throw new TypeCheckException(
@@ -158,16 +141,16 @@ public class ClassDecl extends Node {
 
         // 1. Register class fields
         for (Declaration d : declarations) {
-            d.typecheck(delta, gamma, SecLabel.LOW);
+            d.labelTypeCheck(delta, gamma, SecLabel.LOW);
         }
 
         // 2. Register/check methods
         for (MethodDecl f : methods) {
-            f.typecheck(delta, gamma, SecLabel.LOW);
+            f.labelTypeCheck(delta, gamma, SecLabel.LOW);
         }
 
         for (Stmt stmt : statements) {
-            stmt.typecheck(delta, gamma, SecLabel.LOW);
+            stmt.labelTypeChecker(delta, gamma, SecLabel.LOW);
         }
     }
 
