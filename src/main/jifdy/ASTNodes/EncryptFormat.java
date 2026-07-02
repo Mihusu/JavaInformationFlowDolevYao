@@ -58,7 +58,7 @@ public class EncryptFormat extends Format {
     }
 
     @Override
-    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel label) {
+    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma) {
 
         // Verify the key expression is well-typed
         Type keyType = Types.type(key.labelTypeCheck(delta, gamma));
@@ -69,7 +69,7 @@ public class EncryptFormat extends Format {
             );
         }
 
-        inner.labelTypeCheck(delta, gamma, label);
+        inner.labelTypeCheck(delta, gamma);
     }
 
     public CiphertextType ciphertextType() {

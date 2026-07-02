@@ -65,10 +65,10 @@ public class VarDecl extends Declaration {
      *
      * @param delta The type environment.
      * @param gamma The label environment.
-     * @param variableProcedure The security context (pc).
+     * @param currentProcedureLabel The security context.
      */
     @Override
-    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel variableProcedure) {
+    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
 
         delta.putType(name, type);
         gamma.putLabel(name, label);
@@ -97,7 +97,7 @@ public class VarDecl extends Declaration {
 
             SecLabel typeLabel = delta.infimumLabel(type);
             SecLabel infimumBound = SecLabel.infimum(label, typeLabel);
-            if (!Security.canFlow(variableProcedure, infimumBound)) {
+            if (!Security.canFlow(currentProcedureLabel, infimumBound)) {
                 throw new TypeCheckException(
                         "Illegal control-flow label in initialization of " + name,
                         lineNumber,

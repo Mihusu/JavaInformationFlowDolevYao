@@ -78,42 +78,12 @@ public class ClassDecl extends Node {
         gamma.putLabel("this", SecLabel.LOW);
         validateConstructors();
 
-        // First: register variables
+        // First: register variables so field initializers and methods can refer to them.
         for (Declaration d : declarations) {
 
             if (d instanceof VarDecl v) {
-
-                // Add variable to environments
                 delta.putType(v.name, v.type);
                 gamma.putLabel(v.name, v.label);
-
-                // If initialized, check the initializer
-                if (v.initExpression != null) {
-
-                    Types initType = v.initExpression.labelTypeCheck(delta, gamma);
-
-                    if (!delta.isSubtype(initType, v.type)) {
-                        throw new TypeCheckException(
-                                "Type mismatch in declaration of " + v.name,
-                                v.lineNumber,
-                                v.name
-                        );
-                    }
-
-                    SecLabel initLabel = v.initExpression.label(gamma);
-
-                    // SPECIAL CASE: Encryption (EncryptExpr) is a declassification mechanism.
-                    // If the variable is initialized with an encryption expression and the label is LOW, allow the initialization.
-                    if (!Security.canFlow(initLabel, v.label)) {
-                        throw new TypeCheckException(
-                                "Illegal information flow in initialization of "
-                                        + v.name + ": "
-                                        + initLabel + " -> " + v.label,
-                                v.lineNumber,
-                                v.name
-                        );
-                    }
-                }
             }
         }
 

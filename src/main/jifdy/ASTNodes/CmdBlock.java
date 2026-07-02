@@ -2,8 +2,6 @@ package ASTNodes;
 
 import Analysis.*;
 import CodeGeneration.CodeGenEnv;
-import Utils.Security;
-import Utils.TypeCheckException;
 
 import java.util.List;
 
@@ -32,31 +30,7 @@ public class CmdBlock extends Stmt {
         for (Node s : statements) {
 
             if (s instanceof VarDecl v) {
-
-                delta.putType(v.name, v.type);
-                gamma.putLabel(v.name, v.label);
-
-                if (v.initExpression != null) {
-                    Types t = v.initExpression.labelTypeCheck(delta, gamma);
-
-                    if (!delta.isSubtype(t, v.type)) {
-                        throw new TypeCheckException(
-                                "Type mismatch in initialization of " + v.name
-                        );
-                    }
-
-                    SecLabel lExpr = v.initExpression.label(gamma);
-                    SecLabel currentLabel = SecLabel.supremum(secLabel, lExpr);
-
-                    // SPECIAL CASE: Encryption (EncryptExpr) is a declassification mechanism.
-                    if (v.initExpression instanceof EncryptExpr && v.label == SecLabel.LOW) {
-                        // Allow it.
-                    } else if (!Security.canFlow(currentLabel, v.label)) {
-                        throw new TypeCheckException(
-                                "Illegal information flow in initialization of " + v.name
-                        );
-                    }
-                }
+                v.labelTypeCheck(delta, gamma, secLabel);
             }
 
             else if (s instanceof Stmt stmt) {

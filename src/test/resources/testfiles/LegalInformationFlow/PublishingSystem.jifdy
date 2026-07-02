@@ -51,6 +51,7 @@ public class PublishingSystem {
         }
 
         received = true;
+        String high review = "REJECTED";
 
         if (received) {
             bool high ok = true;
@@ -59,15 +60,15 @@ public class PublishingSystem {
             }
 
             if (ok) {
-                String high review = "APPROVED";
-
-                e(kAuthorEditorPublisher, Approval) low approvalMsg = e(kAuthorEditorPublisher,
-                    Approval(title_in, review)
-                );
-
-                send(approvalMsg);
+                review = "APPROVED";
             }
         }
+
+        e(kAuthorEditorPublisher, Approval) low approvalMsg = e(kAuthorEditorPublisher,
+            Approval(title_in, review)
+        );
+
+        send(approvalMsg);
     }
 
 

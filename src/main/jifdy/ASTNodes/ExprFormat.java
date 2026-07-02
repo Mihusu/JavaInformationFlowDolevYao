@@ -19,7 +19,7 @@ public class ExprFormat extends Format {
     }
 
     @Override
-    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedure) {
+    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma) {
         expr.labelTypeCheck(delta, gamma);
     }
 

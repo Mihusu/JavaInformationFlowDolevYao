@@ -55,12 +55,12 @@ public class BankTransfer {
             print("Transfer failed.");
 
         } else {
-            send(msg1);
-            send(msg2);
-            send(msg3);
-
             print("Transferred " + total + " to " + target);
         }
+
+        send(msg1);
+        send(msg2);
+        send(msg3);
     }
 
     public void low bank() {
@@ -70,6 +70,7 @@ public class BankTransfer {
         int high amount1;
         int high amount2;
         int high amount3;
+        e(kReceiverBank,Result) low resultMsg;
 
         // First transfer
         try_rcv(e(kClientBank,
@@ -99,14 +100,14 @@ public class BankTransfer {
 
         } else {
             done = true;
-
-            // Encrypt result BEFORE sending
-            e(kReceiverBank,Result) low resultMsg = e(kReceiverBank,
-              Result(user, done, total)
-            );
-
-            send(resultMsg);
         }
+
+        // Encrypt result outside the high branch so the network action is public.
+        resultMsg = e(kReceiverBank,
+          Result(user, done, total)
+        );
+
+        send(resultMsg);
     }
 
     public void low clientReceiver() {

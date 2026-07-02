@@ -41,10 +41,10 @@ public class FieldAssignStmt extends Stmt {
      *
      * @param delta Type environment, including class and inherited field data.
      * @param gamma Label environment.
-     * @param currentProcedure Current procedure label.
+     * @param currentProcedureLabel Current procedure label.
      */
     @Override
-    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedure) {
+    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
         Types receiverType = receiver.labelTypeCheck(delta, gamma);
         if (!(receiverType instanceof ClassType classType)) {
             throw new TypeCheckException("Field assignment receiver is not an object: " + fieldName);
@@ -68,10 +68,10 @@ public class FieldAssignStmt extends Stmt {
 
         SecLabel typeLabel = delta.infimumLabel(field.type);
         SecLabel infinumBound = SecLabel.infimum(field.label, typeLabel);
-        if (!Security.canFlow(currentProcedure, infinumBound)) {
+        if (!Security.canFlow(currentProcedureLabel, infinumBound)) {
             throw new TypeCheckException(
                     "Illegal control-flow label in field assignment: " +
-                            currentProcedure + " -> " + infinumBound,
+                            currentProcedureLabel + " -> " + infinumBound,
                     lineNumber,
                     fieldName
             );

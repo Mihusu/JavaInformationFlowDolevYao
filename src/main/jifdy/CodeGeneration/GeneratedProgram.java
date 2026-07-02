@@ -145,11 +145,11 @@ public class GeneratedProgram {
             System.out.println("Transfer failed.");
         }
         else {
-            channel.send(msg1);
-            channel.send(msg2);
-            channel.send(msg3);
             System.out.println("Transferred " + total + " to " + target);
         }
+        channel.send(msg1);
+        channel.send(msg2);
+        channel.send(msg3);
     }
 
     public void bank() {
@@ -158,6 +158,7 @@ public class GeneratedProgram {
         int amount1 = 0;
         int amount2 = 0;
         int amount3 = 0;
+        EncryptedValue resultMsg = new EncryptedValue(new byte[0], "<empty>");
         String user = "";
         String target = "";
         System.out.println("[JIFDY] network -> TRY_RCV: e(kClientBank, Transfer1(user, amount1, target))");
@@ -214,9 +215,9 @@ public class GeneratedProgram {
         }
         else {
             done = true;
-            EncryptedValue resultMsg = Crypto.encrypt(new ConstructorValue("Result", Arrays.asList(user, done, total)), "kReceiverBank");
-            channel.send(resultMsg);
         }
+        resultMsg = Crypto.encrypt(new ConstructorValue("Result", Arrays.asList(user, done, total)), "kReceiverBank");
+        channel.send(resultMsg);
     }
 
     public void clientReceiver() {

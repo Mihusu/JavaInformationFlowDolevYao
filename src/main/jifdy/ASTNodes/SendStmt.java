@@ -2,6 +2,7 @@ package ASTNodes;
 
 import Analysis.Environment;
 import Analysis.LabelEnv;
+import Utils.Security;
 import Utils.TypeCheckException;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
@@ -23,9 +24,17 @@ public class SendStmt extends Stmt {
     }
 
     @Override
-    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel pc) {
+    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
 
         delta.getType(name);
+
+        if (!Security.canFlow(currentProcedureLabel, SecLabel.LOW)) {
+            throw new TypeCheckException(
+                    "Cannot send under non-public control flow: " + name,
+                    lineNumber,
+                    name
+            );
+        }
 
         // Optional (depending on your security model):
         // sending might leak → enforce LOW

@@ -35,10 +35,10 @@ public class AssignStmt extends Stmt {
      *
      * @param delta Type environment.
      * @param gamma Label environment.
-     * @param currentProcedure Current procedure label.
+     * @param currentProcedureLabel Current procedure label.
      */
     @Override
-    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedure) {
+    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
 
         Types lhsType = delta.getType(name);
         Types rhsType = assignmentExpr.labelTypeCheck(delta, gamma);
@@ -60,10 +60,10 @@ public class AssignStmt extends Stmt {
             );
         }
 
-        if (!Security.canFlow(currentProcedure, infinumBound)) {
+        if (!Security.canFlow(currentProcedureLabel, infinumBound)) {
             throw new TypeCheckException(
                     "Illegal control-flow label in assignment: " +
-                            currentProcedure + " -> " + infinumBound,
+                            currentProcedureLabel + " -> " + infinumBound,
                     lineNumber,
                     name
             );

@@ -20,20 +20,17 @@ public class PhotoService {
         e(kClientServer, Login) low loginMsg =
             e(kClientServer, Login(user, password));
 
-        print("[JIFJIFDY] client -> network: e(kClientServer, Login(user, password))");
         send(loginMsg);
 
         // SEND UPLOAD
         e(kClientServer, Upload) low uploadMsg =
             e(kClientServer, Upload(user, photo));
 
-        print("[JIFJIFDY] client -> network: e(kClientServer, Upload(user, photo))");
         send(uploadMsg);
 
         ok = true;
 
         // RECEIVE ACK
-        print("[JIFJIFDY] network -> client: e(kClientServer, AckMsg(msg))");
         try_rcv(e(kClientServer,AckMsg(msg)
         )) {
         }
@@ -51,7 +48,6 @@ public class PhotoService {
         String high photo;
 
         // RECEIVE LOGIN
-        print("[JIFJIFDY] network -> server: e(kClientServer, Login(user, password))");
         try_rcv(e(kClientServer,
             Login(user, password)
         )) {
@@ -59,26 +55,24 @@ public class PhotoService {
         }
 
         // RECEIVE UPLOAD
-        if (ok) {
-            print("[JIFJIFDY] network -> server: e(kClientServer, Upload(user, photo))");
-            try_rcv(e(kClientServer,
-                Upload(ser2, photo)
-            )) {
-                ok = false;
-            }
+        try_rcv(e(kClientServer,
+            Upload(ser2, photo)
+        )) {
+            ok = false;
         }
+
+        String high uploaded = "";
 
         // PROCESS
         if (ok) {
 
             String high store = photo;
-            String high uploaded = "uploaded";
-
-            e(kClientServer, AckMsg) low ackMsg =
-                e(kClientServer, AckMsg(uploaded));
-
-            print("[JIFJIFDY] server -> network: e(kClientServer, AckMsg(uploaded))");
-            send(ackMsg);
+            uploaded = "uploaded";
         }
+
+        e(kClientServer, AckMsg) low ackMsg =
+            e(kClientServer, AckMsg(uploaded));
+
+        send(ackMsg);
     }
 }

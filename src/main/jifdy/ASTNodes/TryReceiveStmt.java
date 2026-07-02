@@ -4,6 +4,8 @@ import Analysis.Environment;
 import Analysis.LabelEnv;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
+import Utils.Security;
+import Utils.TypeCheckException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -92,6 +94,13 @@ public class TryReceiveStmt extends Stmt {
      */
     @Override
     public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel label) {
+
+        if (!Security.canFlow(label, SecLabel.LOW)) {
+            throw new TypeCheckException(
+                    "Cannot receive under non-public control flow",
+                    lineNumber
+            );
+        }
 
         // Typecheck receive pattern using current procedure
         format.labelTypeCheck(delta, gamma, label);
@@ -184,4 +193,3 @@ public class TryReceiveStmt extends Stmt {
                 .replace("\"", "\\\"");
     }
 }
-

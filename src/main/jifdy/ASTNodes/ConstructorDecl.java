@@ -25,7 +25,7 @@ public class ConstructorDecl extends Declaration {
     }
 
     @Override
-    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel pc) {
+    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
         TypeEnv localDelta = new TypeEnv(delta);
         LabelEnv localGamma = new LabelEnv(gamma);
 
