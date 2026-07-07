@@ -23,7 +23,7 @@ public class AssignStmt extends Stmt {
     }
 
     /**
-     * Checks the DYIF-inspired assignment rule for a local variable.
+     * Checks the DYIF assignment rule for a local variable.
      *
      * <p>
      * The explicit flow check requires the expression label to flow to the

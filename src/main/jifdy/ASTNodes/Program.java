@@ -62,7 +62,7 @@ public class Program extends Node {
         }
 
         for (ClassDecl c : classes) {
-            c.typecheck(delta, gamma);
+            c.labelTypechecker(delta, gamma);
         }
     }
 

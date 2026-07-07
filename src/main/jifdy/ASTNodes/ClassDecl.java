@@ -3,7 +3,6 @@ package ASTNodes;
 import ASTBuilder.PublicPrivateLabel;
 import Analysis.*;
 import CodeGeneration.CodeGenEnv;
-import Utils.Security;
 import Utils.TypeCheckException;
 
 import java.util.ArrayList;
@@ -58,11 +57,11 @@ public class ClassDecl extends Node {
     }
 
     /**
-     * Performs type checking on the class fields and methods.
+     * Performs label and type checking on the class fields and methods.
      * @param delta The type environment.
      * @param gamma The label environment.
      */
-    public void typecheck(TypeEnv delta, LabelEnv gamma) {
+    public void labelTypechecker(TypeEnv delta, LabelEnv gamma) {
         if (superName != null) {
             ClassDecl parent = delta.getClassDecl(superName);
             ConstructorDecl parentConstructor = parent.getConstructor();
