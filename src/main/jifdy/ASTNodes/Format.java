@@ -24,7 +24,7 @@ public abstract class Format {
      * @param delta Current type environment.
      * @param gamma Current security label environment.
      */
-    public abstract void labelTypeCheck(TypeEnv delta, LabelEnv gamma);
+    public abstract void typeChecker(TypeEnv delta, LabelEnv gamma);
 
     /**
      * Type and label checks this format pattern under a current control-flow
@@ -41,8 +41,8 @@ public abstract class Format {
      * @param gamma Current security label environment.
      * @param currentProcedureLabel Current control-flow label.
      */
-    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
-        labelTypeCheck(delta, gamma);
+    public void typeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
+        typeChecker(delta, gamma);
     }
 
     /**

@@ -30,7 +30,7 @@ public class CmdBlock extends Stmt {
         for (Node s : statements) {
 
             if (s instanceof VarDecl v) {
-                v.labelTypeCheck(delta, gamma, secLabel);
+                v.labelTypeChecker(delta, gamma, secLabel);
             }
 
             else if (s instanceof Stmt stmt) {

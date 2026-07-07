@@ -17,12 +17,12 @@
         abstract public Value eval(Environment env);
 
         /**
-         * Performs type checking on the expression.
+         * Performs label and type checking on the expression.
          * @param delta The type environment.
          * @param gamma The label environment.
          * @return The type of the expression.
          */
-        abstract public Types labelTypeCheck(TypeEnv delta, LabelEnv gamma);
+        abstract public Types typeChecker(TypeEnv delta, LabelEnv gamma);
 
         /**
          * Determines the security label of the expression.
@@ -46,7 +46,7 @@
             }
 
             @Override
-            public Types labelTypeCheck(TypeEnv delta, LabelEnv gamma) {
+            public Types typeChecker(TypeEnv delta, LabelEnv gamma) {
                 return new BasicType(Type.INT);
             }
 
@@ -76,7 +76,7 @@
             }
 
             @Override
-            public Types labelTypeCheck(TypeEnv delta, LabelEnv gamma) {
+            public Types typeChecker(TypeEnv delta, LabelEnv gamma) {
                 return new BasicType(Type.BOOL);
             }
 
@@ -106,7 +106,7 @@
             }
 
             @Override
-            public Types labelTypeCheck(TypeEnv delta, LabelEnv gamma) {
+            public Types typeChecker(TypeEnv delta, LabelEnv gamma) {
                 return new BasicType(Type.STRING);
             }
 

@@ -41,7 +41,7 @@ public class AssignStmt extends Stmt {
     public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
 
         Types lhsType = delta.getType(name);
-        Types rhsType = assignmentExpr.labelTypeCheck(delta, gamma);
+        Types rhsType = assignmentExpr.typeChecker(delta, gamma);
 
         if (!delta.isSubtype(rhsType, lhsType)) {
             throw new TypeCheckException("Type mismatch in assignment", lineNumber, name);

@@ -27,7 +27,7 @@ public class WhileStmt extends Stmt {
     @Override
     public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel label) {
 
-        Type condType = Types.type(condition.labelTypeCheck(delta, gamma));
+        Type condType = Types.type(condition.typeChecker(delta, gamma));
 
         if (condType != Type.BOOL) {
             throw new TypeCheckException("While condition must be boolean");

@@ -58,15 +58,15 @@ public class EncryptFormat extends Format {
     }
 
     @Override
-    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma) {
-        labelTypeCheck(delta, gamma, SecLabel.LOW);
+    public void typeChecker(TypeEnv delta, LabelEnv gamma) {
+        typeChecker(delta, gamma, SecLabel.LOW);
     }
 
     @Override
-    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
+    public void typeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
 
         // Verify the key expression is well-typed
-        Type keyType = Types.type(key.labelTypeCheck(delta, gamma));
+        Type keyType = Types.type(key.typeChecker(delta, gamma));
 
         if (keyType != Type.STRING) {
             throw new TypeCheckException(
@@ -74,7 +74,7 @@ public class EncryptFormat extends Format {
             );
         }
 
-        inner.labelTypeCheck(delta, gamma, currentProcedureLabel);
+        inner.typeChecker(delta, gamma, currentProcedureLabel);
     }
 
     public CiphertextType ciphertextType() {

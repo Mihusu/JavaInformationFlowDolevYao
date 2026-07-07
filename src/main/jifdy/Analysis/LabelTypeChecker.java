@@ -16,6 +16,6 @@ public class LabelTypeChecker {
      * @param program The program AST to check.
      */
     public void check(Program program) {
-        program.labelTypeCheck(delta, gamma);
+        program.labelTypeChecker(delta, gamma);
     }
 }

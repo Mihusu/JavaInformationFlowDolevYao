@@ -11,16 +11,16 @@ import java.util.Objects;
  * Pattern wrapper for expression-shaped format fields, e.g.
  * `int high amount1 + int high amount2`.
  */
-public class ExprFormat extends Format {
+public class FormatExpr extends Format {
     public final Expr expr;
 
-    public ExprFormat(Expr expr) {
+    public FormatExpr(Expr expr) {
         this.expr = expr;
     }
 
     @Override
-    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma) {
-        expr.labelTypeCheck(delta, gamma);
+    public void typeChecker(TypeEnv delta, LabelEnv gamma) {
+        expr.typeChecker(delta, gamma);
     }
 
     @Override

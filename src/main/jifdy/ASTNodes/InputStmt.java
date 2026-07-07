@@ -74,7 +74,7 @@ public class InputStmt extends Stmt {
 
     @Override
     public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel secLabel) {
-        Types type = field == null ? delta.getType(name) : field.labelTypeCheck(delta, gamma);
+        Types type = field == null ? delta.getType(name) : field.typeChecker(delta, gamma);
         cachedType = type;
         Type runtimeType = Types.type(type);
 

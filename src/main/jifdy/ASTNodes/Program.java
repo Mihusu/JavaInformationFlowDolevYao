@@ -52,7 +52,7 @@ public class Program extends Node {
      * @param delta The type environment.
      * @param gamma The label environment.
      */
-    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma) {
+    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma) {
         for (FormatType formatType : formatTypes.values()) {
             delta.putFormat(formatType.name, formatType);
         }

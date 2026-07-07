@@ -26,7 +26,7 @@ public class ReturnStmt extends Stmt {
 
         Types expectedType = delta.getReturnType();
 
-        Types actualType = returnExpr.labelTypeCheck(delta, gamma);
+        Types actualType = returnExpr.typeChecker(delta, gamma);
 
         if (!delta.isSubtype(actualType, expectedType)) {
             throw new TypeCheckException(

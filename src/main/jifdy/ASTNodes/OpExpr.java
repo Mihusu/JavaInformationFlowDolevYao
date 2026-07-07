@@ -21,10 +21,10 @@ public class OpExpr extends Expr {
     }
 
     @Override
-    public Types labelTypeCheck(TypeEnv delta, LabelEnv gamma) {
+    public Types typeChecker(TypeEnv delta, LabelEnv gamma) {
 
-        Types leftType = left.labelTypeCheck(delta, gamma);
-        Types rightType = right.labelTypeCheck(delta, gamma);
+        Types leftType = left.typeChecker(delta, gamma);
+        Types rightType = right.typeChecker(delta, gamma);
         Type t1 = Types.type(leftType);
         Type t2 = Types.type(rightType);
 

@@ -32,8 +32,8 @@ public class TypedVarFormat extends Format {
     }
 
     @Override
-    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma) {
-        labelTypeCheck(delta, gamma, SecLabel.LOW);
+    public void typeChecker(TypeEnv delta, LabelEnv gamma) {
+        typeChecker(delta, gamma, SecLabel.LOW);
     }
 
     /**
@@ -51,7 +51,7 @@ public class TypedVarFormat extends Format {
      * @param currentProcedureLabel Current control-flow label.
      */
     @Override
-    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
+    public void typeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
 
         Types effectiveType = type;
         boolean alreadyDeclared = delta.containsType(name);

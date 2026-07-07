@@ -31,8 +31,8 @@ public class FieldAccessExpr extends Expr {
     }
 
     @Override
-    public Types labelTypeCheck(TypeEnv delta, LabelEnv gamma) {
-        Types receiverType = receiver.labelTypeCheck(delta, gamma);
+    public Types typeChecker(TypeEnv delta, LabelEnv gamma) {
+        Types receiverType = receiver.typeChecker(delta, gamma);
         if (!(receiverType instanceof ClassType classType)) {
             throw new TypeCheckException("Field access receiver is not an object: " + fieldName);
         }

@@ -110,12 +110,12 @@ public class ClassDecl extends Node {
 
         // 1. Register class fields
         for (Declaration d : declarations) {
-            d.labelTypeCheck(delta, gamma, SecLabel.LOW);
+            d.labelTypeChecker(delta, gamma, SecLabel.LOW);
         }
 
         // 2. Register/check methods
         for (MethodDecl f : methods) {
-            f.labelTypeCheck(delta, gamma, SecLabel.LOW);
+            f.labelTypeChecker(delta, gamma, SecLabel.LOW);
         }
 
         for (Stmt stmt : statements) {

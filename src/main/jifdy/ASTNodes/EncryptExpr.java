@@ -78,15 +78,15 @@ public class EncryptExpr extends Expr {
     }
 
     @Override
-    public Types labelTypeCheck(TypeEnv delta, LabelEnv gamma) {
+    public Types typeChecker(TypeEnv delta, LabelEnv gamma) {
 
-        Type keyType = Types.type(keyExpr.labelTypeCheck(delta, gamma));
+        Type keyType = Types.type(keyExpr.typeChecker(delta, gamma));
 
         if (keyType != Type.STRING) {
             throw new TypeCheckException("Encryption key must have type STRING");
         }
 
-        Types payloadType = payload.labelTypeCheck(delta, gamma);
+        Types payloadType = payload.typeChecker(delta, gamma);
 
         // Infer the ciphertext's format from the payload type, not from the payload syntax.
         // In particular: encrypting a variable `u` where `u: Transfer1` should yield

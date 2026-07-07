@@ -38,7 +38,7 @@ public class MethodDecl extends Declaration {
      * @param secLabel The security context of the current procedure.
      */
     @Override
-    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel secLabel) {
+    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel secLabel) {
 
         List<Types> paramTypes = new ArrayList<>();
         List<SecLabel> paramLabels = new ArrayList<>();

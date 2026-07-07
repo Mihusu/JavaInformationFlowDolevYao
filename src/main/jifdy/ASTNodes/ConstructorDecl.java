@@ -25,7 +25,7 @@ public class ConstructorDecl extends Declaration {
     }
 
     @Override
-    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
+    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
         TypeEnv localDelta = new TypeEnv(delta);
         LabelEnv localGamma = new LabelEnv(gamma);
 
@@ -85,7 +85,7 @@ public class ConstructorDecl extends Declaration {
         }
 
         for (int i = 0; i < args.size(); i++) {
-            Types actualType = args.get(i).labelTypeCheck(delta, gamma);
+            Types actualType = args.get(i).typeChecker(delta, gamma);
             Param expected = params.get(i);
 
             if (!delta.isSubtype(actualType, expected.type)) {

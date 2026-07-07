@@ -26,7 +26,7 @@ public class PrintStmt extends Stmt {
     @Override
     public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel secLabel) {
         for (Expr e : args) {
-            e.labelTypeCheck(delta, gamma);
+            e.typeChecker(delta, gamma);
         }
     }
 

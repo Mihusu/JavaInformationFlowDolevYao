@@ -21,12 +21,12 @@ public class ConstructorFormat extends Format {
     }
 
     @Override
-    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma) {
-        labelTypeCheck(delta, gamma, SecLabel.LOW);
+    public void typeChecker(TypeEnv delta, LabelEnv gamma) {
+        typeChecker(delta, gamma, SecLabel.LOW);
     }
 
     @Override
-    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
+    public void typeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
         FormatType formatType = delta.getFormat(name);
 
         if (args.size() != formatType.fields.size()) {
@@ -48,14 +48,14 @@ public class ConstructorFormat extends Format {
                 if (!Types.sameType(expected.type, delta.getFormat(constructorFormat.name))) {
                     throw new RuntimeException("Nested format mismatch in " + name);
                 }
-            } else if (actual instanceof ExprFormat exprFormat) {
-                Types actualType = exprFormat.expr.labelTypeCheck(delta, gamma);
+            } else if (actual instanceof FormatExpr formatExpr) {
+                Types actualType = formatExpr.expr.typeChecker(delta, gamma);
                 if (!Types.sameType(actualType, expected.type)) {
                     throw new RuntimeException("Format expression type mismatch in " + name);
                 }
             }
 
-            actual.labelTypeCheck(delta, gamma, currentProcedureLabel);
+            actual.typeChecker(delta, gamma, currentProcedureLabel);
         }
     }
 

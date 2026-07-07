@@ -10,5 +10,5 @@ import Analysis.TypeEnv;
 abstract public class Declaration extends Node {
     public abstract void eval(Environment env);
 
-    public abstract void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel declarationProcedure);
+    public abstract void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel declarationProcedure);
 }

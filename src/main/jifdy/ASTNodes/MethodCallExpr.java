@@ -28,11 +28,11 @@ public class MethodCallExpr extends Expr {
     }
 
     @Override
-    public Types labelTypeCheck(TypeEnv delta, LabelEnv gamma) {
+    public Types typeChecker(TypeEnv delta, LabelEnv gamma) {
 
         MethodType f;
         if (receiver != null) {
-            Types receiverType = receiver.labelTypeCheck(delta, gamma);
+            Types receiverType = receiver.typeChecker(delta, gamma);
             if (!(receiverType instanceof ClassType classType)) {
                 throw new TypeCheckException("Method call receiver is not an object: " + name);
             }
@@ -54,7 +54,7 @@ public class MethodCallExpr extends Expr {
             throw new TypeCheckException("Wrong number of arguments");
 
         for (int i = 0; i < args.size(); i++) {
-            Types argType = args.get(i).labelTypeCheck(delta, gamma);
+            Types argType = args.get(i).typeChecker(delta, gamma);
 
             if (!delta.isSubtype(argType, f.paramTypes.get(i))) {
                 throw new TypeCheckException("Argument type mismatch");

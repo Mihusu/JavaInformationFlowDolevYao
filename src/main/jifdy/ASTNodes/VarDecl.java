@@ -68,14 +68,14 @@ public class VarDecl extends Declaration {
      * @param currentProcedureLabel The security context.
      */
     @Override
-    public void labelTypeCheck(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
+    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
 
         delta.putType(name, type);
         gamma.putLabel(name, label);
 
         if (initExpression != null) {
 
-            Types initType = initExpression.labelTypeCheck(delta, gamma);
+            Types initType = initExpression.typeChecker(delta, gamma);
 
             if (!delta.isSubtype(initType, type)) {
                 throw new TypeCheckException(

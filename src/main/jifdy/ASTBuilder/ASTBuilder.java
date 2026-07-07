@@ -553,7 +553,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
 
         // Arithmetic and ordinary variable expressions are value checks rather
         // than new bindings in a receive pattern.
-        return new ExprFormat(expr);
+        return new FormatExpr(expr);
     }
 
     private List<Param> buildParams(Information_flowParser.DeclsContext ctx) {
