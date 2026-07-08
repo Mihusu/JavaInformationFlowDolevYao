@@ -84,8 +84,10 @@ public class TryReceiveStmt extends Stmt {
      *
      * <p>
      * The receive body is checked in copied environments where pattern-bound
-     * variables are available. Its procedure label is the join of the
-     * incoming procedure and the pattern label.
+     * variables are available. The receive action is a public network action,
+     * so the surrounding control-flow label must be public. The body is checked
+     * under that public context; labels of received variables still control
+     * explicit flows when those variables are used inside the body.
      * </p>
      *
      * @param delta Type environment.
@@ -109,15 +111,10 @@ public class TryReceiveStmt extends Stmt {
         TypeEnv bodyDelta = new TypeEnv(delta);
         LabelEnv bodyGamma = new LabelEnv(gamma);
 
-        // Compute overall label of received pattern
-        SecLabel patternLabel = format.label(bodyGamma);
-
-        // Takes the current with message label
-        SecLabel newProcedureLabel = SecLabel.supremum(label, patternLabel);
-
-        // IMPORTANT:
-        // preserve current procedure
-        body.labelTypeChecker(bodyDelta, bodyGamma, newProcedureLabel);
+        // try_rcv itself is public, while the body label is unconstrained by
+        // the network action. Ordinary expression/statement checks inside the
+        // body raise the context when high received variables are used.
+        body.labelTypeChecker(bodyDelta, bodyGamma, label);
     }
 
     /**

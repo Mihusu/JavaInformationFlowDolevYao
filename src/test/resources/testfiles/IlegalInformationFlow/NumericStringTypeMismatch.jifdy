@@ -1,0 +1,13 @@
+public class NumericStringTypeMismatch {
+
+    public void low main() {
+
+        int low amount = 10;
+        String low textAmount = "10";
+
+        // JIFDY does not perform Java-style implicit conversions between
+        // strings and numbers. The assignment must be rejected by the type
+        // checker.
+        amount = textAmount;
+    }
+}

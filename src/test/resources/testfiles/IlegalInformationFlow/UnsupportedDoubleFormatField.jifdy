@@ -1,0 +1,16 @@
+key kBank;
+format Payment(String low user, double high amount);
+
+public class UnsupportedDoubleFormatField {
+
+    public void low main() {
+        String low user = "Alice";
+
+        // The format declaration above is rejected before this point because
+        // double is not a supported JIFDY primitive type.
+        e(kBank, Payment) low msg =
+            e(kBank, Payment(user, 10));
+
+        send(msg);
+    }
+}

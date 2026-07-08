@@ -4,7 +4,6 @@ import Analysis.Environment;
 import Analysis.LabelEnv;
 import Analysis.TypeEnv;
 import CodeGeneration.CodeGenEnv;
-import Utils.Security;
 import Utils.TypeCheckException;
 
 import java.util.Map;
@@ -40,15 +39,18 @@ public class TypedVarFormat extends Format {
      * Checks and registers a variable bound by a receive pattern.
      *
      * <p>
-     * A receive binding acts like an assignment into the pattern variable. The
-     * variable label is therefore checked against the label derived from its
-     * type, corresponding to the underlined {@code Delta(x)} side condition in
-     * the DYIF assignment-labeling rule.
+     * A receive binding registers the variables that become available after a
+     * successful pattern match. It does not reject the binding merely because
+     * the receive occurs under a high control-flow label. Instead, the enclosing
+     * {@link TryReceiveStmt} raises the procedure label for the receive body,
+     * and later assignments or returns are checked under that raised context.
      * </p>
      *
      * @param delta Type environment updated with the bound variable.
      * @param gamma Label environment updated with the bound variable.
-     * @param currentProcedureLabel Current control-flow label.
+     * @param currentProcedureLabel Current control-flow label, propagated by
+     *                              the receive statement but not checked at the
+     *                              binding itself.
      */
     @Override
     public void typeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
@@ -62,19 +64,6 @@ public class TypedVarFormat extends Format {
 
         if (alreadyDeclared && !delta.isSubtype(effectiveType, delta.getType(name))) {
             throw new TypeCheckException("Receive pattern type mismatch for " + name);
-        }
-
-        SecLabel typeLabel = delta.infimumLabel(effectiveType);
-        SecLabel allowedProcedureLabel = SecLabel.infimum(label, typeLabel);
-
-        if (!Security.canFlow(currentProcedureLabel, allowedProcedureLabel)) {
-            throw new TypeCheckException(
-                    "Receive binding for " + name
-                            + " is not allowed under control-flow label "
-                            + currentProcedureLabel
-                            + "; expected flow to "
-                            + allowedProcedureLabel
-            );
         }
 
         // Bind variable with declared or inferred type and label

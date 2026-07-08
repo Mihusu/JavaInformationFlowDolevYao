@@ -441,7 +441,10 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
             if (declaredClasses.contains(typeName)) {
                 return new ClassType(typeName);
             }
-            throw new RuntimeException("Unknown type: " + typeName);
+            throw new TypeCheckException(
+                    "Unsupported or unknown type: " + typeName,
+                    ctx.getStart().getLine()
+            );
         }
 
         return parseBasicType(ctx.basicType().getText());
@@ -452,7 +455,7 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
             case "int" -> new BasicType(Type.INT);
             case "bool" -> new BasicType(Type.BOOL);
             case "String" -> new BasicType(Type.STRING);
-            default -> throw new RuntimeException("Unknown type: " + t);
+            default -> throw new TypeCheckException("Unsupported primitive type: " + t);
         };
     }
 

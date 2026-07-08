@@ -1,0 +1,10 @@
+public class UnsupportedDoubleType {
+
+    public void low main() {
+
+        // JIFDY currently supports int, bool, String, class types,
+        // format types, and ciphertext types. Java-style double is
+        // intentionally outside the implemented source type system.
+        double low balance = 10;
+    }
+}

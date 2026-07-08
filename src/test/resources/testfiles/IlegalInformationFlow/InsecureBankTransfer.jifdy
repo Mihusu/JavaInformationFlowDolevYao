@@ -32,6 +32,7 @@ public class InsecureBankTransfer {
         int high amount1;
         int high amount2;
 
+        // Not a public control flow for try_rcv
         while (ok) {
 
             // Input of the bank

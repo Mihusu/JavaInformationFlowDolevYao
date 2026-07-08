@@ -1,0 +1,15 @@
+public class HighContextFieldAssignment {
+
+    int low p = 0;
+
+    public void high updateField() {
+
+        bool high secretFlag = true;
+
+        if (secretFlag) {
+            // ILLEGAL IMPLICIT FLOW:
+            // a high condition controls assignment to the low field this.p.
+            this.p = 3;
+        }
+    }
+}
