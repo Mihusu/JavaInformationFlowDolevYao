@@ -105,9 +105,7 @@ public class RegressionTest {
      * true -> test behaved as expected
      * false -> unexpected behavior occurred
      */
-
     private static boolean runTest(String filePath, boolean shouldPass) {
-
         File file = new File(filePath);
 
         // fallback location
