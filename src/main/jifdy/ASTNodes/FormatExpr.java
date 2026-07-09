@@ -10,6 +10,12 @@ import java.util.Objects;
 /**
  * Pattern wrapper for expression-shaped format fields, e.g.
  * `int high amount1 + int high amount2`.
+ *
+ * <p>
+ * Unlike typed receive variables, this pattern does not introduce a binding.
+ * It evaluates an ordinary expression and requires the received field to match
+ * that value.
+ * </p>
  */
 public class FormatExpr extends Format {
     public final Expr expr;

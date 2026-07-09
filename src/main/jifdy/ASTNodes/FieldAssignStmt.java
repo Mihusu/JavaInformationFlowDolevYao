@@ -7,6 +7,12 @@ import Utils.TypeCheckException;
 
 /**
  * Assignment statement for receiver field writes, e.g. obj.field = value.
+ *
+ * <p>
+ * Field assignments resolve the receiver class, validate the assigned value
+ * type, and apply the same explicit-flow and control-flow checks used for
+ * local variable assignments.
+ * </p>
  */
 public class FieldAssignStmt extends Stmt {
     public final Expr receiver;
@@ -83,4 +89,3 @@ public class FieldAssignStmt extends Stmt {
         return env.indent() + receiver.compile(env) + "." + fieldName + " = " + expr.compile(env) + ";\n";
     }
 }
-

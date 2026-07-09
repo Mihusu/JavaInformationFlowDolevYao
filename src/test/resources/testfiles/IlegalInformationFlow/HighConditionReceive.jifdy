@@ -1,0 +1,15 @@
+key kMsg;
+format Note(String low text);
+
+public class HighConditionReceive {
+
+    public void low leak() {
+        bool high secret = true;
+
+        if (secret) {
+            // Illegal public action: receive occurs under HIGH control flow.
+            try_rcv(e(kMsg, Note(text))) {
+            }
+        }
+    }
+}

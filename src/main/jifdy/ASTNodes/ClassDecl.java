@@ -172,24 +172,6 @@ public class ClassDecl extends Node {
         return sb.toString();
     }
 
-
-    private void initializeDeclaredFields(Environment env, ObjectValue object) {
-        Environment objectEnv = new Environment(env);
-        objectEnv.setThisObject(object);
-
-        for (Declaration d : declarations) {
-            if (d instanceof VarDecl v) {
-                Value initVal = (v.initExpression != null)
-                        ? v.initExpression.eval(objectEnv)
-                        : defaultObjectFieldValue(env, v.type);
-
-                initVal.label = v.label;
-                object.fields.put(v.name, initVal);
-                object.fieldLabels.put(v.name, v.label);
-            }
-        }
-    }
-
     public void initializeInstance(Environment env, ObjectValue object, List<Value> args) {
         if (superName != null) {
             ClassDecl parent = env.getClassDecl(superName);
@@ -232,6 +214,23 @@ public class ClassDecl extends Node {
         }
 
         return result;
+    }
+
+    private void initializeDeclaredFields(Environment env, ObjectValue object) {
+        Environment objectEnv = new Environment(env);
+        objectEnv.setThisObject(object);
+
+        for (Declaration d : declarations) {
+            if (d instanceof VarDecl v) {
+                Value initVal = (v.initExpression != null)
+                        ? v.initExpression.eval(objectEnv)
+                        : defaultObjectFieldValue(env, v.type);
+
+                initVal.label = v.label;
+                object.fields.put(v.name, initVal);
+                object.fieldLabels.put(v.name, v.label);
+            }
+        }
     }
 
     private Value defaultObjectFieldValue(Environment env, Types type) {

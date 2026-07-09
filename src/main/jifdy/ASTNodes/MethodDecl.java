@@ -11,6 +11,13 @@ import java.util.List;
 
 /**
  * Represents a method declaration in the AST.
+ *
+ * <p>
+ * Method declarations introduce a typed and labeled callable unit. During
+ * label/type checking, the method signature is registered first, then the body
+ * is checked in a local environment containing the parameters and declared
+ * return label.
+ * </p>
  */
 public class MethodDecl extends Declaration {
     public PublicPrivateLabel publicPrivateLabel;

@@ -11,6 +11,13 @@ import java.util.List;
 
 /**
  * Expression node for constructing an object instance.
+ *
+ * <p>
+ * Object creation resolves the target class and, when a constructor is present,
+ * delegates argument type and label validation to the constructor declaration.
+ * The resulting expression is labeled by joining the labels of all constructor
+ * arguments.
+ * </p>
  */
 public class NewObjectExpr extends Expr {
     public final String className;

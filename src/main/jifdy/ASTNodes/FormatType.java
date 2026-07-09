@@ -3,6 +3,15 @@ package ASTNodes;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Type descriptor for a declared Dolev-Yao message format.
+ *
+ * <p>
+ * The format type stores the format name and its ordered field declarations.
+ * Those fields are used when constructing format values and when inferring
+ * bindings in receive patterns.
+ * </p>
+ */
 public class FormatType extends Types {
     public String name;
     public List<Param> fields;

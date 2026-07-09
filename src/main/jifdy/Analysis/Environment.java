@@ -50,10 +50,6 @@ public class Environment {
         this.thisObject = parent.thisObject;
     }
 
-    // =========================
-    // VARIABLES
-    // =========================
-
     /**
      * Retrieves the value of a variable.
      * @param name The name of the variable.
@@ -156,10 +152,6 @@ public class Environment {
 
         return object.fields.get(name);
     }
-
-    // =========================
-    // METHODS
-    // =========================
 
     public void putMethod(String name, MethodDecl f) {
         methods.put(name, f);

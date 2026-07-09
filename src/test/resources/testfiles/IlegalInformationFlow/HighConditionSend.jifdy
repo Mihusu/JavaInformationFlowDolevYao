@@ -1,0 +1,16 @@
+key kMsg;
+format Note(String low text);
+
+public class HighConditionSend {
+
+    public void low leak() {
+        bool high secret = true;
+        String low text = "public";
+        e(kMsg,Note) low msg = e(kMsg, Note(text));
+
+        if (secret) {
+            // Illegal public action: send occurs under HIGH control flow.
+            send(msg);
+        }
+    }
+}

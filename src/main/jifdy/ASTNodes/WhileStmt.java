@@ -8,6 +8,12 @@ import CodeGeneration.CodeGenEnv;
 
 /**
  * Represents a while loop statement in the AST.
+ *
+ * <p>
+ * The loop condition must be boolean. Its security label is joined with the
+ * current control-flow label before checking the body, preventing implicit
+ * flows from high loop conditions into low assignments or public actions.
+ * </p>
  */
 public class WhileStmt extends Stmt {
     Expr condition;

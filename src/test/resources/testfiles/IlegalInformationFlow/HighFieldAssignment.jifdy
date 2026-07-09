@@ -1,0 +1,15 @@
+public class PublicBox {
+
+    int low value = 0;
+}
+
+public class HighFieldAssignment {
+
+    PublicBox low box = new PublicBox();
+    int high secret = 8;
+
+    public void low leak() {
+        // Illegal explicit field flow: HIGH expression assigned to LOW field.
+        box.value = secret;
+    }
+}

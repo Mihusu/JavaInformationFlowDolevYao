@@ -36,8 +36,7 @@ public class SendStmt extends Stmt {
             );
         }
 
-        // Optional (depending on your security model):
-        // sending might leak → enforce LOW
+        // sending might leak, so enforce LOW
         SecLabel l = gamma.getLabel(name);
 
         if (l == SecLabel.HIGH) {

@@ -1,0 +1,13 @@
+public class HighArgumentToLowParameter {
+
+    public void low acceptsLow(int low value) {
+        print(value);
+    }
+
+    public void low leak() {
+        int high secret = 9;
+
+        // Illegal argument flow: HIGH actual argument passed to LOW parameter.
+        acceptsLow(secret);
+    }
+}

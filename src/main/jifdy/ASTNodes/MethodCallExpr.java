@@ -9,6 +9,13 @@ import java.util.List;
 
 /**
  * Expression node for invoking a method and optionally consuming its return value.
+ *
+ * <p>
+ * Method calls check both ordinary Java-like argument types and information-flow
+ * labels. Each actual argument must be allowed to flow to the corresponding
+ * formal parameter label, and the call expression label joins the receiver,
+ * argument labels, and declared method return label.
+ * </p>
  */
 public class MethodCallExpr extends Expr {
     public Expr receiver;

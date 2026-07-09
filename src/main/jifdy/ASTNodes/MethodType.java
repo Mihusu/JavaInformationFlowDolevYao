@@ -3,7 +3,13 @@ package ASTNodes;
 import java.util.List;
 
 /**
- * Captures the parameter and return Types, along with their security labels, for a method.
+ * Type and label signature for a method.
+ *
+ * <p>
+ * Method signatures are stored in the type environment before method bodies
+ * are checked. Calls use this descriptor to validate argument types, argument
+ * label flows, and the label of the returned expression.
+ * </p>
  */
 public class MethodType {
 

@@ -1,5 +1,15 @@
 package ASTNodes;
 
+/**
+ * Type descriptor for symbolic encrypted messages.
+ *
+ * <p>
+ * A ciphertext type records both the key name and the expected plaintext
+ * format name, so the type checker can distinguish values such as
+ * {@code e(kBank, Transfer)} from ciphertexts encrypted under another key or
+ * carrying another message format.
+ * </p>
+ */
 public class CiphertextType extends Types {
 
     public String keyName;

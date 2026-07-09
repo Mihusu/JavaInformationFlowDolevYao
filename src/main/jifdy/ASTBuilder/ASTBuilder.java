@@ -428,6 +428,10 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         return call;
     }
 
+    /**
+     * Converts a grammar type into the corresponding AST type representation,
+     * including primitive, class, format, and ciphertext types.
+     */
     private Types parseType(Information_flowParser.TypeContext ctx) {
         if (ctx.encryptionType() != null) {
             return parseEncryptionType(ctx.encryptionType());
@@ -450,6 +454,9 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         return parseBasicType(ctx.basicType().getText());
     }
 
+    /**
+     * Maps a primitive type token from the source language to its basic AST type.
+     */
     private BasicType parseBasicType(String t) {
         return switch (t) {
             case "int" -> new BasicType(Type.INT);
@@ -459,6 +466,10 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         };
     }
 
+    /**
+     * Builds a ciphertext type after validating that its key and payload format
+     * were declared globally.
+     */
     private CiphertextType parseEncryptionType(Information_flowParser.EncryptionTypeContext ctx) {
         String keyName = normalizeKey(ctx.KEY().getText());
         requireDeclaredKey(keyName, ctx);
@@ -472,6 +483,9 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         throw new RuntimeException("Invalid encryption type");
     }
 
+    /**
+     * Converts a source-level security label into the internal two-point label.
+     */
     private SecLabel parseSecLabel(String text) {
         return switch (text.toLowerCase()) {
             case "low" -> SecLabel.LOW;
@@ -480,14 +494,24 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         };
     }
 
+    /**
+     * Converts a source-level visibility modifier into the internal visibility enum.
+     */
     private PublicPrivateLabel parsePrivacy(String p) {
         return p.equals("public") ? PublicPrivateLabel.PUBLIC : PublicPrivateLabel.PRIVATE;
     }
 
+    /**
+     * Removes the surrounding quote characters from a string literal token.
+     */
     private String stripQuotes(String s) {
         return s.substring(1, s.length() - 1);
     }
 
+    /**
+     * Validates an encryption key token and represents it as a string literal
+     * expression used by encryption nodes.
+     */
     private Expr buildKeyExpr(TerminalNode keyNode) {
         if (keyNode == null) {
             throw new RuntimeException("Encryption requires a KEY token");
@@ -498,6 +522,9 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         return new StringLiteral(keyName);
     }
 
+    /**
+     * Normalizes key syntax so quoted and unquoted key tokens use the same name.
+     */
     private String normalizeKey(String text) {
         if (text.length() >= 2 && text.startsWith("\"") && text.endsWith("\"")) {
             return stripQuotes(text);
@@ -533,6 +560,10 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         throw new RuntimeException("Receive pattern must be an encrypted value or format constructor");
     }
 
+    /**
+     * Converts one field of a receive expression into a pattern node, using the
+     * declared format field to infer omitted type and label annotations.
+     */
     private Format buildReceiveFieldPattern(Expr expr, Param expected) {
         if (expr instanceof TypedVarExpr typedVarExpr) {
             return new TypedVarFormat(
@@ -559,6 +590,10 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         return new FormatExpr(expr);
     }
 
+    /**
+     * Builds parameter descriptors from declaration-list syntax used by methods,
+     * constructors, and message format fields.
+     */
     private List<Param> buildParams(Information_flowParser.DeclsContext ctx) {
 
         List<Param> params = new ArrayList<>();
@@ -576,6 +611,9 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         return params;
     }
 
+    /**
+     * Copies the parser line number onto an AST node for later error reporting.
+     */
     private <T extends Node> T setLocation(T node, ParserRuleContext ctx) {
         if (node != null && ctx != null) {
             node.lineNumber = ctx.getStart().getLine();
@@ -583,6 +621,10 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         return node;
     }
 
+    /**
+     * Builds the receiver expression for a dotted lvalue, excluding the final
+     * field name that will be assigned or accessed.
+     */
     private Expr buildReceiver(List<TerminalNode> names) {
         Expr receiver = new VarExpr(names.get(0).getText());
         for (int i = 1; i < names.size() - 1; i++) {
@@ -591,10 +633,16 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         return receiver;
     }
 
+    /**
+     * Builds a field-access expression from a dotted lvalue token sequence.
+     */
     private FieldAccessExpr buildFieldAccess(List<TerminalNode> names) {
         return new FieldAccessExpr(buildReceiver(names), names.get(names.size() - 1).getText());
     }
 
+    /**
+     * Records a global key declaration and rejects duplicate key names.
+     */
     private void declareKey(Information_flowParser.KeyDeclarationContext ctx) {
         String keyName = normalizeKey(ctx.KEY().getText());
         if (!declaredKeys.add(keyName)) {
@@ -602,6 +650,9 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         }
     }
 
+    /**
+     * Records a global message format and stores its typed, labeled field layout.
+     */
     private void declareFormat(Information_flowParser.FormatDeclarationContext ctx) {
         String formatName = ctx.IDENTIFIER().getText();
         if (!declaredFormats.add(formatName)) {
@@ -612,32 +663,53 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         declaredFormatTypes.put(formatName, new FormatType(formatName, fields));
     }
 
+    /**
+     * Records a class name before class bodies are visited so inheritance and
+     * type references can be checked against known classes.
+     */
     private void declareClass(String className, int lineNumber) {
         if (!declaredClasses.add(className)) {
             throw new RuntimeException("Duplicate class declaration at line " + lineNumber + ": " + className);
         }
     }
 
+    /**
+     * Validates that a key reference names a declared global key using parser
+     * context for source-line reporting.
+     */
     private void requireDeclaredKey(String keyName, ParserRuleContext ctx) {
         requireDeclaredKey(keyName, ctx.getStart().getLine());
     }
 
+    /**
+     * Validates that a key reference names a declared global key at a known line.
+     */
     private void requireDeclaredKey(String keyName, int lineNumber) {
         if (!declaredKeys.contains(keyName)) {
             throw new RuntimeException("Undeclared global key at line " + lineNumber + ": " + keyName);
         }
     }
 
+    /**
+     * Validates that a format reference names a declared global format using
+     * parser context for source-line reporting.
+     */
     private void requireDeclaredFormat(String formatName, ParserRuleContext ctx) {
         requireDeclaredFormat(formatName, ctx.getStart().getLine());
     }
 
+    /**
+     * Validates that a format reference names a declared global format at a known line.
+     */
     private void requireDeclaredFormat(String formatName, int lineNumber) {
         if (!declaredFormats.contains(formatName)) {
             throw new RuntimeException("Undeclared global format at line " + lineNumber + ": " + formatName);
         }
     }
 
+    /**
+     * Returns the declared format type after checking that the format name exists.
+     */
     private FormatType requireDeclaredFormatType(String formatName, ParserRuleContext ctx) {
         requireDeclaredFormat(formatName, ctx);
         return declaredFormatTypes.get(formatName);

@@ -1,0 +1,18 @@
+public class Box {
+
+    int low value = 0;
+
+    public Box(int low initialValue) {
+        value = initialValue;
+    }
+}
+
+public class HighConstructorArgumentToLowParameter {
+
+    public void low leak() {
+        int high secret = 5;
+
+        // Illegal constructor argument flow: HIGH argument to LOW parameter.
+        Box high box = new Box(secret);
+    }
+}

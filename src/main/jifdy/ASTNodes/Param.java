@@ -1,7 +1,13 @@
 package ASTNodes;
 
 /**
- * Declares one parameter in a method or constructor signature.
+ * Typed and labeled binding used in signatures and message formats.
+ *
+ * <p>
+ * A parameter describes one name together with its ordinary type and security
+ * label. The same shape is reused for method parameters, constructor
+ * parameters, and fields inside declared message formats.
+ * </p>
  */
 public class Param {
     public Types type;

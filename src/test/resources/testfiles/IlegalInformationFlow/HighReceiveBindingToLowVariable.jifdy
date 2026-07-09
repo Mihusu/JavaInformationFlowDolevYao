@@ -1,0 +1,14 @@
+key kMsg;
+format SecretNote(String low user, int high code);
+
+public class HighReceiveBindingToLowVariable {
+
+    public void low leak() {
+        int low publicCode = 0;
+
+        try_rcv(e(kMsg, SecretNote(user, code))) {
+            // Illegal explicit flow: received format field code is HIGH.
+            publicCode = code;
+        }
+    }
+}
