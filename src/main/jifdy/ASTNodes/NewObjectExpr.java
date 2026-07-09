@@ -70,6 +70,7 @@ public class NewObjectExpr extends Expr {
                 .append(className)
                 .append("(");
 
+        // Append any parameters from the constructor
         for (int i = 0; i < args.size(); i++) {
             sb.append(args.get(i).compile(env));
             if (i < args.size() - 1) {

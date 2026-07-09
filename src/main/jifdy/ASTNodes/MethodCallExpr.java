@@ -128,10 +128,18 @@ public class MethodCallExpr extends Expr {
         return sb.toString();
     }
 
+    /**
+     * Executes a method call used as a statement, intentionally discarding any
+     * returned value.
+     */
     public void evalAsStatement(Environment env) {
         invoke(env);
     }
 
+    /**
+     * Performs the shared runtime method-call logic for expression and
+     * statement calls, including receiver resolution and parameter binding.
+     */
     private Value invoke(Environment env) {
 
         MethodDecl f;

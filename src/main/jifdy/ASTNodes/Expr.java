@@ -41,6 +41,9 @@
                 this.value = value;
             }
 
+            /**
+             * Produces the runtime integer value represented by this literal.
+             */
             public Value eval(Environment env) {
                 return new IntValue(value);
             }
@@ -71,6 +74,9 @@
                 this.value = b;
             }
 
+            /**
+             * Produces the runtime boolean value represented by this literal.
+             */
             public Value eval(Environment env) {
                 return new BoolValue(value);
             }
@@ -101,6 +107,9 @@
                 this.value = value;
             }
 
+            /**
+             * Produces the runtime string value represented by this literal.
+             */
             public Value eval(Environment env) {
                 return new StringValue(value);
             }

@@ -114,11 +114,19 @@ public class VarDecl extends Declaration {
         return env.indent() + JavaTypeSupport.toJavaType(type) + " " + name + compileInitializer(env) + ";\n";
     }
 
+    /**
+     * Generates Java source for this declaration when it appears as a class
+     * field rather than as a local variable.
+     */
     public String compileField(CodeGenEnv env) {
         env.declareVariable(name, type);
         return env.indent() + "public " + JavaTypeSupport.toJavaType(type) + " " + name + compileInitializer(env) + ";\n";
     }
 
+    /**
+     * Generates the initializer fragment for this declaration, falling back to
+     * a default value when the source declaration has no explicit initializer.
+     */
     private String compileInitializer(CodeGenEnv env) {
         if (initExpression != null) {
             return " = " + initExpression.compile(env);

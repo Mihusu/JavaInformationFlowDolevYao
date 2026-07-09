@@ -24,6 +24,9 @@ public class WhileStmt extends Stmt {
         this.body = visitBody;
     }
 
+    /**
+     * Repeatedly evaluates the loop body while the condition evaluates to true.
+     */
     public void eval(Environment env) {
         while (((BoolValue) condition.eval(env)).value) {
             body.eval(env);

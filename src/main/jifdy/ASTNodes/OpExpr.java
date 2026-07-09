@@ -71,6 +71,10 @@ public class OpExpr extends Expr {
         return SecLabel.supremum(l1, l2);
     }
 
+    /**
+     * Evaluates both operands and applies the source-language operator to the
+     * resulting runtime values.
+     */
     public Value eval(Environment env) {
         Value l = left.eval(env);
         Value r = right.eval(env);
@@ -142,6 +146,10 @@ public class OpExpr extends Expr {
         return left.compile(env) + " " + op + " " + right.compile(env);
     }
 
+    /**
+     * Converts primitive runtime values to source-like strings for string
+     * concatenation.
+     */
     private String valueToString(Value value) {
         if (value instanceof StringValue stringValue) {
             return stringValue.value;

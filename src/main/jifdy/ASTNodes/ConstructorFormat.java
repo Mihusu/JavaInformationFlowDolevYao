@@ -59,6 +59,10 @@ public class ConstructorFormat extends Format {
         }
     }
 
+    /**
+     * Matches a runtime constructor value by name and then recursively matches
+     * each field against the corresponding nested receive pattern.
+     */
     public boolean match(Value value, Environment env) {
 
         if (!(value instanceof ConstructorValue cv)) {

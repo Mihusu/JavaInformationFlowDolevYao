@@ -17,6 +17,10 @@ public class AssignStmt extends Stmt {
         this.assignmentExpr = visit;
     }
 
+    /**
+     * Evaluates the right-hand expression and writes the resulting value into
+     * the existing runtime variable binding.
+     */
     public void eval(Environment env) {
         Value v = assignmentExpr.eval(env);
         env.setVariables(name, v);
@@ -76,4 +80,3 @@ public class AssignStmt extends Stmt {
         return env.indent() + name + " = " + assignmentExpr.compile(env) + ";\n";
     }
 }
-

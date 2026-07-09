@@ -15,10 +15,16 @@ public class VarExpr extends Expr {
         this.name = text;
     }
 
+    /**
+     * Looks up the current runtime value of this variable.
+     */
     public Value eval(Environment env) {
         return env.getVariables(name);
     }
 
+    /**
+     * Looks up the declared source type of this variable.
+     */
     public Types typeChecker(TypeEnv delta, LabelEnv gamma) {
         return delta.getType(name);
     }

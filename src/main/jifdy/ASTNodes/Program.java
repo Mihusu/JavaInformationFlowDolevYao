@@ -37,6 +37,9 @@ public class Program extends Node {
      * Evaluates (interprets) the program.
      * @param env The execution environment.
      */
+    /**
+     * Registers and executes each class declaration in program order.
+     */
     public void eval(Environment env) {
         for (ClassDecl c : classes) {
             env.putClass(c);
@@ -51,6 +54,10 @@ public class Program extends Node {
      * Performs type checking on the entire program.
      * @param delta The type environment.
      * @param gamma The label environment.
+     */
+    /**
+     * Registers global key and format declarations, then type and label checks
+     * all classes in the program.
      */
     public void labelTypeChecker(TypeEnv delta, LabelEnv gamma) {
         for (FormatType formatType : formatTypes.values()) {
@@ -205,6 +212,10 @@ public class Program extends Node {
         return sb.toString();
     }
 
+    /**
+     * Emits generated Java entry-point code for classes that contain top-level
+     * statements to execute.
+     */
     private void appendMainEntry(StringBuilder sb, ClassDecl cls) {
         String instance = cls.name.substring(0, 1).toLowerCase() + cls.name.substring(1);
         sb.append(cls.name)

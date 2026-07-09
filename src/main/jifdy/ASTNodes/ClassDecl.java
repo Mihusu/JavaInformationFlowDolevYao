@@ -172,6 +172,10 @@ public class ClassDecl extends Node {
         return sb.toString();
     }
 
+    /**
+     * Initializes a freshly allocated object by preparing inherited fields,
+     * local fields, and finally running the matching constructor body.
+     */
     public void initializeInstance(Environment env, ObjectValue object, List<Value> args) {
         if (superName != null) {
             ClassDecl parent = env.getClassDecl(superName);
@@ -199,6 +203,10 @@ public class ClassDecl extends Node {
         constructor.invoke(env, object, args);
     }
 
+    /**
+     * Finds the single constructor declared by this class, rejecting classes
+     * that declare more than one constructor.
+     */
     public ConstructorDecl getConstructor() {
         ConstructorDecl result = null;
 
@@ -216,6 +224,10 @@ public class ClassDecl extends Node {
         return result;
     }
 
+    /**
+     * Evaluates this class's own field declarations into the supplied object,
+     * using an object-aware environment so initializers may reference fields.
+     */
     private void initializeDeclaredFields(Environment env, ObjectValue object) {
         Environment objectEnv = new Environment(env);
         objectEnv.setThisObject(object);
@@ -233,6 +245,10 @@ public class ClassDecl extends Node {
         }
     }
 
+    /**
+     * Creates the default runtime value for an object field when no initializer
+     * expression is present.
+     */
     private Value defaultObjectFieldValue(Environment env, Types type) {
         if (type instanceof ClassType classType) {
             return env.instantiate(classType.name);
@@ -241,6 +257,10 @@ public class ClassDecl extends Node {
         return JavaTypeSupport.defaultValue(type);
     }
 
+    /**
+     * Resolves a method declaration during type checking, walking up the
+     * superclass chain when the method is inherited.
+     */
     public MethodDecl findMethod(String methodName, TypeEnv delta) {
         for (MethodDecl method : methods) {
             if (method.name.equals(methodName)) {
@@ -255,6 +275,9 @@ public class ClassDecl extends Node {
         return null;
     }
 
+    /**
+     * Resolves a method declaration at runtime, including inherited methods.
+     */
     public MethodDecl findMethod(String methodName, Environment env) {
         for (MethodDecl method : methods) {
             if (method.name.equals(methodName)) {
@@ -269,6 +292,10 @@ public class ClassDecl extends Node {
         return null;
     }
 
+    /**
+     * Resolves a field declaration during type checking, including inherited
+     * fields from superclasses.
+     */
     public VarDecl findField(String fieldName, TypeEnv delta) {
         for (Declaration declaration : declarations) {
             if (declaration instanceof VarDecl field && field.name.equals(fieldName)) {
@@ -283,6 +310,10 @@ public class ClassDecl extends Node {
         return null;
     }
 
+    /**
+     * Adds inherited field types and labels to the current class environment so
+     * methods can type check inherited field accesses.
+     */
     private void registerInheritedFields(TypeEnv delta, LabelEnv gamma) {
         if (superName == null) {
             return;
@@ -298,6 +329,9 @@ public class ClassDecl extends Node {
         }
     }
 
+    /**
+     * Ensures the constructor declaration, when present, uses this class's name.
+     */
     private void validateConstructors() {
         ConstructorDecl constructor = getConstructor();
         if (constructor != null && !name.equals(constructor.className)) {

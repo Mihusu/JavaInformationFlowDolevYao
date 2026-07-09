@@ -17,6 +17,10 @@ public class PrintStmt extends Stmt {
         this.args = args;
     }
 
+    /**
+     * Evaluates each print argument in order and writes the runtime value to
+     * standard output.
+     */
     public void eval(Environment env) {
         for (Expr expr : args) {
             System.out.println(expr.eval(env));

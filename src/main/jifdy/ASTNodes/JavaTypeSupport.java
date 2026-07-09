@@ -6,6 +6,10 @@ package ASTNodes;
  */
 public final class JavaTypeSupport {
 
+    /**
+     * Converts a JIFDY type descriptor into the Java type name used by emitted
+     * source code.
+     */
     public static String toJavaType(Types type) {
         if (type instanceof ClassType classType) {
             return classType.name;
@@ -26,6 +30,9 @@ public final class JavaTypeSupport {
      * - defaultValue returns an interpreter Value object for eval() method across all relevant nodes.
      * - defaultValueExpression returns Java source code for compile() method across all relevant nodes.
      */
+    /**
+     * Creates the interpreter-side default runtime value for a JIFDY type.
+     */
     public static Value defaultValue(Types type) {
         return switch (Types.type(type)) {
             case INT -> new IntValue(0);
@@ -37,6 +44,10 @@ public final class JavaTypeSupport {
         };
     }
 
+    /**
+     * Creates the generated-Java expression used as the default value for a
+     * JIFDY type.
+     */
     public static String defaultValueExpression(Types type) {
         return switch (Types.type(type)) {
             case INT -> "0";

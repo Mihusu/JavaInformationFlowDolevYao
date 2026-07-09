@@ -17,6 +17,10 @@ public class SendStmt extends Stmt {
         this.name = text;
     }
 
+    /**
+     * Reads the named message value and appends it to the runtime outbox used
+     * to model public network communication.
+     */
     public void eval(Environment env) {
         Value message = env.getVariables(name);
         System.out.println("[JIFDY] SEND -> network: " + describe(message));
@@ -52,6 +56,9 @@ public class SendStmt extends Stmt {
                 "channel.send(" + name + ");\n";
     }
 
+    /**
+     * Builds a compact textual representation of sent values for trace output.
+     */
     private String describe(Value value) {
         if (value instanceof EncryptedValue encryptedValue) {
             return "e(" + encryptedValue.key + ", " + describe(encryptedValue.payload) + ")";

@@ -77,6 +77,10 @@ public class EncryptFormat extends Format {
         inner.typeChecker(delta, gamma, currentProcedureLabel);
     }
 
+    /**
+     * Computes the precise ciphertext type represented by this encrypted
+     * receive pattern.
+     */
     public CiphertextType ciphertextType() {
         return new CiphertextType(
                 EncryptionTypeSupport.extractKeyName(key),

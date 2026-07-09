@@ -17,6 +17,10 @@ public class IfStmt extends Stmt {
     public List<ElseIf> elseIfs;
     public CmdBlock elseCmdBlock;
 
+    /**
+     * Evaluates the condition chain in source order and executes only the first
+     * branch whose condition is true.
+     */
     public void eval(Environment env) {
         if (((BoolValue) condition.eval(env)).value) {
             thenCmdBlock.eval(env);

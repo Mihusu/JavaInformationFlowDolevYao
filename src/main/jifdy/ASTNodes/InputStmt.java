@@ -117,6 +117,10 @@ public class InputStmt extends Stmt {
         return sb.toString();
     }
 
+    /**
+     * Emits Java source code that parses a raw input string into the checked
+     * primitive type of the target variable.
+     */
     private String parseExpression(Types type, String input) {
         return switch (Types.type(type)) {
             case INT -> "Integer.parseInt(" + input + ".trim())";

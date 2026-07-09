@@ -173,18 +173,32 @@ public class TryReceiveStmt extends Stmt {
         return sb.toString();
     }
 
+    /**
+     * Maps a receive-bound source type to the Java type used in generated code.
+     */
     private String javaType(Types type) {
         return type == null ? "Object" : JavaTypeSupport.toJavaType(type);
     }
 
+    /**
+     * Produces the generated-code default value for a receive-bound variable.
+     */
     private String defaultValue(Types type) {
         return type == null ? "null" : JavaTypeSupport.defaultValueExpression(type);
     }
 
+    /**
+     * Produces the interpreter default value for a receive-bound variable before
+     * pattern matching has succeeded.
+     */
     private Value defaultRuntimeValue(Types type) {
         return type == null ? new StringValue("") : JavaTypeSupport.defaultValue(type);
     }
 
+    /**
+     * Escapes text so receive-pattern descriptions can be embedded in generated
+     * Java string literals.
+     */
     private String escapeJava(String text) {
         return text.replace("\\", "\\\\")
                 .replace("\"", "\\\"");

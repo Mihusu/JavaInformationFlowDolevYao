@@ -77,6 +77,10 @@ public class ConstructorDecl extends Declaration {
         return sb.toString();
     }
 
+    /**
+     * Checks constructor-call arguments against the declared parameter types and
+     * labels before object creation is accepted.
+     */
     public void checkArguments(List<Expr> args, TypeEnv delta, LabelEnv gamma) {
         if (args.size() != params.size()) {
             throw new TypeCheckException(
@@ -104,6 +108,10 @@ public class ConstructorDecl extends Declaration {
         }
     }
 
+    /**
+     * Executes the constructor body against a new object after binding actual
+     * argument values to the constructor parameters.
+     */
     public void invoke(Environment env, ObjectValue object, List<Value> args) {
         Environment constructorEnv = new Environment(env);
         constructorEnv.setThisObject(object);
