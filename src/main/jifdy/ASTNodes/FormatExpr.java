@@ -25,7 +25,7 @@ public class FormatExpr extends Format {
     }
 
     @Override
-    public void typeChecker(TypeEnv delta, LabelEnv gamma) {
+    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
         expr.typeChecker(delta, gamma);
     }
 
@@ -42,11 +42,6 @@ public class FormatExpr extends Format {
         // so Objects.equals is the right equality check on the compiled path as well.
         return env.indent()
                 + "if (!Objects.equals(" + valueVar + ", " + expr.compile(env) + ")) throw new RuntimeException();\n";
-    }
-
-    @Override
-    public SecLabel label(LabelEnv gamma) {
-        return expr.label(gamma);
     }
 
     @Override

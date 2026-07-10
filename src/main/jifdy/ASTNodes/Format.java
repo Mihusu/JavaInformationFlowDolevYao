@@ -13,37 +13,21 @@ import java.util.Map;
 public abstract class Format {
 
     /**
-     * Type checks this format pattern.
-     *
-     * <p>
-     * Implementations may introduce new variable bindings into the
-     * type and label environments and verify that the structure of
-     * the format is valid.
-     * </p>
-     *
-     * @param delta Current type environment.
-     * @param gamma Current security label environment.
-     */
-    public abstract void typeChecker(TypeEnv delta, LabelEnv gamma);
-
-    /**
      * Type and label checks this format pattern under a current control-flow
      * label.
      *
      * <p>
-     * Most format nodes only validate structure and can reuse the ordinary
-     * two-argument check. Binding formats may override this method when the
-     * current procedure label must be compared with the label derived from the
-     * bound variable type.
+     * Implementations may introduce new variable bindings into the type and
+     * label environments, verify that the pattern structure is valid, and use
+     * the current procedure label when the pattern has information-flow side
+     * conditions.
      * </p>
      *
      * @param delta Current type environment.
      * @param gamma Current security label environment.
      * @param currentProcedureLabel Current control-flow label.
      */
-    public void typeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
-        typeChecker(delta, gamma);
-    }
+    public abstract void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel);
 
     /**
      * Attempts to match a runtime value against this format pattern.
@@ -112,17 +96,4 @@ public abstract class Format {
      * @return String representation of the format.
      */
     public abstract String describe();
-
-    /**
-     * Computes the security label associated with this format.
-     *
-     * <p>
-     * For compound formats, implementations may combine multiple
-     * labels using the language's label lattice.
-     * </p>
-     *
-     * @param gamma Current label environment.
-     * @return The resulting security label of the format.
-     */
-    public abstract SecLabel label(LabelEnv gamma);
 }

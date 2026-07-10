@@ -105,7 +105,7 @@ public class TryReceiveStmt extends Stmt {
         }
 
         // Typecheck receive pattern using current procedure
-        format.typeChecker(delta, gamma, label);
+        format.labelTypeChecker(delta, gamma, label);
 
         // New scope for body
         TypeEnv bodyDelta = new TypeEnv(delta);

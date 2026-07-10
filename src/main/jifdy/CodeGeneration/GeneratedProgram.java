@@ -7,24 +7,25 @@ import java.io.*;
  
 public class GeneratedProgram {
     private static final Scanner INPUT = new Scanner(System.in);
-
-    static class ConstructorValue implements Serializable {
-        String name;
-        List<Object> values;
-
-        ConstructorValue(String n, List<Object> v) {
-            name = n;
-            values = v;
-        }
-    }
-
+ 
     static class EncryptedValue implements Serializable {
         byte[] ciphertext;
         String description;
-
+        byte[] salt; // This is just a mock for simplicity. 
+ 
         EncryptedValue(byte[] ciphertext, String description) {
             this.ciphertext = ciphertext;
             this.description = description;
+        }
+    }
+ 
+    static class ConstructorValue implements Serializable {
+        String name;
+        List<Object> values;
+ 
+        ConstructorValue(String n, List<Object> v) {
+            name = n;
+            values = v;
         }
     }
  

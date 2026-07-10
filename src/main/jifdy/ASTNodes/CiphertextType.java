@@ -15,10 +15,9 @@ public class CiphertextType extends Types {
     public String keyName;
     public String formatName;
 
-    public CiphertextType(String keyName,
-                          String formatName) {
+    public CiphertextType(String keyName, String formatName) {
 
-        super(keyName, formatName);
+        super(Type.CIPHERTEXT);
         this.keyName = keyName;
         this.formatName = formatName;
     }

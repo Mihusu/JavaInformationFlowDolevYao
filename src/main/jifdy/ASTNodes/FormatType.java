@@ -19,7 +19,6 @@ public class FormatType extends Types {
     public FormatType(String name, List<Param> fields) {
         super(Type.FORMAT);
         this.name = name;
-        this.formatName = name;
         this.fields = fields;
     }
 

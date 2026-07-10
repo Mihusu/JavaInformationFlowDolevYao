@@ -21,12 +21,7 @@ public class ConstructorFormat extends Format {
     }
 
     @Override
-    public void typeChecker(TypeEnv delta, LabelEnv gamma) {
-        typeChecker(delta, gamma, SecLabel.LOW);
-    }
-
-    @Override
-    public void typeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
+    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
         FormatType formatType = delta.getFormat(name);
 
         if (args.size() != formatType.fields.size()) {
@@ -55,7 +50,7 @@ public class ConstructorFormat extends Format {
                 }
             }
 
-            actual.typeChecker(delta, gamma, currentProcedureLabel);
+            actual.labelTypeChecker(delta, gamma, currentProcedureLabel);
         }
     }
 
@@ -144,17 +139,5 @@ public class ConstructorFormat extends Format {
                 .orElse("") + ")";
     }
 
-    @Override
-    public SecLabel label(LabelEnv gamma) {
-
-        SecLabel result = SecLabel.LOW;
-
-        for (Format arg : args) {
-            result = SecLabel.supremum(result,
-                    arg.label(gamma));
-        }
-
-        return result;
-    }
 }
 

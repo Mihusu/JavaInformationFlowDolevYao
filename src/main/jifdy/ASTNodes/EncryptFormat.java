@@ -58,12 +58,7 @@ public class EncryptFormat extends Format {
     }
 
     @Override
-    public void typeChecker(TypeEnv delta, LabelEnv gamma) {
-        typeChecker(delta, gamma, SecLabel.LOW);
-    }
-
-    @Override
-    public void typeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
+    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
 
         // Verify the key expression is well-typed
         Type keyType = Types.type(key.typeChecker(delta, gamma));
@@ -74,7 +69,7 @@ public class EncryptFormat extends Format {
             );
         }
 
-        inner.typeChecker(delta, gamma, currentProcedureLabel);
+        inner.labelTypeChecker(delta, gamma, currentProcedureLabel);
     }
 
     /**
@@ -139,11 +134,6 @@ public class EncryptFormat extends Format {
                 ? literal.value
                 : key.compile(new CodeGenEnv());
         return "e(" + keyName + ", " + inner.describe() + ")";
-    }
-
-    @Override
-    public SecLabel label(LabelEnv gamma) {
-        return inner.label(gamma);
     }
 
 }

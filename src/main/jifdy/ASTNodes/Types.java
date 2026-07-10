@@ -1,7 +1,5 @@
 package ASTNodes;
 
-import java.util.Objects;
-
 /**
  * Concrete base class for source-language type descriptors.
  *
@@ -13,24 +11,10 @@ import java.util.Objects;
  */
 public class Types {
     public Type runtimeType;
-    public String keyName;
-    public String formatName;
 
     // When a subclass creates a type descriptor, it must specify which runtime type it belongs to
     protected Types(Type runtimeType) {
         this.runtimeType = runtimeType;
-    }
-
-    /**
-     * Convenience constructor for encrypted type descriptors.
-     *
-     * @param keyName the key name used by the ciphertext type
-     * @param formatName the encrypted format name
-     */
-    public Types(String keyName, String formatName) {
-        this.runtimeType = Type.CIPHERTEXT;
-        this.keyName = keyName;
-        this.formatName = formatName;
     }
 
     /**
@@ -45,7 +29,7 @@ public class Types {
             return basicType.type;
         }
 
-        if (type instanceof CiphertextType || type.runtimeType == Type.CIPHERTEXT) {
+        if (type instanceof CiphertextType) {
             return Type.CIPHERTEXT;
         }
 
@@ -78,9 +62,8 @@ public class Types {
             return false;
         }
 
-        if (type(left) == Type.CIPHERTEXT && type(right) == Type.CIPHERTEXT) {
-            return Objects.equals(left.keyName, right.keyName)
-                    && Objects.equals(left.formatName, right.formatName);
+        if (left instanceof CiphertextType leftCiphertext && right instanceof CiphertextType rightCiphertext) {
+            return leftCiphertext.equals(rightCiphertext);
         }
 
         if (left instanceof FormatType leftFormat && right instanceof FormatType rightFormat) {

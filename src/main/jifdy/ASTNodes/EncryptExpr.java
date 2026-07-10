@@ -101,7 +101,7 @@ public class EncryptExpr extends Expr {
 
         this.formatName = inferredFormatName;
 
-        return new Types(keyName, inferredFormatName);
+        return new CiphertextType(keyName, inferredFormatName);
     }
 
     @Override

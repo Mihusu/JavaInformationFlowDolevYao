@@ -30,11 +30,6 @@ public class TypedVarFormat extends Format {
         this.label = label;
     }
 
-    @Override
-    public void typeChecker(TypeEnv delta, LabelEnv gamma) {
-        typeChecker(delta, gamma, SecLabel.LOW);
-    }
-
     /**
      * Checks and registers a variable bound by a receive pattern.
      *
@@ -53,7 +48,7 @@ public class TypedVarFormat extends Format {
      *                              binding itself.
      */
     @Override
-    public void typeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
+    public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel currentProcedureLabel) {
 
         Types effectiveType = type;
         boolean alreadyDeclared = delta.containsType(name);
@@ -129,10 +124,5 @@ public class TypedVarFormat extends Format {
     @Override
     public String describe() {
         return name;
-    }
-
-    @Override
-    public SecLabel label(LabelEnv gamma) {
-        return this.label;
     }
 }
