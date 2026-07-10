@@ -159,7 +159,7 @@ The regression test runner checks:
 Some parser diagnostics may still be printed for illegal examples, but the summary at the end is the important result:
 
 ```text
-Tests Passed: 14
+Tests Passed: 24
 Tests Failed: 0
 ```
 
