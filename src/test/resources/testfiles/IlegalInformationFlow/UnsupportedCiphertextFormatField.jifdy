@@ -1,0 +1,16 @@
+key kBank;
+format Payment(String low user, int high amount);
+format Wrapped(e(kBank,Payment) low paymentMsg);
+
+public class UnsupportedCiphertextFormatField {
+
+    public void low main() {
+        String low user = "Alice";
+        Payment high payment = Payment(user, 10);
+        e(kBank,Payment) low msg = e(kBank, payment);
+
+        // The format declaration above is rejected because format fields may
+        // only be basic types or nested format types.
+        print(msg);
+    }
+}

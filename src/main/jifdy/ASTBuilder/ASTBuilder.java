@@ -660,7 +660,25 @@ public class ASTBuilder extends Information_flowBaseVisitor<Node> {
         }
 
         List<Param> fields = ctx.decls() == null ? List.of() : buildParams(ctx.decls());
+        validateFormatFieldTypes(formatName, fields, ctx);
         declaredFormatTypes.put(formatName, new FormatType(formatName, fields));
+    }
+
+    /**
+     * Enforces the DYIF-style restriction that format payloads are made only
+     * from basic values and nested format terms.
+     */
+    private void validateFormatFieldTypes(String formatName, List<Param> fields, ParserRuleContext ctx) {
+        for (Param field : fields) {
+            if (!(field.type instanceof BasicType) && !(field.type instanceof FormatType)) {
+                throw new TypeCheckException(
+                        "Invalid field type in format " + formatName + ": " +
+                                field.name + " must be a basic type or declared format type",
+                        ctx.getStart().getLine(),
+                        field.name
+                );
+            }
+        }
     }
 
     /**

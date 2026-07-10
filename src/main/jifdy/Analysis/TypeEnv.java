@@ -68,7 +68,23 @@ public class TypeEnv {
     }
 
     public void putFormat(String name, FormatType formatType) {
+        validateFormatFieldTypes(formatType);
         formats.put(name, formatType);
+    }
+
+    /**
+     * Defensively enforces the source-language rule that format declarations
+     * may contain only primitive/basic fields or nested format fields.
+     */
+    private void validateFormatFieldTypes(FormatType formatType) {
+        for (Param field : formatType.fields) {
+            if (!(field.type instanceof BasicType) && !(field.type instanceof FormatType)) {
+                throw new TypeCheckException(
+                        "Invalid field type in format " + formatType.name + ": " +
+                                field.name + " must be a basic type or declared format type"
+                );
+            }
+        }
     }
 
     public FormatType getFormat(String name) {
@@ -80,7 +96,20 @@ public class TypeEnv {
 
     // methods
     public void putMethod(String name, MethodType type) {
+        validateMethodReturnType(name, type);
         methods.put(name, type);
+    }
+
+    /**
+     * Defensively enforces that method declarations return only primitive
+     * source values or void.
+     */
+    private void validateMethodReturnType(String name, MethodType type) {
+        if (type.returnType != null && !(type.returnType instanceof BasicType)) {
+            throw new TypeCheckException(
+                    "Invalid return type for method " + name + ": must be a basic type or void"
+            );
+        }
     }
 
     public MethodType getMethod(String name) {

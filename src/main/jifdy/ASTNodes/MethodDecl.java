@@ -47,6 +47,8 @@ public class MethodDecl extends Declaration {
     @Override
     public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel secLabel) {
 
+        validateReturnType();
+
         List<Types> paramTypes = new ArrayList<>();
         List<SecLabel> paramLabels = new ArrayList<>();
 
@@ -88,6 +90,18 @@ public class MethodDecl extends Declaration {
 
         // update method label after checking the body
         gamma.getMethod(name).returnLabel = returnLabel;
+    }
+
+    /**
+     * Enforces the source-language rule that methods may return only primitive
+     * values, while methods with no return value are represented as void.
+     */
+    private void validateReturnType() {
+        if (returnType != null && !(returnType instanceof BasicType)) {
+            throw new TypeCheckException(
+                    "Invalid return type for method " + name + ": must be a basic type or void"
+            );
+        }
     }
 
     @Override

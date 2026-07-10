@@ -1,0 +1,12 @@
+format Receipt(String low user);
+
+public class UnsupportedFormatMethodReturn {
+
+    public Receipt low makeReceipt() {
+        String low user = "Alice";
+
+        // The method declaration is rejected because methods may return only
+        // basic types or void.
+        return Receipt(user);
+    }
+}
