@@ -92,18 +92,6 @@ public class MethodDecl extends Declaration {
         gamma.getMethod(name).returnLabel = returnLabel;
     }
 
-    /**
-     * Enforces the source-language rule that methods may return only primitive
-     * values, while methods with no return value are represented as void.
-     */
-    private void validateReturnType() {
-        if (returnType != null && !(returnType instanceof BasicType)) {
-            throw new TypeCheckException(
-                    "Invalid return type for method " + name + ": must be a basic type or void"
-            );
-        }
-    }
-
     @Override
     public String compile(CodeGenEnv env) {
 
@@ -143,5 +131,17 @@ public class MethodDecl extends Declaration {
         sb.append(env.indent()).append("}\n");
 
         return sb.toString();
+    }
+
+    /**
+     * Enforces the source-language rule that methods may return only primitive
+     * values, while methods with no return value are represented as void.
+     */
+    private void validateReturnType() {
+        if (returnType != null && !(returnType instanceof BasicType)) {
+            throw new TypeCheckException(
+                    "Invalid return type for method " + name + ": must be a basic type or void"
+            );
+        }
     }
 }

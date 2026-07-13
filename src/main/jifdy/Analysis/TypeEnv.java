@@ -11,7 +11,7 @@ import Utils.TypeCheckException;
 
 /**
  * Manages types during type checking.
- * Keeps track of variable types, method signatures, and return types.
+ * Keeps track of variable types, format types, method signatures, and return types.
  */
 public class TypeEnv {
 
@@ -41,16 +41,6 @@ public class TypeEnv {
         types.put(var, type);
     }
 
-    public void setReturnType(Types type) {
-        this.returnType = type;
-    }
-
-    public Types getReturnType() {
-        if (returnType == null)
-            throw new TypeCheckException("Return type not set");
-        return returnType;
-    }
-
     /**
      * Retrieves the type associated with a variable name.
      * @param name The name of the variable.
@@ -67,6 +57,17 @@ public class TypeEnv {
         return types.containsKey(name);
     }
 
+    public void setReturnType(Types type) {
+        this.returnType = type;
+    }
+
+    public Types getReturnType() {
+        if (returnType == null)
+            throw new TypeCheckException("Return type not set");
+        return returnType;
+    }
+
+    // Format types
     public void putFormat(String name, FormatType formatType) {
         validateFormatFieldTypes(formatType);
         formats.put(name, formatType);

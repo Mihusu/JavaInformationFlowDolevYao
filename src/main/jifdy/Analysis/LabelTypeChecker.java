@@ -11,10 +11,6 @@ public class LabelTypeChecker {
     private final TypeEnv delta = new TypeEnv();
     private final LabelEnv gamma = new LabelEnv();
 
-    /**
-     * Performs type checking on the provided program.
-     * @param program The program AST to check.
-     */
     public void check(Program program) {
         program.labelTypeChecker(delta, gamma);
     }

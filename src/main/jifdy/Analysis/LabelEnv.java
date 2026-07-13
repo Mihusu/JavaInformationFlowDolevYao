@@ -7,8 +7,8 @@ import ASTNodes.SecLabel;
 import Utils.TypeCheckException;
 
 /**
- * Manages security labels during type checking.
- * Keeps track of variable labels, method labels, and return labels.
+ * Manages security labels during label checking.
+ * Keeps track of declaration labels, method labels, and return labels.
  */
 public class LabelEnv {
 
@@ -38,12 +38,6 @@ public class LabelEnv {
         labels.put(var, label);
     }
 
-    /**
-     * Retrieves the security label associated with a variable.
-     * @param var The variable name.
-     * @return The security label.
-     * @throws TypeCheckException if the variable is not declared.
-     */
     public SecLabel getLabel(String var) {
         if (!labels.containsKey(var))
             throw new TypeCheckException("Label error: variable not declared: " + var);

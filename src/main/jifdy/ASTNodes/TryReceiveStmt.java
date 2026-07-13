@@ -54,32 +54,6 @@ public class TryReceiveStmt extends Stmt {
     }
 
     /**
-     * Declares default runtime values for variables introduced by the pattern.
-     *
-     * <p>
-     * This mirrors the Java code generator, where receive-bound variables must
-     * be definitely assigned even if the receive attempt fails.
-     * </p>
-     *
-     * @param env Runtime environment to receive the default bindings.
-     */
-    private void declareDefaultBindings(Environment env) {
-        Map<String, Types> bindings = new LinkedHashMap<>();
-        Map<String, SecLabel> labels = new LinkedHashMap<>();
-        format.collectBindings(bindings);
-        format.collectBindingLabels(labels);
-
-        for (Map.Entry<String, Types> binding : bindings.entrySet()) {
-            String name = binding.getKey();
-            Types type = binding.getValue();
-            SecLabel bindingLabel = labels.getOrDefault(name, SecLabel.LOW);
-            Value value = defaultRuntimeValue(type);
-            value.label = bindingLabel;
-            env.declare(name, value, bindingLabel);
-        }
-    }
-
-    /**
      * Type and label checks the receive pattern and its continuation.
      *
      * <p>
@@ -96,24 +70,15 @@ public class TryReceiveStmt extends Stmt {
      */
     @Override
     public void labelTypeChecker(TypeEnv delta, LabelEnv gamma, SecLabel label) {
-
         if (!Security.canFlow(label, SecLabel.LOW)) {
             throw new TypeCheckException(
                     "Cannot receive under non-public control flow",
                     lineNumber
             );
         }
-
-        // Typecheck receive pattern using current procedure
         format.labelTypeChecker(delta, gamma, label);
-
-        // New scope for body
         TypeEnv bodyDelta = new TypeEnv(delta);
         LabelEnv bodyGamma = new LabelEnv(gamma);
-
-        // try_rcv itself is public, while the body label is unconstrained by
-        // the network action. Ordinary expression/statement checks inside the
-        // body raise the context when high received variables are used.
         body.labelTypeChecker(bodyDelta, bodyGamma, label);
     }
 
@@ -171,6 +136,32 @@ public class TryReceiveStmt extends Stmt {
         sb.append(env.indent()).append("}\n");
 
         return sb.toString();
+    }
+
+    /**
+     * Declares default runtime values for variables introduced by the pattern.
+     *
+     * <p>
+     * This mirrors the Java code generator, where receive-bound variables must
+     * be definitely assigned even if the receive attempt fails.
+     * </p>
+     *
+     * @param env Runtime environment to receive the default bindings.
+     */
+    private void declareDefaultBindings(Environment env) {
+        Map<String, Types> bindings = new LinkedHashMap<>();
+        Map<String, SecLabel> labels = new LinkedHashMap<>();
+        format.collectBindings(bindings);
+        format.collectBindingLabels(labels);
+
+        for (Map.Entry<String, Types> binding : bindings.entrySet()) {
+            String name = binding.getKey();
+            Types type = binding.getValue();
+            SecLabel bindingLabel = labels.getOrDefault(name, SecLabel.LOW);
+            Value value = defaultRuntimeValue(type);
+            value.label = bindingLabel;
+            env.declare(name, value, bindingLabel);
+        }
     }
 
     /**
